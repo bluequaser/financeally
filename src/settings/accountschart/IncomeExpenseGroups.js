@@ -38,11 +38,13 @@ export default function IncomeExpenseGroups() {
   
   return (
     <div>
+       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
       Groups : <Link  to="/inventory"><b>Balance Sheet</b></Link> | {" "}   
       <Link  to="/groupsincomeexpense"><b>Income Statement</b></Link> | <br/> 
       Accounts : <Link  to="/categories"><b>Balance Sheet</b></Link> | {" "} 
       <Link  to="/locations"><b>Income Statement</b></Link> | <br/> 
-      <center><b>Manage Income Statement Groups </b></center>
+      </nav>
+      <b>Manage Income Statement Groups </b>
 
     <div style={{ display: 'flex' }}>
       

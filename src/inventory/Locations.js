@@ -42,11 +42,12 @@ export default function Locations() {
   
   return (
     <div>
+       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
       <Link  to="/items"><b>Products | Services</b></Link> | {" "}   
       <Link  to="/locations"><b>Location</b></Link> | {" "} 
       <Link  to="/categories"><b>Categories</b></Link> 
-
-      <center><b>Manage Store Locations </b></center>
+      </nav>
+      <b>Manage Store Locations </b>
 
     <div style={{ display: 'flex' }}>
       

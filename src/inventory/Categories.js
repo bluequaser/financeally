@@ -38,11 +38,12 @@ export default function Categories() {
   
   return (
     <div>
+      <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
       <Link  to="/inventory"><b>Inventory</b></Link> | {" "}   
       <Link  to="/locations"><b>Location</b></Link> | {" "} 
       <Link  to="/categories"><b>Categories</b></Link> 
-
-      <center><b>Manage Categories </b></center>
+   </nav>
+      <b>Manage Categories </b>
 
     <div style={{ display: 'flex' }}>
       
