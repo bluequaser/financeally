@@ -11,22 +11,25 @@ import {
 import { nanoid } from "nanoid";
 import {collection, query, orderBy, onSnapshot, addDoc, Timestamp} from "firebase/firestore"
 import {db} from '../firebase'
-//import MainLayout from '../layouts/MainLayout'
 
 function QueryNavLink({ to, ...props }) {
   let location = useLocation();
   return <NavLink to={to + location.search} {...props} />;
 }
 
-export default function Categories() {
+export default function Locations() {
+//  let categories = getCategories();
+//  let filterbyarray = getFilterBy();
+//  const covertypes = getCoverTypes(); 
   const [tasks, setTasks] = useState([])
+  const [name, setName] =  useState([])
   const [addNew, setNew] = useState("Add New")
   const [filterby, setFilterBy] = useState("name")
 
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'categories'), orderBy('name'))
+      const taskColRef = query(collection(db, 'locations'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -35,14 +38,15 @@ export default function Categories() {
       })
     },[])
 
+
   
   return (
     <div>
-      <Link  to="/inventory"><b>Inventory</b></Link> | {" "}   
+      <Link  to="/items"><b>Products | Services</b></Link> | {" "}   
       <Link  to="/locations"><b>Location</b></Link> | {" "} 
       <Link  to="/categories"><b>Categories</b></Link> 
 
-      <center><b>Manage Categories </b></center>
+      <center><b>Manage Store Locations </b></center>
 
     <div style={{ display: 'flex' }}>
       
@@ -57,7 +61,7 @@ export default function Categories() {
                 };
               }}
 
-              to={`/categories/${addNew}`}
+              to={`/locations/${addNew}`}
             >
               <button>+Add New</button>
             </QueryNavLink>
@@ -103,7 +107,7 @@ export default function Categories() {
                 };
               }}
 
-              to={`/categories/${task.data.uniqueId}`}
+              to={`/locations/${task.data.uniqueId}`}
             >
               {task.data.name}
             </QueryNavLink>

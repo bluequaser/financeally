@@ -25,6 +25,8 @@ import Book from "./routes/Book";
 import Settings from './settings/Settings';
 import Categories from './inventory/Categories';
 import Category from './inventory/Category';
+import Locations from './inventory/Locations';
+import Location from './inventory/Location';
 import './style.css';
 
 const rootElement = document.getElementById('root');
@@ -46,6 +48,17 @@ root.render(
              }
            />
            <Route path=":categoryId" element={<Category />} />
+      </Route>
+     <Route path="locations" element={<Locations />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a store location</p>
+              </main>
+             }
+           />
+           <Route path=":locationId" element={<Location />} />
       </Route>
      <Route path="books" element={<Books />} >
            <Route
