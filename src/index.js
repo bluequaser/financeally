@@ -27,6 +27,8 @@ import Categories from './inventory/Categories';
 import Category from './inventory/Category';
 import Locations from './inventory/Locations';
 import Location from './inventory/Location';
+import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
+import IncomeExpenseGroup from './settings/accountschart/IncomeExpenseGroup';
 import './style.css';
 
 const rootElement = document.getElementById('root');
@@ -59,6 +61,17 @@ root.render(
              }
            />
            <Route path=":locationId" element={<Location />} />
+      </Route>
+     <Route path="groupsincomeexpense" element={<IncomeExpenseGroups />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a group</p>
+              </main>
+             }
+           />
+           <Route path=":groupincomeexpenseId" element={<IncomeExpenseGroup />} />
       </Route>
      <Route path="books" element={<Books />} >
            <Route

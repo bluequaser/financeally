@@ -7,7 +7,7 @@ const Settings =() =>{
     <div>
     <b>Settings</b>
     <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-        <Link to="/books">Chart of Accounts</Link> |{' '}
+        <Link to="/groupsincomeexpense">Chart of Accounts</Link> |{' '}
         <Link to="/categories">Inventory</Link> |{' '}
       </nav>  
     </div>
