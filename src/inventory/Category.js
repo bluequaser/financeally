@@ -85,12 +85,19 @@ export default function Category() {
   const handleUpdate = async () => {
     
     var id="";
+    let originalName = "";
+    let nameExists = false;
+    let addNew = false;
+      if(uniqueId === 'Add New')
+        addNew = true;
+
+ 
     tasks.map((task) =>{
-      
-      if(task.data.uniqueId === uniqueId)
+      if(task.data.uniqueId === uniqueId){
       id=task.id
-      
-    });
+      originalName = task.data.name;
+      }
+      });
     
 
     let mname = name;
@@ -102,19 +109,17 @@ export default function Category() {
     if(category)
     mname = category+":"+name
 
+    // check name exists
+    dbase.map((item) =>{
+     if(item.data.name.includes(name))
+       nameExists = true;
+    })
+
+    if(nameExists){
+      alert("Name already exists! Please enter a unique name!")
+      return;
+    }
     if(uniqueId === 'Add New'){
-      /*  
-      try {
-        await addDoc(collection(db, 'categories'), {
-          name: mname,
-          created: Timestamp.now(),
-          uniqueId: nanoid()
-        })
-        
-      } catch (err) {
-        alert(err)
-      }
-      */
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'categories', categoriesRefDoc);
@@ -123,27 +128,25 @@ export default function Category() {
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
-
-    }
-    else{
-    /*      
-    const taskDocRef = doc(db, 'categories', id)
-    try{
-      await updateDoc(taskDocRef, {
-        name: mname,
-        created: Timestamp.now(),
-      })
-      } catch (err) {
-        alert(err)
-      }
-    */
-
+    } else{
       const categoryUpdateRef = doc(db, 'categories', id);
       batch.update(categoryUpdateRef, {
           name: mname,
           created: Timestamp.now()
-      }); 
-
+      });
+        dbase.map((item) =>{
+          if(item.data.name.includes(originalName)){
+            console.log("updating similar name references in DB..")
+           let oldName = item.data.name;
+           let revisedName = oldName.replace(originalName, mname)
+           const categoryUpdateRefAll = doc(db, 'categories', item.id);
+           batch.update(categoryUpdateRefAll, {
+              name: revisedName,
+              created: Timestamp.now()
+           });
+        } 
+       })
+    
     }
         // Commit the batch
         await batch.commit().then(() =>{
