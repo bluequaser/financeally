@@ -25,6 +25,7 @@ export default function Category() {
   const [dbase, setDBase] = useState([])
   const [store, setStore] = useState([]) 
   const [name, setName] = useState('')
+  const [originalName, setOriginalName] = useState('')
   const [category, setCategory] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
   const [isSubCategory, setIsSubCategory] = useState(false)
@@ -69,10 +70,12 @@ export default function Category() {
           let mname = task.data.name.slice(lastIndex + 1);
           setCategory(mcategory);
           setName(mname)
+          setOriginalName(mname)
            if(isSubCategory === false)
             setIsSubCategory(true)
         } else {
           setName(task.data.name)
+          setOriginalName(task.data.name)
           setCategory("")
         } 
       })
@@ -87,17 +90,13 @@ export default function Category() {
     var id="";
     let originalName = "";
     let nameExists = false;
-    let addNew = false;
-      if(uniqueId === 'Add New')
-        addNew = true;
 
  
     tasks.map((task) =>{
       if(task.data.uniqueId === uniqueId){
-      id=task.id
-      originalName = task.data.name;
+        id=task.id
       }
-      });
+    });
     
 
     let mname = name;
@@ -105,22 +104,27 @@ export default function Category() {
      alert("Please enter a name..");
       return
     }
-    const batch = writeBatch(db);
+   
     if(category)
     mname = category+":"+name
 
     // check name exists
     dbase.map((item) =>{
-     if(item.data.name.includes(name))
-       nameExists = true;
+      var str_spl = item.data.name.split(":");
+      let num;
+      for(num = 0;str_spl.length; num++ ){
+        if((str_spl[num] === name)){
+          nameExists = true;
+        } 
+      }
     })
 
     if(nameExists){
       alert("Name already exists! Please enter a unique name!")
       return;
     }
+    const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
-
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'categories', categoriesRefDoc);
       batch.set(categoriesRef, {
@@ -130,23 +134,31 @@ export default function Category() {
       }); 
     } else{
       const categoryUpdateRef = doc(db, 'categories', id);
-      batch.update(categoryUpdateRef, {
+        batch.update(categoryUpdateRef, {
           name: mname,
           created: Timestamp.now()
-      });
+        });
+      //update similar name references in DB
         dbase.map((item) =>{
-          if(item.data.name.includes(originalName)){
+          var str_spl = item.data.name.split(":");
+          let num;
+          let updateName = false;
+            for(num = 0;str_spl.length; num++ ){
+              if((str_spl[num] === originalName)){
+                updateName = true;
+              } 
+            }
+          if(updateName){
             console.log("updating similar name references in DB..")
-           let oldName = item.data.name;
-           let revisedName = oldName.replace(originalName, mname)
-           const categoryUpdateRefAll = doc(db, 'categories', item.id);
-           batch.update(categoryUpdateRefAll, {
-              name: revisedName,
-              created: Timestamp.now()
-           });
-        } 
-       })
-    
+            let oldName = item.data.name;
+            let revisedName = oldName.replace(originalName, name)
+            const categoryUpdateRefAll = doc(db, 'categories', item.id);
+               batch.update(categoryUpdateRefAll, {
+               name: revisedName,
+               created: Timestamp.now()
+              });
+          }
+        })
     }
         // Commit the batch
         await batch.commit().then(() =>{
