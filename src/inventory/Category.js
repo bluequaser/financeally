@@ -112,16 +112,22 @@ export default function Category() {
     let mtext ="";
     dbase.map((item) =>{
       let val = item.data.name;
-      var str_spl = val.split(":");
+      if(val.includes(":")){
+        let num;
+        let str_spl = val.split(":");
+        for(num = 0;str_spl.length; num++ )
+          mtext += str_spl[0] + "";
+      }
+      
       /*
-      let num;
+      
       for(num = 0;str_spl.length; num++ ){
         if((str_spl[num] === name)){
           mtext += str_spl[num];
           nameExists = true;
         } 
       }
-      *
+      */
     })
     console.log("name exists : "+mtext)
 
