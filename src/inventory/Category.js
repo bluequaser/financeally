@@ -64,17 +64,20 @@ export default function Category() {
 
     const handleEdit = async () => {
       tasks.map((task) => {
-        if(task.data.name.includes(":")){
-          let lastIndex = task.data.name.lastIndexOf(":")
-          let mcategory = task.data.name.slice(0,lastIndex);         
-          let mname = task.data.name.slice(lastIndex + 1);
+        let val = task.data.name;
+        if(val.includes(":")){
+          let lastIndex = val.lastIndexOf(":")
+          let mcategory = val.slice(0,lastIndex);         
+          let mname = val.slice(lastIndex + 1);
           setCategory(mcategory);
           setName(mname)
           setOriginalName(mname)
+
            if(isSubCategory === false)
             setIsSubCategory(true)
         } else {
           setName(task.data.name)
+          console.log(val)
           setOriginalName(task.data.name)
           setCategory("")
         } 
@@ -112,34 +115,29 @@ export default function Category() {
     let mtext ="";
     dbase.map((item) =>{
       let val = item.data.name;
+      
       if(val.includes(":")){
-        let num;
-        let str_spl = val.split(":");
-        for(num = 0;str_spl.length; num++ )
-          mtext += str_spl[0] + "";
+         let mstr = val.split(":")
+         for(let i = 0; i< mstr.length; i++){
+           console.log(name+" : "+mstr[i])
+           if(mstr[i] === name)
+           nameExists = true;
+         }
       }
-      
-      /*
-      
-      for(num = 0;str_spl.length; num++ ){
-        if((str_spl[num] === name)){
-          mtext += str_spl[num];
-          nameExists = true;
-        } 
-      }
-      */
+
     })
-    console.log("name exists : "+mtext)
+    
 
     if(nameExists){
       
       alert("Name already exists! Please enter a unique name!")
       return;
     }
-    let a =10;
-    if(a < 100){
-      return
-    }
+ let a = 10;
+ if(a<100){
+   console.log("originalName : "+originalName)
+   return
+ }
     const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
       var categoriesRefDoc = Math.random().toString(36).slice(2);
@@ -157,17 +155,19 @@ export default function Category() {
         });
       //update similar name references in DB
         dbase.map((item) =>{
-          var str_spl = item.data.name.split(":");
-          let num;
+          let val = item.data.name;
           let updateName = false;
-            for(num = 0;str_spl.length; num++ ){
-              if((str_spl[num] === originalName)){
-                updateName = true;
-              } 
-            }
+          if(val.includes(":")){
+             let mstr = val.split(":")
+             for(let i = 0; i< mstr.length; i++){
+               if(mstr[i] === originalName)
+               updateName = true;
+             }
+          }
+    
           if(updateName){
             console.log("updating similar name references in DB..")
-            let oldName = item.data.name;
+            let oldName = item.data.name;;
             let revisedName = oldName.replace(originalName, name)
             const categoryUpdateRefAll = doc(db, 'categories', item.id);
                batch.update(categoryUpdateRefAll, {
