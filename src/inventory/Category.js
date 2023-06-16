@@ -133,11 +133,23 @@ export default function Category() {
       alert("Name already exists! Please enter a unique name!")
       return;
     }
+    let moriginalName = "";
+    tasks.map((task) => {
+      let val = task.data.name;
+      if(val.includes(":")){
+        let lastIndex = val.lastIndexOf(":")    
+        moriginalName = val.slice(lastIndex + 1);
+      } else {
+        moriginalName = val;
+      } 
+    })
+/*    
  let a = 10;
  if(a<100){
-   console.log("originalName : "+originalName)
+   console.log("originalName : " + moriginalName)
    return
  }
+*/ 
     const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
       var categoriesRefDoc = Math.random().toString(36).slice(2);
@@ -160,15 +172,15 @@ export default function Category() {
           if(val.includes(":")){
              let mstr = val.split(":")
              for(let i = 0; i< mstr.length; i++){
-               if(mstr[i] === originalName)
+               if(mstr[i] === moriginalName)
                updateName = true;
              }
           }
     
           if(updateName){
             console.log("updating similar name references in DB..")
-            let oldName = item.data.name;;
-            let revisedName = oldName.replace(originalName, name)
+            let oldName = item.data.name;
+            let revisedName = oldName.replace(moriginalName, name)
             const categoryUpdateRefAll = doc(db, 'categories', item.id);
                batch.update(categoryUpdateRefAll, {
                name: revisedName,
@@ -285,15 +297,16 @@ return (
           }}
         >
            Done
-        </button>        
-        <button
+        </button> |{" "}        
+        <p><button
           onClick={() => {
             handleDelete();
             navigate("/categories" + mlocation.search);
           }}
         >
           🗑️Del
-        </button> |{" "}
+        </button> 
+        </p>
       </p>
       </div> : 
             <div>
