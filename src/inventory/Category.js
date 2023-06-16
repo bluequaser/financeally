@@ -109,19 +109,27 @@ export default function Category() {
     mname = category+":"+name
 
     // check name exists
+    let mtext ="";
     dbase.map((item) =>{
       var str_spl = item.data.name.split(":");
       let num;
       for(num = 0;str_spl.length; num++ ){
         if((str_spl[num] === name)){
+          mtext += str_spl[num];
           nameExists = true;
         } 
       }
     })
+    console.log("name exists : "+mtext)
 
     if(nameExists){
+      
       alert("Name already exists! Please enter a unique name!")
       return;
+    }
+    let a =10;
+    if(a < 100){
+      return
     }
     const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
