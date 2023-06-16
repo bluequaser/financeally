@@ -111,7 +111,9 @@ export default function Category() {
     // check name exists
     let mtext ="";
     dbase.map((item) =>{
-      var str_spl = item.data.name.split(":");
+      let val = item.data.name;
+      var str_spl = val.split(":");
+      /*
       let num;
       for(num = 0;str_spl.length; num++ ){
         if((str_spl[num] === name)){
@@ -119,6 +121,7 @@ export default function Category() {
           nameExists = true;
         } 
       }
+      *
     })
     console.log("name exists : "+mtext)
 
