@@ -85,6 +85,8 @@ export default function IncomeExpenseGroup() {
   /* function to update firestore */
   const handleUpdate = async () => {
     
+    let originalName = "";
+    let nameExists = false;
     var id="";
     tasks.map((task) =>{
       
@@ -103,12 +105,47 @@ export default function IncomeExpenseGroup() {
     if(category)
     mname = category+":"+name
 
+    // check name exists
+    let mtext ="";
+    dbase.map((item) =>{
+      let val = item.data.name;
+      
+      if(val.includes(":")){
+         let mstr = val.split(":")
+         for(let i = 0; i< mstr.length; i++){
+           console.log(name+" : "+mstr[i])
+           if(mstr[i] === name)
+           nameExists = true;
+         }
+      }
+
+    })
+    
+
+    if(nameExists){
+      
+      alert("Name already exists! Please enter a unique name!")
+      return;
+    }
+    let moriginalName = "";
+
+    tasks.map((task) => {
+      let val = task.data.name;
+      if(val.includes(":")){
+        let lastIndex = val.lastIndexOf(":")    
+        moriginalName = val.slice(lastIndex + 1);
+      } else {
+        moriginalName = val;
+      } 
+    })
+
     if(uniqueId === 'Add New'){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
       batch.set(categoriesRef, {
           name: mname,
+          type: type,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -119,9 +156,33 @@ export default function IncomeExpenseGroup() {
       const categoryUpdateRef = doc(db, 'groupsincomeexpense', id);
       batch.update(categoryUpdateRef, {
           name: mname,
+          type: type,
           created: Timestamp.now()
       }); 
-
+    //update similar name references in DB
+        dbase.map((item) =>{
+          let val = item.data.name;
+          let updateName = false;
+          if(val.includes(":")){
+             let mstr = val.split(":")
+             for(let i = 0; i< mstr.length; i++){
+               if(mstr[i] === moriginalName)
+               updateName = true;
+             }
+          }
+    
+          if(updateName){
+            console.log("updating similar name references in DB..")
+            let oldName = item.data.name;
+            let revisedName = oldName.replace(moriginalName, name)
+            const categoryUpdateRefAll = doc(db, 'groupsincomeexpense', item.id);
+               batch.update(categoryUpdateRefAll, {
+               name: revisedName,
+               type: type,
+               created: Timestamp.now()
+              });
+          }
+        })
     }
         // Commit the batch
         await batch.commit().then(() =>{
@@ -155,30 +216,6 @@ const handleDelete = async () => {
   }
 }
 
-   /* function to add new task to firestore */
-   const handleAdd = async () => {
-    
-    let mname = name; 
-    if(mname == ""){
-     alert("Please enter a name..");
-      return
-    }
-    if(category)
-    mname = category+":"+name
-
-
-    try {
-      await addDoc(collection(db, 'groupsincomeexpense'), {
-        name: mname,
-        created: Timestamp.now(),
-        uniqueId: nanoid()
-      })
-      
-    } catch (err) {
-      alert(err)
-    }
-
-  }
 
 const componentRef = useRef();
     

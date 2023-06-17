@@ -143,13 +143,7 @@ export default function Category() {
         moriginalName = val;
       } 
     })
-/*    
- let a = 10;
- if(a<100){
-   console.log("originalName : " + moriginalName)
-   return
- }
-*/ 
+
     const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
       var categoriesRefDoc = Math.random().toString(36).slice(2);
