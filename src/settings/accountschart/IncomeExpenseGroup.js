@@ -23,7 +23,8 @@ export default function IncomeExpenseGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [store, setStore] = useState([]) 
+  const [typeArray, setTypeArray] = useState([{type: 'Income group'},{type: 'Expense group'}])
+  const [type, setType] = useState('Income group') 
   const [name, setName] = useState('')
   const [category, setCategory] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
@@ -103,18 +104,6 @@ export default function IncomeExpenseGroup() {
     mname = category+":"+name
 
     if(uniqueId === 'Add New'){
-      /*  
-      try {
-        await addDoc(collection(db, 'categories'), {
-          name: mname,
-          created: Timestamp.now(),
-          uniqueId: nanoid()
-        })
-        
-      } catch (err) {
-        alert(err)
-      }
-      */
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
@@ -126,17 +115,6 @@ export default function IncomeExpenseGroup() {
 
     }
     else{
-    /*      
-    const taskDocRef = doc(db, 'categories', id)
-    try{
-      await updateDoc(taskDocRef, {
-        name: mname,
-        created: Timestamp.now(),
-      })
-      } catch (err) {
-        alert(err)
-      }
-    */
 
       const categoryUpdateRef = doc(db, 'groupsincomeexpense', id);
       batch.update(categoryUpdateRef, {
@@ -231,7 +209,10 @@ return (
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
-            ))} <br/>                
+            ))} <br/> 
+            <b>Type:</b> {tasks.map((task)=>(
+              task.data.type
+            ))} <br/>                      
             <b>Category:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
             ))}   
@@ -277,6 +258,23 @@ return (
               placeholder="name" />
           }
            <br/>
+           <select 
+        name='type' 
+        onChange={(e) => setType(e.target.value)  } 
+        value={type}>
+        {
+          typeArray.map((cat, key) =>{
+            if(type === cat.type)
+         return(
+          <option key={key} value={type} selected >{type}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.type} >{cat.type}</option>
+             );                       
+         })
+      }
+    </select> <br/>           
            <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
         {isSubCategory ?
         <select 
