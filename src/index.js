@@ -29,6 +29,8 @@ import Locations from './inventory/Locations';
 import Location from './inventory/Location';
 import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
 import IncomeExpenseGroup from './settings/accountschart/IncomeExpenseGroup';
+import BalanceSheetGroups from './settings/accountschart/BalanceSheetGroups';
+import BalanceSheetGroup from './settings/accountschart/BalanceSheetGroup';
 import './style.css';
 
 const rootElement = document.getElementById('root');
@@ -72,6 +74,17 @@ root.render(
              }
            />
            <Route path=":groupincomeexpenseId" element={<IncomeExpenseGroup />} />
+      </Route>
+     <Route path="groupsbalancesheet" element={<BalanceSheetGroups />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a group</p>
+              </main>
+             }
+           />
+           <Route path=":groupbalancesheetId" element={<BalanceSheetGroup />} />
       </Route>
      <Route path="books" element={<Books />} >
            <Route

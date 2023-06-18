@@ -18,7 +18,7 @@ function QueryNavLink({ to, ...props }) {
   return <NavLink to={to + location.search} {...props} />;
 }
 
-export default function IncomeExpenseGroups() {
+export default function BalanceSheetGroups() {
   const [tasks, setTasks] = useState([])
   const [addNew, setNew] = useState("Add New")
   const [filterby, setFilterBy] = useState("name")
@@ -26,7 +26,7 @@ export default function IncomeExpenseGroups() {
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'groupsincomeexpense'), orderBy('name'))
+      const taskColRef = query(collection(db, 'groupsbalancesheet'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -38,13 +38,13 @@ export default function IncomeExpenseGroups() {
   
   return (
     <div>
-       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
+      <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
       Groups : <Link  to="/groupsbalancesheet"><b>Balance Sheet</b></Link> | {" "}   
       <Link  to="/groupsincomeexpense"><b>Income Statement</b></Link> | <br/> 
       Accounts : <Link  to="/categories"><b>Balance Sheet</b></Link> | {" "} 
       <Link  to="/locations"><b>Income Statement</b></Link> | <br/> 
-      </nav>
-      <b>Manage Income Statement Groups </b>
+   </nav>
+      <b>Manage Balance Sheet Groups </b>
 
     <div style={{ display: 'flex' }}>
       
@@ -59,7 +59,7 @@ export default function IncomeExpenseGroups() {
                 };
               }}
 
-              to={`/groupsincomeexpense/${addNew}`}
+              to={`/groupsbalancesheet/${addNew}`}
             >
               <button>+Add New</button>
             </QueryNavLink>
@@ -105,7 +105,7 @@ export default function IncomeExpenseGroups() {
                 };
               }}
 
-              to={`/groupsincomeexpense/${task.data.uniqueId}`}
+              to={`/groupsbalancesheet/${task.data.uniqueId}`}
             >
               {task.data.name}
             </QueryNavLink>

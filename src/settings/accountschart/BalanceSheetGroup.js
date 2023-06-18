@@ -6,26 +6,23 @@ import { useParams ,
 
 import {collection, query, where,orderBy, onSnapshot, doc,deleteDoc, addDoc, updateDoc, Timestamp, writeBatch} from "firebase/firestore"
 import {db} from '../../firebase'
-//import {getCategories, getCoverTypes} from '../classification'
 import { ComponentToPrint } from './components/ComponentToPrint';
 import { useReactToPrint } from 'react-to-print';
 import MainLayout from '../layouts/MainLayout'
 import { nanoid } from "nanoid";
 
-export default function IncomeExpenseGroup() {
-//  let categories = getCategories();
-//  const covertypes = getCoverTypes();
+export default function BalanceSheetGroup() {
   let navigate = useNavigate();
   let mlocation = useLocation();
   let params = useParams();
   
-  const[uniqueId,setUniqueId] = useState(params.groupincomeexpenseId);
+  const[uniqueId,setUniqueId] = useState(params.groupbalancesheetId);
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] = useState([{type: 'Income group'},{type: 'Expense group'}])
-  const [type, setType] = useState('Income group') 
+  const [store, setStore] = useState([]) 
   const [name, setName] = useState('')
+  const [originalName, setOriginalName] = useState('')
   const [category, setCategory] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
   const [isSubCategory, setIsSubCategory] = useState(false)
@@ -33,7 +30,7 @@ export default function IncomeExpenseGroup() {
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef1 = collection(db, 'groupsincomeexpense');
+      const taskColRef1 = collection(db, 'groupsbalancesheet');
       const taskColRef = query(taskColRef1, where("uniqueId","==",uniqueId))
 //      const taskColRef = query(collection(db, 'books'), orderBy('created', 'desc'))
       onSnapshot(taskColRef, (snapshot) => {
@@ -46,7 +43,7 @@ export default function IncomeExpenseGroup() {
     },[])
     
     useEffect(() => {
-      const taskColRef = query(collection(db, 'groupsincomeexpense'), orderBy('name'))
+      const taskColRef = query(collection(db, 'groupsbalancesheet'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDBase(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -64,18 +61,21 @@ export default function IncomeExpenseGroup() {
 
     const handleEdit = async () => {
       tasks.map((task) => {
-        if(task.data.name.includes(":")){
-          let lastIndex = task.data.name.lastIndexOf(":")
-          let mcategory = task.data.name.slice(0,lastIndex);         
-          let mname = task.data.name.slice(lastIndex + 1);
-          let mtype = task.data.type;
+        let val = task.data.name;
+        if(val.includes(":")){
+          let lastIndex = val.lastIndexOf(":")
+          let mcategory = val.slice(0,lastIndex);         
+          let mname = val.slice(lastIndex + 1);
           setCategory(mcategory);
-          setType(mtype);
           setName(mname)
+          setOriginalName(mname)
+
            if(isSubCategory === false)
             setIsSubCategory(true)
         } else {
           setName(task.data.name)
+          console.log(val)
+          setOriginalName(task.data.name)
           setCategory("")
         } 
       })
@@ -87,14 +87,15 @@ export default function IncomeExpenseGroup() {
   /* function to update firestore */
   const handleUpdate = async () => {
     
+    var id="";
     let originalName = "";
     let nameExists = false;
-    var id="";
+
+ 
     tasks.map((task) =>{
-      
-      if(task.data.uniqueId === uniqueId)
-      id=task.id
-      
+      if(task.data.uniqueId === uniqueId){
+        id=task.id
+      }
     });
     
 
@@ -103,7 +104,7 @@ export default function IncomeExpenseGroup() {
      alert("Please enter a name..");
       return
     }
-    const batch = writeBatch(db);
+   
     if(category)
     mname = category+":"+name
 
@@ -130,7 +131,6 @@ export default function IncomeExpenseGroup() {
       return;
     }
     let moriginalName = "";
-
     tasks.map((task) => {
       let val = task.data.name;
       if(val.includes(":")){
@@ -141,27 +141,22 @@ export default function IncomeExpenseGroup() {
       } 
     })
 
+    const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
-
       var categoriesRefDoc = Math.random().toString(36).slice(2);
-      const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
+      const categoriesRef = doc(db, 'groupsbalancesheet', categoriesRefDoc);
       batch.set(categoriesRef, {
           name: mname,
-          type: type,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
-
-    }
-    else{
-
-      const categoryUpdateRef = doc(db, 'groupsincomeexpense', id);
-      batch.update(categoryUpdateRef, {
+    } else{
+      const categoryUpdateRef = doc(db, 'groupsbalancesheet', id);
+        batch.update(categoryUpdateRef, {
           name: mname,
-          type: type,
           created: Timestamp.now()
-      }); 
-    //update similar name references in DB
+        });
+      //update similar name references in DB
         dbase.map((item) =>{
           let val = item.data.name;
           let updateName = false;
@@ -177,10 +172,9 @@ export default function IncomeExpenseGroup() {
             console.log("updating similar name references in DB..")
             let oldName = item.data.name;
             let revisedName = oldName.replace(moriginalName, name)
-            const categoryUpdateRefAll = doc(db, 'groupsincomeexpense', item.id);
+            const categoryUpdateRefAll = doc(db, 'groupsbalancesheet', item.id);
                batch.update(categoryUpdateRefAll, {
                name: revisedName,
-               type: type,
                created: Timestamp.now()
               });
           }
@@ -210,7 +204,7 @@ const handleDelete = async () => {
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
     return
-  const taskDocRef = doc(db, 'groupsincomeexpense', id)
+  const taskDocRef = doc(db, 'groupsbalancesheet', id)
   try{
     await deleteDoc(taskDocRef)
   } catch (err) {
@@ -218,6 +212,30 @@ const handleDelete = async () => {
   }
 }
 
+   /* function to add new task to firestore */
+   const handleAdd = async () => {
+    
+    let mname = name; 
+    if(mname == ""){
+     alert("Please enter a name..");
+      return
+    }
+    if(category)
+    mname = category+":"+name
+
+
+    try {
+      await addDoc(collection(db, 'groupsbalancesheet'), {
+        name: mname,
+        created: Timestamp.now(),
+        uniqueId: nanoid()
+      })
+      
+    } catch (err) {
+      alert(err)
+    }
+
+  }
 
 const componentRef = useRef();
     
@@ -248,10 +266,7 @@ return (
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
-            ))} <br/> 
-            <b>Type:</b> {tasks.map((task)=>(
-              task.data.type
-            ))} <br/>                      
+            ))} <br/>                
             <b>Category:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
             ))}   
@@ -269,19 +284,20 @@ return (
         </button> |{" "}        
         <button
           onClick={() => {
-            navigate("/groupsincomeexpense" + mlocation.search);
+            navigate("/groupsbalancesheet" + mlocation.search);
           }}
         >
            Done
-        </button>        
-        <button
+        </button> |{" "}        
+        <p><button
           onClick={() => {
             handleDelete();
-            navigate("/groupsincomeexpense" + mlocation.search);
+            navigate("/groupsbalancesheet" + mlocation.search);
           }}
         >
           🗑️Del
-        </button> |{" "}
+        </button> 
+        </p>
       </p>
       </div> : 
             <div>
@@ -297,26 +313,9 @@ return (
               placeholder="name" />
           }
            <br/>
-           <label for="type"> Type: <br/><select 
-        name='type' 
-        onChange={(e) => setType(e.target.value)  } 
-        value={type}>
-        {
-          typeArray.map((cat, key) =>{
-            if(type === cat.type)
-         return(
-          <option key={key} value={type} selected >{type}</option>
-           );
-           else
-           return(
-            <option  key={key} value={cat.type} >{cat.type}</option>
-             );                       
-         })
-      }
-    </select> </label><br/>           
            <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
         {isSubCategory ?
-        <label for="category">Sub Category <br/><select 
+        <select 
         name='category' 
         onChange={(e) => setCategory(e.target.value)  } 
         value={category}>
@@ -332,13 +331,13 @@ return (
              );                       
          })
       }
-    </select></label> : null } 
+    </select> : null } 
             <p>
               <button
            onClick={() => {
             handleUpdate();
            
-            navigate("/groupsincomeexpense" + mlocation.search);
+            navigate("/groupsbalancesheet" + mlocation.search);
           }}
               >
                 💾
@@ -346,7 +345,7 @@ return (
               </button> |{" "}
               <button
                 onClick={() => {
-                  navigate("/groupsincomeexpense" + mlocation.search);
+                  navigate("/groupsbalancesheet" + mlocation.search);
                 }}
               >
                 Done
