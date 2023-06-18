@@ -20,9 +20,9 @@ export default function BalanceSheetGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [store, setStore] = useState([]) 
+  const [typeArray, setTypeArray] = useState([{type: 'Asset group'},{type: 'Liability group'},{type: 'Equity group'}])
+  const [type, setType] = useState('Asset group') 
   const [name, setName] = useState('')
-  const [originalName, setOriginalName] = useState('')
   const [category, setCategory] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
   const [isSubCategory, setIsSubCategory] = useState(false)
@@ -61,21 +61,18 @@ export default function BalanceSheetGroup() {
 
     const handleEdit = async () => {
       tasks.map((task) => {
-        let val = task.data.name;
-        if(val.includes(":")){
-          let lastIndex = val.lastIndexOf(":")
-          let mcategory = val.slice(0,lastIndex);         
-          let mname = val.slice(lastIndex + 1);
+        if(task.data.name.includes(":")){
+          let lastIndex = task.data.name.lastIndexOf(":")
+          let mcategory = task.data.name.slice(0,lastIndex);         
+          let mname = task.data.name.slice(lastIndex + 1);
+          let mtype = task.data.type;
           setCategory(mcategory);
+          setType(mtype);
           setName(mname)
-          setOriginalName(mname)
-
            if(isSubCategory === false)
             setIsSubCategory(true)
         } else {
           setName(task.data.name)
-          console.log(val)
-          setOriginalName(task.data.name)
           setCategory("")
         } 
       })
@@ -87,15 +84,14 @@ export default function BalanceSheetGroup() {
   /* function to update firestore */
   const handleUpdate = async () => {
     
-    var id="";
     let originalName = "";
     let nameExists = false;
-
- 
+    var id="";
     tasks.map((task) =>{
-      if(task.data.uniqueId === uniqueId){
-        id=task.id
-      }
+      
+      if(task.data.uniqueId === uniqueId)
+      id=task.id
+      
     });
     
 
@@ -104,7 +100,7 @@ export default function BalanceSheetGroup() {
      alert("Please enter a name..");
       return
     }
-   
+    const batch = writeBatch(db);
     if(category)
     mname = category+":"+name
 
@@ -131,6 +127,7 @@ export default function BalanceSheetGroup() {
       return;
     }
     let moriginalName = "";
+
     tasks.map((task) => {
       let val = task.data.name;
       if(val.includes(":")){
@@ -141,22 +138,27 @@ export default function BalanceSheetGroup() {
       } 
     })
 
-    const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
+
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'groupsbalancesheet', categoriesRefDoc);
       batch.set(categoriesRef, {
           name: mname,
+          type: type,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
-    } else{
+
+    }
+    else{
+
       const categoryUpdateRef = doc(db, 'groupsbalancesheet', id);
-        batch.update(categoryUpdateRef, {
+      batch.update(categoryUpdateRef, {
           name: mname,
+          type: type,
           created: Timestamp.now()
-        });
-      //update similar name references in DB
+      }); 
+    //update similar name references in DB
         dbase.map((item) =>{
           let val = item.data.name;
           let updateName = false;
@@ -175,6 +177,7 @@ export default function BalanceSheetGroup() {
             const categoryUpdateRefAll = doc(db, 'groupsbalancesheet', item.id);
                batch.update(categoryUpdateRefAll, {
                name: revisedName,
+               type: type,
                created: Timestamp.now()
               });
           }
@@ -242,7 +245,10 @@ return (
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
-            ))} <br/>                
+            ))} <br/> 
+            <b>Type:</b> {tasks.map((task)=>(
+              task.data.type
+            ))} <br/>                      
             <b>Category:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
             ))}   
@@ -264,16 +270,15 @@ return (
           }}
         >
            Done
-        </button> |{" "}        
-        <p><button
+        </button>        
+        <button
           onClick={() => {
             handleDelete();
             navigate("/groupsbalancesheet" + mlocation.search);
           }}
         >
           🗑️Del
-        </button> 
-        </p>
+        </button> |{" "}
       </p>
       </div> : 
             <div>
@@ -289,9 +294,26 @@ return (
               placeholder="name" />
           }
            <br/>
+           <label for="type"> Type: <br/><select 
+        name='type' 
+        onChange={(e) => setType(e.target.value)  } 
+        value={type}>
+        {
+          typeArray.map((cat, key) =>{
+            if(type === cat.type)
+         return(
+          <option key={key} value={type} selected >{type}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.type} >{cat.type}</option>
+             );                       
+         })
+      }
+    </select> </label><br/>           
            <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
         {isSubCategory ?
-        <select 
+        <label for="category">Sub Category <br/><select 
         name='category' 
         onChange={(e) => setCategory(e.target.value)  } 
         value={category}>
@@ -307,7 +329,7 @@ return (
              );                       
          })
       }
-    </select> : null } 
+    </select></label> : null } 
             <p>
               <button
            onClick={() => {
