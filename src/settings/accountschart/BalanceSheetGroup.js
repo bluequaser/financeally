@@ -212,30 +212,6 @@ const handleDelete = async () => {
   }
 }
 
-   /* function to add new task to firestore */
-   const handleAdd = async () => {
-    
-    let mname = name; 
-    if(mname == ""){
-     alert("Please enter a name..");
-      return
-    }
-    if(category)
-    mname = category+":"+name
-
-
-    try {
-      await addDoc(collection(db, 'groupsbalancesheet'), {
-        name: mname,
-        created: Timestamp.now(),
-        uniqueId: nanoid()
-      })
-      
-    } catch (err) {
-      alert(err)
-    }
-
-  }
 
 const componentRef = useRef();
     
