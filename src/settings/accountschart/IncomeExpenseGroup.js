@@ -314,7 +314,7 @@ return (
     </select> <br/>           
            <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
         {isSubCategory ?
-        <select 
+        <label for="category">Sub Category <br/><select 
         name='category' 
         onChange={(e) => setCategory(e.target.value)  } 
         value={category}>
@@ -330,7 +330,7 @@ return (
              );                       
          })
       }
-    </select> : null } 
+    </select></label> : null } 
             <p>
               <button
            onClick={() => {
