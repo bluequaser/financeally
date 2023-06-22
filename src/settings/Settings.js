@@ -9,7 +9,7 @@ const Settings =() =>{
     <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
         <Link to="/groupsincomeexpense">Chart of Accounts</Link> |{' '}
         <Link to="/categories">Inventory</Link> |{' '}
-        <Link to="/division">Division</Link> |{' '}
+        <Link to="/divisions">Division</Link> |{' '}
       </nav>  
     </div>
   )

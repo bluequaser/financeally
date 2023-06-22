@@ -59,7 +59,7 @@ export default function Divisions() {
                 };
               }}
 
-              to={`/locations/${addNew}`}
+              to={`/divisions/${addNew}`}
             >
               <button>+Add New</button>
             </QueryNavLink>
