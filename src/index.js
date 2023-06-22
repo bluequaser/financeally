@@ -68,7 +68,7 @@ root.render(
            />
            <Route path=":categoryId" element={<Category />} />
       </Route>
-       <Route path="inventoryitems" element={<InventoryItems />} >
+       <Route path="itemslist" element={<InventoryItems />} >
            <Route
              index
              element={
@@ -77,7 +77,7 @@ root.render(
               </main>
              }
            />
-           <Route path=":inventoryitemId" element={<InventoryItem />} />
+           <Route path=":itemlistId" element={<InventoryItem />} />
       </Route>
        <Route path="locations" element={<Locations />} >
            <Route

@@ -7,6 +7,7 @@ export default function App() {
       <h1>Finance Ally</h1>
       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
         <Link to="/books">Books</Link> |{' '}
+        <Link to="/itemslist">Inventory Items</Link> |{' '}
         <Link to="/settings">Settings</Link> |{' '}
       </nav>
       <Outlet />

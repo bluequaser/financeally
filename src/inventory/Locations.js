@@ -18,9 +18,6 @@ function QueryNavLink({ to, ...props }) {
 }
 
 export default function Locations() {
-//  let categories = getCategories();
-//  let filterbyarray = getFilterBy();
-//  const covertypes = getCoverTypes(); 
   const [tasks, setTasks] = useState([])
   const [name, setName] =  useState([])
   const [addNew, setNew] = useState("Add New")
@@ -43,7 +40,6 @@ export default function Locations() {
   return (
     <div>
        <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-      <Link  to="/inventoryitems"><b>Products</b></Link> | {" "}   
       <Link  to="/locations"><b>Location</b></Link> | {" "} 
       <Link  to="/categories"><b>Categories</b></Link> 
       </nav>

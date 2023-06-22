@@ -16,7 +16,7 @@ export default function InventoryItem() {
   let mlocation = useLocation();
   let params = useParams();
   
-  const[uniqueId,setUniqueId] = useState(params.inventoryitemId);
+  const[uniqueId,setUniqueId] = useState(params.itemlistId);
 
   const [tasks, setTasks] = useState([]) 
   const [itemsDB, setItemsDB] = useState([])
@@ -144,7 +144,7 @@ export default function InventoryItem() {
 
 
       var locationsRefDoc = Math.random().toString(36).slice(2);
-      const locationsRef = doc(db, 'inventoryitems', locationsRefDoc);
+      const locationsRef = doc(db, 'itemslist', locationsRefDoc);
       batch.set(locationsRef, {
           name: mname,
           created: Timestamp.now(),
@@ -154,7 +154,7 @@ export default function InventoryItem() {
     }
     else{
 
-      const locationsUpdateRef = doc(db, 'inventoryitems', id);
+      const locationsUpdateRef = doc(db, 'itemslist', id);
       batch.update(locationsUpdateRef, {
           name: mname,
           created: Timestamp.now()
@@ -185,7 +185,7 @@ const handleDelete = async () => {
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
     return
-  const taskDocRef = doc(db, 'inventoryitems', id)
+  const taskDocRef = doc(db, 'itemslist', id)
   try{
     await deleteDoc(taskDocRef)
   } catch (err) {
@@ -229,7 +229,7 @@ return (
         </button> |{" "}        
         <button
           onClick={() => {
-            navigate("/inventoryitems" + mlocation.search);
+            navigate("/itemslist" + mlocation.search);
           }}
         >
            Done
@@ -237,7 +237,7 @@ return (
         <button
           onClick={() => {
             handleDelete();
-            navigate("/inventoryitems" + mlocation.search);
+            navigate("/itemslist" + mlocation.search);
           }}
         >
           🗑️Del
@@ -442,7 +442,7 @@ return (
            onClick={() => {
             handleUpdate();
            
-            navigate("/inventoryitems" + mlocation.search);
+            navigate("/itemslist" + mlocation.search);
           }}
               >
                 💾
@@ -450,7 +450,7 @@ return (
               </button> |{" "}
               <button
                 onClick={() => {
-                  navigate("/inventoryitems" + mlocation.search);
+                  navigate("/itemslist" + mlocation.search);
                 }}
               >
                 Done
