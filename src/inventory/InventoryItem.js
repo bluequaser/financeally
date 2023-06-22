@@ -18,15 +18,17 @@ export default function InventoryItem() {
   
   const[uniqueId,setUniqueId] = useState(params.inventoryitemId);
 
-  const [tasks, setTasks] = useState([])
-  const [dbase, setDBase] = useState([]) 
+  const [tasks, setTasks] = useState([]) 
   const [itemsDB, setItemsDB] = useState([])
   const [salesDB, setSalesDB] = useState([]) 
   const [expenseDB, setExpenseDB] = useState([]) 
-  const [taxRatesDB, setTaxRatesDB] = useState([]) 
+  const [taxDB, setTaxDB] = useState([]) 
+  const [divisionDB, setDivisionDB] = useState([]) 
+  const [categoryDB, setCategoryDB] = useState([]) 
   const [name, setName] = useState('')
   const [sku, setSKU] = useState('')
   const [category, setCategory] = useState("")
+  const [division, setDivision] = useState('') 
   const [qtyAtHand, setQtyAtHand] = useState(0.0);
   const [reorderQty, setReorderQty] = useState(0.0);
   const [date, setDate] = useState('');
@@ -34,10 +36,10 @@ export default function InventoryItem() {
   const [itemDescription, setItemDescription] = useState('');
   const [salesAccount, setSalesAccount] = useState('');
   const [salesDescription, setSalesDescription] = useState('');useState('');
-  const [salesTaxRate, setSalesTaxRate] = useState('')
+  const [salesTax, setSalesTax] = useState('')
   const [expenseAccount, setExpenseAccount] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');
-  const [expenseTaxRate, setExpenseTaxRate] = useState('')
+  const [expenseTax, setExpenseTax] = useState('')
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
   const dateInputRef = useRef(null); 
@@ -67,7 +69,7 @@ export default function InventoryItem() {
   */
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef1 = collection(db, 'inventoryitems');
+      const taskColRef1 = collection(db, 'itemslist');
       const taskColRef = query(taskColRef1, where("uniqueId","==",uniqueId))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
@@ -79,9 +81,19 @@ export default function InventoryItem() {
     },[])
     
     useEffect(() => {
-      const taskColRef = query(collection(db, 'inventoryitems'), orderBy('name'))
+      const taskColRef = query(collection(db, 'itemslist'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
-        setDBase(snapshot.docs.map(doc => ({
+        setItemsDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
+
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'categories'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setCategoryDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -242,7 +254,7 @@ return (
         onChange={(e) => setCategory(e.target.value)  } 
         value={category}>
         {
-          dbase.map((cat, key) =>{
+          categoryDB.map((cat, key) =>{
             if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
          return(
           <option key={key} value={category} selected >{category}</option>
@@ -317,6 +329,66 @@ return (
             value={salesDescription}
             size = "10" 
             placeholder="Description" /><br/>
+        <label for="salesTax"> Sales Tax:<br/>
+        <select 
+        name='salesTax' 
+        onChange={(e) => setSalesTax(e.target.value)  } 
+        value={salesTax}>
+        {
+          taxDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={salesTax} selected >{salesTax}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+
+    <label for="expenseAccount"> Expense Account:<br/>
+        <select 
+        name='expenseAccount' 
+        onChange={(e) => setExpenseAccount(e.target.value)  } 
+        value={expenseAccount}>
+        {
+          expenseDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={expenseAccount} selected >{expenseAccount}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+          <input 
+            onChange={(e) => setExpenseDescription(e.target.value)} 
+            value={expenseDescription}
+            size = "10" 
+            placeholder="Description" /><br/>
+        <label for="expenseTax"> Expense Tax:<br/>
+        <select 
+        name='expenseTax' 
+        onChange={(e) => setExpenseTax(e.target.value)  } 
+        value={expenseTax}>
+        {
+          taxDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={expenseTax} selected >{expenseTax}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
             <p>
               <button
            onClick={() => {

@@ -23,6 +23,8 @@ import Expenses from './routes/expenses';
 import Books from "./routes/Books";
 import Book from "./routes/Book";
 import Settings from './settings/Settings';
+import Divisions from './settings/Divisions';
+import Division from './settings/Division';
 import Categories from './inventory/Categories';
 import Category from './inventory/Category';
 import Locations from './inventory/Locations';
@@ -44,6 +46,17 @@ root.render(
     <Routes>
      <Route path="/" element={<App />} >
      <Route path="settings" element={<Settings />} />
+     <Route path="divisions" element={<Divisions />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a division</p>
+              </main>
+             }
+           />
+           <Route path=":divisionId" element={<Division />} />
+      </Route>
      <Route path="categories" element={<Categories />} >
            <Route
              index
