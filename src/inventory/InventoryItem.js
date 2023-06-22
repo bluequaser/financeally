@@ -21,6 +21,8 @@ export default function InventoryItem() {
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([]) 
   const [name, setName] = useState('')
+  const [sku, setSKU] = useState('')
+  const [category, setCategory] = useState("")
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -182,15 +184,49 @@ return (
 
           <b>{editLabel}</b>
         <br/>
-          {
 
               <input 
               onChange={(e) => setName(e.target.value)} 
               value={name}
               size = "10" 
-              placeholder="name" />
-          }
-            
+              placeholder="name" /><br/>
+
+              <input 
+              onChange={(e) => setSKU(e.target.value)} 
+              value={sku}
+              size = "10" 
+              placeholder="sku" /><br/>
+        <label for="category"> Category<br/>
+        <select 
+        name='category' 
+        onChange={(e) => setCategory(e.target.value)  } 
+        value={category}>
+        {
+          dbase.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={category} selected >{category}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+        Quantity at hand<br/>
+        <input type="number" 
+          onChange={(e) => setQtyAtHand(e.target.value)} 
+          value={sku}
+          size = "10" 
+          placeholder="0.0" /><br/>
+        Re-order quantity<br/>
+        <input type="number" 
+          onChange={(e) => setReorderQty(e.target.value)} 
+          value={sku}
+          size = "10" 
+          placeholder="0.0" /><br/>
+            Earliest date<br/>
             <p>
               <button
            onClick={() => {
