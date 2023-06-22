@@ -25,6 +25,37 @@ export default function InventoryItem() {
   const [category, setCategory] = useState("")
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
+  /*
+import {useEffect, useRef, useState} from 'react' 
+
+  const handleDateChange = (e) => {
+        setDate(e.target.value);
+        //console.log(e.target.value)
+        
+  };
+const [date, setDate] = useState('');
+  const dateInputRef = useRef(null); 
+
+       var today = null;
+        if(date)
+          today = new Date(date)
+        else
+        today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        var dayInt = today.getDay();    
+        var log = today*1;  // outputs a long value
+        //new Date(longFormat); gives correct date format, from long to string
+        var mdate = yyyy + '-' + mm + '-' + dd;
+
+
+      <input
+        type="date"
+        onChange={handleDateChange}
+        ref={dateInputRef}
+      />{" "} {date}
+  */
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
       const taskColRef1 = collection(db, 'inventoryitems');
