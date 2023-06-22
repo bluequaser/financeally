@@ -43,7 +43,7 @@ export default function Locations() {
   return (
     <div>
        <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-      <Link  to="/items"><b>Products | Services</b></Link> | {" "}   
+      <Link  to="/inventoryitems"><b>Products</b></Link> | {" "}   
       <Link  to="/locations"><b>Location</b></Link> | {" "} 
       <Link  to="/categories"><b>Categories</b></Link> 
       </nav>

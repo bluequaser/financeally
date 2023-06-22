@@ -27,6 +27,8 @@ import Categories from './inventory/Categories';
 import Category from './inventory/Category';
 import Locations from './inventory/Locations';
 import Location from './inventory/Location';
+import InventoryItems from './inventory/InventoryItems';
+import InventoryItem from './inventory/InventoryItem';
 import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
 import IncomeExpenseGroup from './settings/accountschart/IncomeExpenseGroup';
 import BalanceSheetGroups from './settings/accountschart/BalanceSheetGroups';
@@ -53,7 +55,18 @@ root.render(
            />
            <Route path=":categoryId" element={<Category />} />
       </Route>
-     <Route path="locations" element={<Locations />} >
+       <Route path="inventoryitems" element={<InventoryItems />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select an item</p>
+              </main>
+             }
+           />
+           <Route path=":inventoryitemId" element={<InventoryItem />} />
+      </Route>
+       <Route path="locations" element={<Locations />} >
            <Route
              index
              element={
