@@ -23,6 +23,7 @@ export default function InventoryItem() {
   const [salesDB, setSalesDB] = useState([]) 
   const [expenseDB, setExpenseDB] = useState([]) 
   const [taxDB, setTaxDB] = useState([]) 
+  const [supplierDB, setSupplierDB] = useState([]) 
   const [divisionDB, setDivisionDB] = useState([]) 
   const [categoryDB, setCategoryDB] = useState([]) 
   const [name, setName] = useState('')
@@ -40,6 +41,7 @@ export default function InventoryItem() {
   const [expenseAccount, setExpenseAccount] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');
   const [expenseTax, setExpenseTax] = useState('')
+  const [supplier, setSupplier] = useState('')
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
   const dateInputRef = useRef(null); 
@@ -94,6 +96,16 @@ export default function InventoryItem() {
       const taskColRef = query(collection(db, 'categories'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setCategoryDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
+
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'divisions'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setDivisionDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -266,6 +278,24 @@ return (
          })
       }
     </select></label><br/>
+        <label for="division"> Division<br/>
+        <select 
+        name='division' 
+        onChange={(e) => setDivision(e.target.value)  } 
+        value={division}>
+        {
+          divisionDB.map((cat, key) =>{
+            if(division === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={division} selected >{division}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
         Quantity at hand<br/>
         <input type="number" 
           onChange={(e) => setQtyAtHand(e.target.value)} 
@@ -381,6 +411,24 @@ return (
             if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
          return(
           <option key={key} value={expenseTax} selected >{expenseTax}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+        <label for="supplier"> Supplier<br/>
+        <select 
+        name='supplier' 
+        onChange={(e) => setSupplier(e.target.value)  } 
+        value={supplier}>
+        {
+          supplierDB.map((cat, key) =>{
+            if(supplier === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={supplier} selected >{supplier}</option>
            );
            else
            return(
