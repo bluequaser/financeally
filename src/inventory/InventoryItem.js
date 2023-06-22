@@ -16,7 +16,7 @@ export default function InventoryItem() {
   let mlocation = useLocation();
   let params = useParams();
   
-  const[uniqueId,setUniqueId] = useState(params.locationId);
+  const[uniqueId,setUniqueId] = useState(params.inventoryitemId);
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([]) 
@@ -25,7 +25,7 @@ export default function InventoryItem() {
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef1 = collection(db, 'locations');
+      const taskColRef1 = collection(db, 'inventoryitems');
       const taskColRef = query(taskColRef1, where("uniqueId","==",uniqueId))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
@@ -37,7 +37,7 @@ export default function InventoryItem() {
     },[])
     
     useEffect(() => {
-      const taskColRef = query(collection(db, 'locations'), orderBy('name'))
+      const taskColRef = query(collection(db, 'inventoryitems'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDBase(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -78,7 +78,7 @@ export default function InventoryItem() {
 
 
       var locationsRefDoc = Math.random().toString(36).slice(2);
-      const locationsRef = doc(db, 'locations', locationsRefDoc);
+      const locationsRef = doc(db, 'inventoryitems', locationsRefDoc);
       batch.set(locationsRef, {
           name: mname,
           created: Timestamp.now(),
@@ -88,7 +88,7 @@ export default function InventoryItem() {
     }
     else{
 
-      const locationsUpdateRef = doc(db, 'locations', id);
+      const locationsUpdateRef = doc(db, 'inventoryitems', id);
       batch.update(locationsUpdateRef, {
           name: mname,
           created: Timestamp.now()
@@ -119,7 +119,7 @@ const handleDelete = async () => {
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
     return
-  const taskDocRef = doc(db, 'locations', id)
+  const taskDocRef = doc(db, 'inventoryitems', id)
   try{
     await deleteDoc(taskDocRef)
   } catch (err) {
@@ -163,7 +163,7 @@ return (
         </button> |{" "}        
         <button
           onClick={() => {
-            navigate("/locations" + mlocation.search);
+            navigate("/inventoryitems" + mlocation.search);
           }}
         >
            Done
@@ -171,7 +171,7 @@ return (
         <button
           onClick={() => {
             handleDelete();
-            navigate("/locations" + mlocation.search);
+            navigate("/inventoryitems" + mlocation.search);
           }}
         >
           🗑️Del
@@ -196,7 +196,7 @@ return (
            onClick={() => {
             handleUpdate();
            
-            navigate("/locations" + mlocation.search);
+            navigate("/inventoryitems" + mlocation.search);
           }}
               >
                 💾
@@ -204,7 +204,7 @@ return (
               </button> |{" "}
               <button
                 onClick={() => {
-                  navigate("/locations" + mlocation.search);
+                  navigate("/inventoryitems" + mlocation.search);
                 }}
               >
                 Done

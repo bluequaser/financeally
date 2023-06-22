@@ -26,7 +26,7 @@ export default function InventoryItems() {
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'locations'), orderBy('name'))
+      const taskColRef = query(collection(db, 'inventoryitems'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -40,11 +40,11 @@ export default function InventoryItems() {
   return (
     <div>
        <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-      <Link  to="/items"><b>Products | Services</b></Link> | {" "}   
+      <Link  to="/inventoryitems"><b>Products </b></Link> | {" "}   
       <Link  to="/locations"><b>Location</b></Link> | {" "} 
       <Link  to="/categories"><b>Categories</b></Link> 
       </nav>
-      <b>Manage Store Locations </b>
+      <b>Manage Inventory Items </b>
 
     <div style={{ display: 'flex' }}>
       
@@ -59,7 +59,7 @@ export default function InventoryItems() {
                 };
               }}
 
-              to={`/locations/${addNew}`}
+              to={`/inventoryitems/${addNew}`}
             >
               <button>+Add New</button>
             </QueryNavLink>
@@ -105,7 +105,7 @@ export default function InventoryItems() {
                 };
               }}
 
-              to={`/locations/${task.data.uniqueId}`}
+              to={`/inventoryitems/${task.data.uniqueId}`}
             >
               {task.data.name}
             </QueryNavLink>

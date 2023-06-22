@@ -6,7 +6,6 @@ import { useParams ,
 
 import {collection, query, where,orderBy, onSnapshot, doc,deleteDoc, addDoc, updateDoc, Timestamp, writeBatch} from "firebase/firestore"
 import {db} from '../firebase'
-//import {getCategories, getCoverTypes} from '../classification'
 import { ComponentToPrint } from './components/ComponentToPrint';
 import { useReactToPrint } from 'react-to-print';
 import MainLayout from '../layouts/MainLayout'
