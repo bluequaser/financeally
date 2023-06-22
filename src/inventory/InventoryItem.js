@@ -20,21 +20,36 @@ export default function InventoryItem() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([]) 
+  const [itemsDB, setItemsDB] = useState([])
+  const [salesDB, setSalesDB] = useState([]) 
+  const [expenseDB, setExpenseDB] = useState([]) 
+  const [taxRatesDB, setTaxRatesDB] = useState([]) 
   const [name, setName] = useState('')
   const [sku, setSKU] = useState('')
   const [category, setCategory] = useState("")
+  const [qtyAtHand, setQtyAtHand] = useState(0.0);
+  const [reorderQty, setReorderQty] = useState(0.0);
+  const [date, setDate] = useState('');
+  const [itemsAccount, setItemsAccount] = useState("");
+  const [itemDescription, setItemDescription] = useState('');
+  const [salesAccount, setSalesAccount] = useState('');
+  const [salesDescription, setSalesDescription] = useState('');useState('');
+  const [salesTaxRate, setSalesTaxRate] = useState('')
+  const [expenseAccount, setExpenseAccount] = useState('');
+  const [expenseDescription, setExpenseDescription] = useState('');
+  const [expenseTaxRate, setExpenseTaxRate] = useState('')
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
-  /*
-import {useEffect, useRef, useState} from 'react' 
+  const dateInputRef = useRef(null); 
+
 
   const handleDateChange = (e) => {
         setDate(e.target.value);
-        //console.log(e.target.value)
-        
   };
-const [date, setDate] = useState('');
-  const dateInputRef = useRef(null); 
+
+  /*
+
+
 
        var today = null;
         if(date)
@@ -49,12 +64,6 @@ const [date, setDate] = useState('');
         //new Date(longFormat); gives correct date format, from long to string
         var mdate = yyyy + '-' + mm + '-' + dd;
 
-
-      <input
-        type="date"
-        onChange={handleDateChange}
-        ref={dateInputRef}
-      />{" "} {date}
   */
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
@@ -248,16 +257,66 @@ return (
         Quantity at hand<br/>
         <input type="number" 
           onChange={(e) => setQtyAtHand(e.target.value)} 
-          value={sku}
-          size = "10" 
+          value={qtyAtHand}
+          size = "5" 
           placeholder="0.0" /><br/>
         Re-order quantity<br/>
         <input type="number" 
           onChange={(e) => setReorderQty(e.target.value)} 
-          value={sku}
-          size = "10" 
+          value={reorderQty}
+          size = "5" 
           placeholder="0.0" /><br/>
             Earliest date<br/>
+        <input type="date"
+            onChange={handleDateChange}
+             ref={dateInputRef}
+            /><br/>{" "} {date}<br/>
+        <label for="itemsAccount"> Inventory Account:<br/>
+        <select 
+        name='itemsAccount' 
+        onChange={(e) => setItemsAccount(e.target.value)  } 
+        value={itemsAccount}>
+        {
+          itemsDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={itemsAccount} selected >{itemsAccount}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+          <input 
+            onChange={(e) => setItemDescription(e.target.value)} 
+            value={itemDescription}
+            size = "10" 
+            placeholder="Description" /><br/>
+        <label for="salesAccount"> Sales Account:<br/>
+        <select 
+        name='salesAccount' 
+        onChange={(e) => setSalesAccount(e.target.value)  } 
+        value={salesAccount}>
+        {
+          salesDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={salesAccount} selected >{salesAccount}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+          <input 
+            onChange={(e) => setSalesDescription(e.target.value)} 
+            value={salesDescription}
+            size = "10" 
+            placeholder="Description" /><br/>
             <p>
               <button
            onClick={() => {
