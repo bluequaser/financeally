@@ -39,11 +39,7 @@ export default function InventoryItems() {
   
   return (
     <div>
-       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-      <Link  to="/itemslist"><b>Inventory Items </b></Link> | {" "}   
-      <Link  to="/locations"><b>Location</b></Link> | {" "} 
-      <Link  to="/categories"><b>Categories</b></Link> 
-      </nav>
+
       <b>Manage Inventory Items </b>
 
     <div style={{ display: 'flex' }}>

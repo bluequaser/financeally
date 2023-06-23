@@ -36,10 +36,12 @@ export default function InventoryItem() {
   const [itemsAccount, setItemsAccount] = useState("");
   const [itemDescription, setItemDescription] = useState('');
   const [salesAccount, setSalesAccount] = useState('');
-  const [salesDescription, setSalesDescription] = useState('');useState('');
+  const [salesDescription, setSalesDescription] = useState('');
+  const [salesPrice, setSalesPrice] = useState(0.0);
   const [salesTax, setSalesTax] = useState('')
   const [expenseAccount, setExpenseAccount] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');
+  const [purchasePrice, setPurchasePrice] = useState(0.0);
   const [expenseTax, setExpenseTax] = useState('')
   const [supplier, setSupplier] = useState('')
   const [isEdit, setEdit] = useState(false)
@@ -359,6 +361,12 @@ return (
             value={salesDescription}
             size = "10" 
             placeholder="Description" /><br/>
+            Sales Price:<br/>
+            <input type="number" 
+              onChange={(e) => setSalesPrice(e.target.value)} 
+              value={qtyAtHand}
+              size = "5" 
+              placeholder="0.0" /><br/>
         <label for="salesTax"> Sales Tax:<br/>
         <select 
         name='salesTax' 
@@ -401,6 +409,12 @@ return (
             value={expenseDescription}
             size = "10" 
             placeholder="Description" /><br/>
+            Purchase Price:<br/>
+            <input type="number" 
+              onChange={(e) => setPurchasePrice(e.target.value)} 
+              value={purchasePrice}
+              size = "5" 
+              placeholder="0.0" /><br/>
         <label for="expenseTax"> Expense Tax:<br/>
         <select 
         name='expenseTax' 
