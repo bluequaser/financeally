@@ -25,6 +25,8 @@ import Book from "./routes/Book";
 import Settings from './settings/Settings';
 import Divisions from './settings/Divisions';
 import Division from './settings/Division';
+import TaxCodes from './settings/TaxCodes';
+import TaxCode from './settings/TaxCode';
 import Categories from './inventory/Categories';
 import Category from './inventory/Category';
 import Locations from './inventory/Locations';
@@ -56,6 +58,17 @@ root.render(
              }
            />
            <Route path=":divisionId" element={<Division />} />
+      </Route>
+     <Route path="taxcodes" element={<TaxCodes />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a tax code</p>
+              </main>
+             }
+           />
+           <Route path=":taxcodeId" element={<TaxCode />} />
       </Route>
      <Route path="categories" element={<Categories />} >
            <Route
