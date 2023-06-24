@@ -11,12 +11,12 @@ import { useReactToPrint } from 'react-to-print';
 import MainLayout from '../layouts/MainLayout'
 import { nanoid } from "nanoid";
 
-export default function BalanceSheetGroup() {
+export default function BalanceSheetAccount() {
   let navigate = useNavigate();
   let mlocation = useLocation();
   let params = useParams();
   
-  const[uniqueId,setUniqueId] = useState(params.groupbalancesheetId);
+  const[uniqueId,setUniqueId] = useState(params.accountbalancesheetId);
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
@@ -30,7 +30,7 @@ export default function BalanceSheetGroup() {
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef1 = collection(db, 'groupsbalancesheet');
+      const taskColRef1 = collection(db, 'chartofaccounts');
       const taskColRef = query(taskColRef1, where("uniqueId","==",uniqueId))
 //      const taskColRef = query(collection(db, 'books'), orderBy('created', 'desc'))
       onSnapshot(taskColRef, (snapshot) => {
@@ -43,7 +43,7 @@ export default function BalanceSheetGroup() {
     },[])
     
     useEffect(() => {
-      const taskColRef = query(collection(db, 'groupsbalancesheet'), orderBy('name'))
+      const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDBase(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -141,7 +141,7 @@ export default function BalanceSheetGroup() {
     if(uniqueId === 'Add New'){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
-      const categoriesRef = doc(db, 'groupsbalancesheet', categoriesRefDoc);
+      const categoriesRef = doc(db, 'chartofaccounts', categoriesRefDoc);
       batch.set(categoriesRef, {
           name: mname,
           type: type,
@@ -152,7 +152,7 @@ export default function BalanceSheetGroup() {
     }
     else{
 
-      const categoryUpdateRef = doc(db, 'groupsbalancesheet', id);
+      const categoryUpdateRef = doc(db, 'chartofaccounts', id);
       batch.update(categoryUpdateRef, {
           name: mname,
           type: type,
@@ -174,7 +174,7 @@ export default function BalanceSheetGroup() {
             console.log("updating similar name references in DB..")
             let oldName = item.data.name;
             let revisedName = oldName.replace(moriginalName, name)
-            const categoryUpdateRefAll = doc(db, 'groupsbalancesheet', item.id);
+            const categoryUpdateRefAll = doc(db, 'chartofaccounts', item.id);
                batch.update(categoryUpdateRefAll, {
                name: revisedName,
                type: type,
@@ -207,7 +207,7 @@ const handleDelete = async () => {
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
     return
-  const taskDocRef = doc(db, 'groupsbalancesheet', id)
+  const taskDocRef = doc(db, 'chartofaccounts', id)
   try{
     await deleteDoc(taskDocRef)
   } catch (err) {
@@ -266,7 +266,7 @@ return (
         </button> |{" "}        
         <button
           onClick={() => {
-            navigate("/groupsbalancesheet" + mlocation.search);
+            navigate("/accountsbalancesheet" + mlocation.search);
           }}
         >
            Done
@@ -274,7 +274,7 @@ return (
         <button
           onClick={() => {
             handleDelete();
-            navigate("/groupsbalancesheet" + mlocation.search);
+            navigate("/accountsbalancesheet" + mlocation.search);
           }}
         >
           🗑️Del
@@ -335,7 +335,7 @@ return (
            onClick={() => {
             handleUpdate();
            
-            navigate("/groupsbalancesheet" + mlocation.search);
+            navigate("/accountsbalancesheet" + mlocation.search);
           }}
               >
                 💾
@@ -343,7 +343,7 @@ return (
               </button> |{" "}
               <button
                 onClick={() => {
-                  navigate("/groupsbalancesheet" + mlocation.search);
+                  navigate("/accountsbalancesheet" + mlocation.search);
                 }}
               >
                 Done
