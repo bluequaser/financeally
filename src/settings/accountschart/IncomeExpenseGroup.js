@@ -26,6 +26,7 @@ export default function IncomeExpenseGroup() {
   const [typeArray, setTypeArray] = useState([{type: 'Income group'},{type: 'Expense group'}])
   const [type, setType] = useState('Income group') 
   const [name, setName] = useState('')
+  const [rootPath, setRootPath] = useState('')
   const [category, setCategory] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
   const [isSubCategory, setIsSubCategory] = useState(false)
@@ -99,6 +100,7 @@ export default function IncomeExpenseGroup() {
     
 
     let mname = name;
+    let path = "";
     if(mname == ""){
      alert("Please enter a name..");
       return
@@ -106,7 +108,7 @@ export default function IncomeExpenseGroup() {
     const batch = writeBatch(db);
     if(category)
     mname = category+":"+name
-
+    path = type+":"+mname;
     // check name exists
     let mtext ="";
     dbase.map((item) =>{
@@ -148,6 +150,7 @@ export default function IncomeExpenseGroup() {
       batch.set(categoriesRef, {
           name: mname,
           type: type,
+          rootPath: path,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -159,6 +162,7 @@ export default function IncomeExpenseGroup() {
       batch.update(categoryUpdateRef, {
           name: mname,
           type: type,
+          rootPath: path,
           created: Timestamp.now()
       }); 
     //update similar name references in DB
@@ -176,11 +180,14 @@ export default function IncomeExpenseGroup() {
           if(updateName){
             console.log("updating similar name references in DB..")
             let oldName = item.data.name;
+            let oldPath = item.data.rootPath;
             let revisedName = oldName.replace(moriginalName, name)
+            let newRootPath = item.data.rootPath+":"+revisedName;
             const categoryUpdateRefAll = doc(db, 'groupsincomeexpense', item.id);
                batch.update(categoryUpdateRefAll, {
                name: revisedName,
                type: type,
+               rootPath: newRootPath,
                created: Timestamp.now()
               });
           }
