@@ -20,7 +20,7 @@ export default function BalanceSheetGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] = useState([{type: 'Assets group'},{type: 'Fixed Assets group'},{type: 'Current Assets group'},{type: 'Liabilities group'},{type: 'Long Term Liabilities group'},{type: 'Current Liabilities group'},{type: 'Equity group'}])
+  const [typeArray, setTypeArray] = useState([{type: 'Assets group'},{type: 'Fixed Assets group'},{type: 'Current Assets group'},{type: 'Current Assets group'},{type: 'Cash and cash equivalents group'},{type: 'Long Term Liabilities group'},{type: 'Current Liabilities group'},{type: 'Equity group'}])
   const [type, setType] = useState('Assets group') 
   const [name, setName] = useState('')
   const [category, setCategory] = useState("")
