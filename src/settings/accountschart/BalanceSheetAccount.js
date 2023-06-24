@@ -20,10 +20,21 @@ export default function BalanceSheetAccount() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] = useState([{type: 'Assets group'},{type: 'Fixed Assets group'},{type: 'Current Assets group'},{type: 'Cash and cash equivalents group'},{type: 'Liabilities group'},{type: 'Long Term Liabilities group'},{type: 'Current Liabilities group'},{type: 'Equity group'}])
+  const [groupsDB, setGroupsDB] = useState([])
+  const [divisionDB, setDivisionsDB] = useState([])
+  const [taxCodeDB, setTaxCodeDB] = useState([])
+  const [fundsFlowArray, setFundsFlowArray] = useState([{fundsFlowType: 'Operating activities'},{fundsFlowType: 'Investing activities'},{fundsFlowType: 'Financing activities'}])
+  
+  const [entryTypeArray, setEntryTypeArray] = useState([{entryType: "Credit"},{entryType: "Debit"}])
+  const [entryType, setEntryType] = useState('Credit')
   const [type, setType] = useState('Assets group') 
   const [name, setName] = useState('')
+  const [code, setCode] = useState('')
+  const [division, setDivision] = useState('')
+  const [taxCode, setTaxCode] = useState('')
+  const [openingBalance, setOpeningBalance] = useState(0.0)
   const [category, setCategory] = useState("")
+  const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [toInitializeCategory, setInitialCategory] = useState(false)
   const [isSubCategory, setIsSubCategory] = useState(false)
   const [isEdit, setEdit] = useState(false)
@@ -52,7 +63,35 @@ export default function BalanceSheetAccount() {
       })
     },[])
 
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'groupsbalancesheet'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setGroupsDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
 
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'divisions'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setDivisionsDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
+
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'taxcodes'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setTaxCodeDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
 
     const handleNameChange = async (e) => {
       e.preventDefault();
@@ -246,12 +285,17 @@ return (
             <b>Name:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
             ))} <br/> 
+            <b>Code:</b><br/> 
             <b>Type:</b> {tasks.map((task)=>(
               task.data.type
             ))} <br/>                      
-            <b>Category:</b> {tasks.map((task)=>(
+            <b>Group:</b> {tasks.map((task)=>(
               task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
-            ))}   
+            ))} <br/>
+          <b>Cash Flow Statement :</b><br/>  
+          <b>Division:</b><br/> 
+          <b>Default Tax Code :</b><br/>
+          <b>Opening Balance :</b> Debit | Credit :<br/>       
       <p>
 
         <button
@@ -285,40 +329,26 @@ return (
 
           <b>{editLabel}</b>
         <br/>
-          {
-
               <input 
               onChange={(e) => setName(e.target.value)} 
               value={name}
               size = "10" 
-              placeholder="name" />
-          }
+              placeholder="name" />          
            <br/>
-           <label for="type"> Type: <br/><select 
-        name='type' 
-        onChange={(e) => setType(e.target.value)  } 
-        value={type}>
-        {
-          typeArray.map((cat, key) =>{
-            if(type === cat.type)
-         return(
-          <option key={key} value={type} selected >{type}</option>
-           );
-           else
-           return(
-            <option  key={key} value={cat.type} >{cat.type}</option>
-             );                       
-         })
-      }
-    </select> </label><br/>           
-           <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
-        {isSubCategory ?
-        <label for="category">Sub Category <br/><select 
+           <input 
+              onChange={(e) => setCode(e.target.value)} 
+              value={code}
+              size = "10" 
+              placeholder="code" />          
+           <br/>
+
+        <label for="category">Group <br/>
+        <select 
         name='category' 
         onChange={(e) => setCategory(e.target.value)  } 
         value={category}>
         {
-          dbase.map((cat, key) =>{
+          groupsDB.map((cat, key) =>{
             if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
          return(
           <option key={key} value={category} selected >{category}</option>
@@ -329,7 +359,61 @@ return (
              );                       
          })
       }
-    </select></label> : null } 
+    </select></label> <br/>
+    <label for="fundsFlowType"> Cash Flow Statement: <br/>
+        <select 
+        name='fundsFlow' 
+        onChange={(e) => setFundsFlowType(e.target.value)  } 
+        value={type}>
+        {
+          fundsFlowArray.map((cat, key) =>{
+            if(type === cat.fundsFlowType)
+         return(
+          <option key={key} value={fundsFlowType} selected >{fundsFlowType}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.fundsFlowType} >{cat.fundsFlowType}</option>
+             );                       
+         })
+      }
+    </select> </label><br/>
+    <label for="division"> Division: <br/>
+        <select 
+        name='division' 
+        onChange={(e) => setDivision(e.target.value)  } 
+        value={division}>
+        {
+          divisionDB.map((cat, key) =>{
+            if(division === cat.name)
+         return(
+          <option key={key} value={division} selected >{division}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select> </label><br/>
+    <label for="taxCode"> Tax Code: <br/>
+        <select 
+        name='taxCode' 
+        onChange={(e) => setTaxCode(e.target.value)  } 
+        value={taxCode}>
+        {
+          taxCodeDB.map((cat, key) =>{
+            if(taxCode === cat.name)
+         return(
+          <option key={key} value={taxCode} selected >{taxCode}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.title} >{cat.data.title}</option>
+             );                       
+         })
+      }
+    </select> </label><br/>
             <p>
               <button
            onClick={() => {

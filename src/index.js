@@ -37,6 +37,8 @@ import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
 import IncomeExpenseGroup from './settings/accountschart/IncomeExpenseGroup';
 import BalanceSheetGroups from './settings/accountschart/BalanceSheetGroups';
 import BalanceSheetGroup from './settings/accountschart/BalanceSheetGroup';
+import BalanceSheetAccounts from './settings/accountschart/BalanceSheetAccounts';
+import BalanceSheetAccount from './settings/accountschart/BalanceSheetAccount';
 import './style.css';
 
 const rootElement = document.getElementById('root');
@@ -124,6 +126,17 @@ root.render(
              }
            />
            <Route path=":groupbalancesheetId" element={<BalanceSheetGroup />} />
+      </Route>
+      <Route path="accountsbalancesheet" element={<BalanceSheetAccounts />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select an account</p>
+              </main>
+             }
+           />
+           <Route path=":accountbalancesheetId" element={<BalanceSheetAccount />} />
       </Route>
      <Route path="books" element={<Books />} >
            <Route

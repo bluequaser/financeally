@@ -41,7 +41,7 @@ export default function BalanceSheetAccounts() {
       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
       Groups : <Link  to="/groupsbalancesheet"><b>Balance Sheet</b></Link> | {" "}   
       <Link  to="/groupsincomeexpense"><b>Income Statement</b></Link> | <br/> 
-      Accounts : <Link  to="/categories"><b>Balance Sheet</b></Link> | {" "} 
+      Accounts : <Link  to="/accountsbalancesheet"><b>Balance Sheet</b></Link> | {" "} 
       <Link  to="/locations"><b>Income Statement</b></Link> | <br/> 
    </nav>
       <b>Manage Balance Sheet Accounts </b>
