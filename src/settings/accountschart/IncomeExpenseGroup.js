@@ -77,6 +77,7 @@ export default function IncomeExpenseGroup() {
             setIsSubCategory(true)
         } else {
           setName(task.data.name)
+          setType(task.data.type)
           setCategory("")
         } 
       })
@@ -112,6 +113,11 @@ export default function IncomeExpenseGroup() {
     // check name exists
     let mtext ="";
     dbase.map((item) =>{
+      let mpath= item.data.rootPath;
+      if(mpath === path && item.data.uniqueId !== uniqueId ){
+        nameExists = true;
+      }
+      /*
       let val = item.data.name;
       
       if(val.includes(":")){
@@ -122,7 +128,7 @@ export default function IncomeExpenseGroup() {
            nameExists = true;
          }
       }
-
+      */
     })
     
 
@@ -259,9 +265,12 @@ return (
             <b>Type:</b> {tasks.map((task)=>(
               task.data.type
             ))} <br/>                      
-            <b>Category:</b> {tasks.map((task)=>(
+            <b>Group:</b> {tasks.map((task)=>(
               task.data.name
-            ))}   
+            ))} <br/>                      
+            <b>Root Path :</b> {tasks.map((task)=>(
+              task.data.rootPath
+            ))}     
       <p>
 
         <button
@@ -323,7 +332,7 @@ return (
     </select> </label><br/>           
            <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
         {isSubCategory ?
-        <label for="category">Sub Category <br/><select 
+        <label for="category">Subgroupof <br/><select 
         name='category' 
         onChange={(e) => setCategory(e.target.value)  } 
         value={category}>
