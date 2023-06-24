@@ -253,7 +253,7 @@ return (
               task.data.type
             ))} <br/>                      
             <b>Category:</b> {tasks.map((task)=>(
-              task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
+              task.data.name
             ))}   
       <p>
 
