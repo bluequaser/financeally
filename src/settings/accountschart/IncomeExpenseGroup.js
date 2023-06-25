@@ -70,14 +70,17 @@ export default function IncomeExpenseGroup() {
           let mcategory = task.data.name.slice(0,lastIndex);         
           let mname = task.data.name.slice(lastIndex + 1);
           let mtype = task.data.type;
+          let mrootpath = task.data.rootPath;
           setCategory(mcategory);
           setType(mtype);
           setName(mname)
+          setRootPath(mrootpath)
            if(isSubCategory === false)
             setIsSubCategory(true)
         } else {
           setName(task.data.name)
           setType(task.data.type)
+          setRootPath(task.data.rootPath)
           setCategory("")
         } 
       })
@@ -188,7 +191,7 @@ export default function IncomeExpenseGroup() {
             let oldName = item.data.name;
             let oldPath = item.data.rootPath;
             let revisedName = oldName.replace(moriginalName, name)
-            let newRootPath = item.data.rootPath+":"+revisedName;
+            let newRootPath = type+":"+revisedName;
             const categoryUpdateRefAll = doc(db, 'groupsincomeexpense', item.id);
                batch.update(categoryUpdateRefAll, {
                name: revisedName,
@@ -250,6 +253,7 @@ const handleChange = () => {
   setIsSubCategory(!isSubCategory);
   setCategory("");
 } 
+
 
 return (
 
@@ -338,7 +342,7 @@ return (
         value={category}>
         {
           dbase.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(category === cat.data.name)
          return(
           <option key={key} value={category} selected >{category}</option>
            );
