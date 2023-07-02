@@ -21,7 +21,7 @@ function QueryNavLink({ to, ...props }) {
 export default function Categories() {
   const [tasks, setTasks] = useState([])
   const [addNew, setNew] = useState("Add New")
-  const [filterby, setFilterBy] = useState("name")
+  const [filterby, setFilterBy] = useState("title")
 
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
@@ -89,7 +89,7 @@ export default function Categories() {
           .filter((task) => {
             let filter = searchParams.get('filter');
             if (!filter) return true;
-            let mname = task.data.name
+            let mname = task.data.title
           mname = mname.toLowerCase();
           //return mname.startsWith(filter.toLowerCase());
             return mname.includes(filter.toLowerCase());
@@ -109,7 +109,7 @@ export default function Categories() {
 
               to={`/taxcodes/${task.data.uniqueId}`}
             >
-              {task.data.name}
+              {task.data.title}
             </QueryNavLink>
           ))}
       </nav>
