@@ -85,7 +85,7 @@ export default function Categories() {
           .filter((task) => {
             let filter = searchParams.get('filter');
             if (!filter) return true;
-            let mname = task.data.name
+            let mname = task.data.rootPath
           mname = mname.toLowerCase();
           //return mname.startsWith(filter.toLowerCase());
             return mname.includes(filter.toLowerCase());
@@ -105,7 +105,7 @@ export default function Categories() {
 
               to={`/categories/${task.data.uniqueId}`}
             >
-              {task.data.name}
+              {task.data.rootPath}
             </QueryNavLink>
           ))}
       </nav>

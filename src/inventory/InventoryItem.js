@@ -23,24 +23,27 @@ export default function InventoryItem() {
   const [salesDB, setSalesDB] = useState([]) 
   const [expenseDB, setExpenseDB] = useState([]) 
   const [taxDB, setTaxDB] = useState([]) 
-  const [categoryDB, setCategoryDB] = useState([]) 
+  const [supplierDB, setSupplierDB] = useState([]) 
   const [divisionDB, setDivisionDB] = useState([]) 
+  const [categoryDB, setCategoryDB] = useState([]) 
   const [name, setName] = useState('')
   const [sku, setSKU] = useState('')
-  const [unit, setUnit] = useState('')
   const [category, setCategory] = useState("")
   const [division, setDivision] = useState('') 
   const [qtyAtHand, setQtyAtHand] = useState(0.0);
   const [reorderQty, setReorderQty] = useState(0.0);
   const [date, setDate] = useState('');
   const [itemsAccount, setItemsAccount] = useState("");
-  const [description, setDescription] = useState('');
+  const [itemDescription, setItemDescription] = useState('');
   const [salesAccount, setSalesAccount] = useState('');
+  const [salesDescription, setSalesDescription] = useState('');
   const [salesPrice, setSalesPrice] = useState(0.0);
   const [salesTax, setSalesTax] = useState('')
   const [expenseAccount, setExpenseAccount] = useState('');
+  const [expenseDescription, setExpenseDescription] = useState('');
   const [purchasePrice, setPurchasePrice] = useState(0.0);
-  const [purchaseTax, setPurchaseTax] = useState('')
+  const [expenseTax, setExpenseTax] = useState('')
+  const [supplier, setSupplier] = useState('')
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
   const dateInputRef = useRef(null); 
@@ -111,16 +114,6 @@ export default function InventoryItem() {
       })
     },[])
 
-    useEffect(() => {
-      const taskColRef = query(collection(db, 'taxcodes'), orderBy('title'))
-      onSnapshot(taskColRef, (snapshot) => {
-        setTaxDB(snapshot.docs.map(doc => ({
-          id: doc.id,
-          data: doc.data()
-        })))
-      })
-    },[])
-
     const handleEdit = async () => {
       tasks.map((task) => {
           setName(task.data.name)
@@ -141,7 +134,8 @@ export default function InventoryItem() {
     });
     
 
-    if(name == ""){
+    let mname = name;
+    if(mname == ""){
      alert("Please enter a name..");
       return
     }
@@ -154,18 +148,7 @@ export default function InventoryItem() {
       var locationsRefDoc = Math.random().toString(36).slice(2);
       const locationsRef = doc(db, 'itemslist', locationsRefDoc);
       batch.set(locationsRef, {
-          name: name,
-          sku: sku,
-          description: description,
-          category: category,
-          division: division,
-          qtyAtHand: setQtyAtHand,
-          reorderQty: reorderQty,
-          date: date, 
-          salesPrice: salesPrice,
-          salesTax: salesTax,
-          purchasePrice: purchasePrice,
-          purchaseTax: purchaseTax,
+          name: mname,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -175,7 +158,7 @@ export default function InventoryItem() {
 
       const locationsUpdateRef = doc(db, 'itemslist', id);
       batch.update(locationsUpdateRef, {
-          name: name,
+          name: mname,
           created: Timestamp.now()
       }); 
 
@@ -273,21 +256,12 @@ return (
               value={name}
               size = "10" 
               placeholder="name" /><br/>
+
               <input 
               onChange={(e) => setSKU(e.target.value)} 
               value={sku}
               size = "10" 
               placeholder="sku" /><br/>
-              <input 
-              onChange={(e) => setDescription(e.target.value)} 
-              value={description}
-              size = "10" 
-              placeholder="description" /><br/>
-              <input 
-              onChange={(e) => setUnit(e.target.value)} 
-              value={unit}
-              size = "10" 
-              placeholder="Unit of measure" /><br/>
         <label for="category"> Category<br/>
         <select 
         name='category' 
@@ -306,7 +280,6 @@ return (
          })
       }
     </select></label><br/>
- 
         <label for="division"> Division<br/>
         <select 
         name='division' 
@@ -342,10 +315,56 @@ return (
             onChange={handleDateChange}
              ref={dateInputRef}
             /><br/>{" "} {date}<br/>
-              Sales Price:<br/>
+        <label for="itemsAccount"> Inventory Account:<br/>
+        <select 
+        name='itemsAccount' 
+        onChange={(e) => setItemsAccount(e.target.value)  } 
+        value={itemsAccount}>
+        {
+          itemsDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={itemsAccount} selected >{itemsAccount}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+          <input 
+            onChange={(e) => setItemDescription(e.target.value)} 
+            value={itemDescription}
+            size = "10" 
+            placeholder="Description" /><br/>
+        <label for="salesAccount"> Sales Account:<br/>
+        <select 
+        name='salesAccount' 
+        onChange={(e) => setSalesAccount(e.target.value)  } 
+        value={salesAccount}>
+        {
+          salesDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={salesAccount} selected >{salesAccount}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+          <input 
+            onChange={(e) => setSalesDescription(e.target.value)} 
+            value={salesDescription}
+            size = "10" 
+            placeholder="Description" /><br/>
+            Sales Price:<br/>
             <input type="number" 
               onChange={(e) => setSalesPrice(e.target.value)} 
-              value={salesPrice}
+              value={qtyAtHand}
               size = "5" 
               placeholder="0.0" /><br/>
         <label for="salesTax"> Sales Tax:<br/>
@@ -355,38 +374,79 @@ return (
         value={salesTax}>
         {
           taxDB.map((cat, key) =>{
-            if(salesTax === cat.data.title)
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
          return(
           <option key={key} value={salesTax} selected >{salesTax}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.title} >{cat.data.title}</option>
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
              );                       
          })
       }
     </select></label><br/>
+
+    <label for="expenseAccount"> Expense Account:<br/>
+        <select 
+        name='expenseAccount' 
+        onChange={(e) => setExpenseAccount(e.target.value)  } 
+        value={expenseAccount}>
+        {
+          expenseDB.map((cat, key) =>{
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={expenseAccount} selected >{expenseAccount}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+          <input 
+            onChange={(e) => setExpenseDescription(e.target.value)} 
+            value={expenseDescription}
+            size = "10" 
+            placeholder="Description" /><br/>
             Purchase Price:<br/>
             <input type="number" 
               onChange={(e) => setPurchasePrice(e.target.value)} 
               value={purchasePrice}
               size = "5" 
               placeholder="0.0" /><br/>
-
-      <label for="purchaseTax"> Purchase Tax Rate:<br/>
+        <label for="expenseTax"> Expense Tax:<br/>
         <select 
-        name='purchaseTax' 
-        onChange={(e) => setPurchaseTax(e.target.value)  } 
-        value={purchaseTax}>
+        name='expenseTax' 
+        onChange={(e) => setExpenseTax(e.target.value)  } 
+        value={expenseTax}>
         {
           taxDB.map((cat, key) =>{
-            if(purchaseTax === cat.data.title)
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
          return(
-          <option key={key} value={purchaseTax} selected >{purchaseTax}</option>
+          <option key={key} value={expenseTax} selected >{expenseTax}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.title} >{cat.data.title}</option>
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
+        <label for="supplier"> Supplier<br/>
+        <select 
+        name='supplier' 
+        onChange={(e) => setSupplier(e.target.value)  } 
+        value={supplier}>
+        {
+          supplierDB.map((cat, key) =>{
+            if(supplier === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+         return(
+          <option key={key} value={supplier} selected >{supplier}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
              );                       
          })
       }

@@ -27,6 +27,7 @@ export default function Category() {
   const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
   const [category, setCategory] = useState("")
+  const [rootPath, setRootPath] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
   const [isSubCategory, setIsSubCategory] = useState(false)
   const [isEdit, setEdit] = useState(false)
@@ -64,6 +65,20 @@ export default function Category() {
 
     const handleEdit = async () => {
       tasks.map((task) => {
+          setName(task.data.name)
+          setOriginalName(task.data.name)
+          setCategory(task.data.category)
+          setRootPath(task.data.rootPath)
+          if(isSubCategory === false && task.data.category)
+          setIsSubCategory(true)
+      })
+      setEdit(true);
+      setEditLabel("Edit")
+
+    }
+
+    const handleEdit2 = async () => {
+      tasks.map((task) => {
         let val = task.data.name;
         if(val.includes(":")){
           let lastIndex = val.lastIndexOf(":")
@@ -88,7 +103,7 @@ export default function Category() {
 
     }
   /* function to update firestore */
-  const handleUpdate = async () => {
+  const handleUpdate2 = async () => {
     
     var id="";
     let originalName = "";
@@ -193,16 +208,163 @@ export default function Category() {
 
 
   }
+
+  /* function to update firestore */
+  const handleUpdate = async () => {
+    var id="";
+    let originalName = "";
+    let mroot = "";
+    let nameExists = false;
+
+    tasks.map((task) =>{
+      if(task.data.uniqueId === uniqueId){
+        id=task.id
+      }
+    });
+
+    if(name == ""){
+     alert("Please enter a name..");
+      return
+    }
+    if(category)
+      mroot = category+":"+name;
+    else
+    mroot = name;
+    // check name exists
+    let mtext ="";
+    dbase.map((item) =>{
+      let val = item.data.rootPath;
+      if(val.includes(":")){
+         let mstr = val.split(":")
+         for(let i = 0; i< mstr.length; i++){
+           console.log(name+" : "+mstr[i])
+           if(mstr[i] === name)
+           nameExists = true;
+         }
+      } else {
+        if(val === name)
+          nameExists = true;
+      }
+
+    })
+    
+
+    if(nameExists){
+      alert("Name already exists! Please enter a unique name!")
+      return;
+    }
+    /*
+    let a=10;
+    if(a<100){
+      alert("returning.."+category);
+      return;
+    }
+    */
+    let moriginalName = "";
+    tasks.map((task) => {
+      moriginalName = task.data.name;
+    })
+
+    const batch = writeBatch(db);
+    if(uniqueId === 'Add New'){
+      
+      var categoriesRefDoc = Math.random().toString(36).slice(2);
+      const categoriesRef = doc(db, 'categories', categoriesRefDoc);
+      batch.set(categoriesRef, {
+          name: name,
+          category: category,
+          rootPath: mroot,
+          created: Timestamp.now(),
+          uniqueId: nanoid()
+      }); 
+    } else{
+      const categoryUpdateRef = doc(db, 'categories', id);
+        batch.update(categoryUpdateRef, {
+          name: name,
+          category: category,
+          rootPath: mroot,
+          created: Timestamp.now()
+        });
+      //update similar name references in DB
+        dbase.map((item) =>{
+          let val2 = item.data.rootPath;
+          let oldRootPath = val2;
+          let updateCategory = false;
+          if(val2.includes(":")){
+             let mstr = val2.split(":")
+             for(let i = 0; i< mstr.length; i++){
+               if(mstr[i] === moriginalName){
+               updateCategory = true;
+               console.log(mstr[i]+"..ok here")
+               }
+             }
+          }
+    
+          if(updateCategory){
+            console.log("updating similar name references in DB..")
+            let oldCategory = item.data.category;
+            let revisedCategory = oldCategory.replace(moriginalName, name)
+            let revisedRootPath = oldRootPath.replace(moriginalName, name)
+            const categoryUpdateRefAll = doc(db, 'categories', item.id);
+               batch.update(categoryUpdateRefAll, {
+               category: revisedCategory,
+               rootPath: revisedRootPath,
+               created: Timestamp.now()
+              });
+          }
+        })
+    }
+        // Commit the batch
+        await batch.commit().then(() =>{
+          if(uniqueId === 'Add New')
+          console.log("Success.. adding")
+          else 
+          console.log("Success..updating ")
+        });
+  }
+
 /* function to delete a document from firstore */ 
 const handleDelete = async () => {
  
   var id="";
+  var mname="";
+  var position =0;
   tasks.map((task) =>{
     
-    if(task.data.uniqueId === uniqueId)
-    id=task.id
+    if(task.data.uniqueId === uniqueId){
+      id=task.id;
+      mname = task.data.name;
+      let val = task.data.rootPath;
+      if(val.includes(":")){
+         let mstr = val.split(":")
+         for(let i = 0; i< mstr.length; i++){
+           console.log(" :: "+mstr[i])
+           if(mstr[i] === mname)
+            position = i;
+         }
+      } 
+    }
     
   });
+ let nameExists = false;
+  dbase.map((item) =>{
+    let val = item.data.rootPath;
+    if(val.includes(":")){
+       let mstr = val.split(":")
+       for(let i = 0; i< mstr.length; i++){
+         console.log(" :: "+mstr[i])
+         if(mstr[i] === mname)
+         nameExists = true;
+       }
+    } 
+
+  })
+  
+
+  if(nameExists){
+    alert("Name in use in other items! Please delete other sub category items under this name!")
+    return;
+  }
 
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
@@ -268,10 +430,13 @@ return (
                 🖨️
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
-              task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
+              task.data.name
             ))} <br/>                
             <b>Category:</b> {tasks.map((task)=>(
-              task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
+              task.data.category
+            ))}   <br/>
+            <b>Path :</b> {tasks.map((task)=>(
+              task.data.rootPath
             ))}   
       <p>
 
@@ -308,7 +473,6 @@ return (
           <b>{editLabel}</b>
         <br/>
           {
-
               <input 
               onChange={(e) => setName(e.target.value)} 
               value={name}
@@ -324,13 +488,13 @@ return (
         value={category}>
         {
           dbase.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(category === cat.data.category)
          return(
-          <option key={key} value={category} selected >{category}</option>
+          <option key={key} value={cat.data.rootPath} selected >{cat.data.rootPath}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );                       
          })
       }
