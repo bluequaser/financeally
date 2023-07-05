@@ -81,7 +81,7 @@ export default function IncomeExpenseGroup() {
     }
   /* function to update firestore */
   const handleUpdate = async () => {
-    
+    let msubgroupof = subGroupOf;
     let originalName = "";
     let nameExists = false;
     var id="";
@@ -97,11 +97,15 @@ export default function IncomeExpenseGroup() {
      alert("Please enter a name..");
       return
     }
-    if(subGroupOf)
-      mroot = type+":"+subGroupOf+":"+name;
-    else
+    
+    if(msubgroupof){
+      mroot = type+":"+msubgroupof+":"+name;
+      msubgroupof = type+":"+msubgroupof;
+    }
+    else{
     mroot = type+":"+name;
-
+    msubgroupof = type;
+    }
     // check name exists
    dbase.map((item) =>{
     let val = item.data.rootPath;
@@ -132,7 +136,7 @@ export default function IncomeExpenseGroup() {
       const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
       batch.set(categoriesRef, {
           name: name,
-          category: subGroupOf,
+          subgroupof: msubgroupof,
           type: type,
           rootPath: mroot,
           created: Timestamp.now(),
@@ -145,7 +149,7 @@ export default function IncomeExpenseGroup() {
       const categoryUpdateRef = doc(db, 'groupsincomeexpense', id);
       batch.update(categoryUpdateRef, {
           name: name,
-          category: subGroupOf,
+          subgroupof: msubgroupof,
           type: type,
           rootPath: mroot,
           created: Timestamp.now()
