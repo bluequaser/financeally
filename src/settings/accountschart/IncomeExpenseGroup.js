@@ -72,7 +72,7 @@ export default function IncomeExpenseGroup() {
           setType(mtype);
           setName(mname)
           setRootPath(mrootpath)
-           if(isSubGroupOf === false  && task.data.msubgroupof)
+           if(isSubGroupOf === false  && task.data.subgroupof)
             setIsSubGroupOf(true)
       })
       setEdit(true);
@@ -82,7 +82,6 @@ export default function IncomeExpenseGroup() {
   /* function to update firestore */
   const handleUpdate = async () => {
     let msubgroupof = subGroupOf;
-    let originalName = "";
     let nameExists = false;
     var id="";
     let mroot = "";
@@ -97,14 +96,13 @@ export default function IncomeExpenseGroup() {
      alert("Please enter a name..");
       return
     }
-    
+    console.log("name to update =.."+name)
     if(msubgroupof){
-      mroot = type+":"+msubgroupof+":"+name;
-      msubgroupof = type+":"+msubgroupof;
+      mroot = msubgroupof+":"+name;
+      msubgroupof = msubgroupof;
     }
     else{
-    mroot = type+":"+name;
-    msubgroupof = type;
+    mroot = name;
     }
     // check name exists
    dbase.map((item) =>{
@@ -113,7 +111,7 @@ export default function IncomeExpenseGroup() {
        let mstr = val.split(":")
        for(let i = 0; i< mstr.length; i++){
          console.log(name+" : "+mstr[i])
-         if(mstr[i] === name)
+         if(mstr[i] === name && item.data.uniqueId !== uniqueId)
          nameExists = true;
        }
     }
@@ -176,8 +174,6 @@ export default function IncomeExpenseGroup() {
           let revisedRootPath = oldRootPath.replace(moriginalName, name)
             const categoryUpdateRefAll = doc(db, 'groupsincomeexpense', item.id);
                batch.update(categoryUpdateRefAll, {
-               name: revisedName,
-               type: type,
                subgroupof: revisedSubGroupOf,
                rootPath: revisedRootPath,
                created: Timestamp.now()
