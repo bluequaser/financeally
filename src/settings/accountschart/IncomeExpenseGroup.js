@@ -195,13 +195,39 @@ export default function IncomeExpenseGroup() {
 const handleDelete = async () => {
  
   var id="";
+  var mname="";
   tasks.map((task) =>{
     
-    if(task.data.uniqueId === uniqueId)
-    id=task.id
-    
+    if(task.data.uniqueId === uniqueId){
+    id=task.id;
+    mname = task.data.name;
+    }
   });
+  let occurrence = 0;
+  
+  dbase.map((item) =>{
+    let val = item.data.rootPath;
+    if(val.includes(":")){
+       let mstr = val.split(":")
+       for(let i = 0; i< mstr.length; i++){
+         console.log(" :: "+mstr[i])
+         if(mstr[i] === mname  && item.data.uniqueId !== uniqueId){
+           occurrence++;
+         }
+       }
+    } else {
+      console.log("val=: "+val);
+      if(val === mname  && item.data.uniqueId !== uniqueId)
+      occurrence++;
+    }  
+  })
 
+  console.log("occurrence :"+occurrence);
+  
+  if(occurrence > 0){
+    alert("Name is in use as a subgroup in other items! Please delete other subgroups using this name!")
+    return;
+  }
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
     return
