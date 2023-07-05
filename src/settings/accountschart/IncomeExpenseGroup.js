@@ -75,7 +75,7 @@ export default function IncomeExpenseGroup() {
           setType(mtype);
           setName(mname)
           setRootPath(mrootpath)
-           if(isSubCategory === false)
+           if(isSubCategory === false  && task.data.mcategory)
             setIsSubCategory(true)
         } else {
           setName(task.data.name)

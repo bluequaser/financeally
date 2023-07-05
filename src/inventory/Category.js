@@ -329,23 +329,14 @@ const handleDelete = async () => {
   var id="";
   var mname="";
   var position =0;
-  tasks.map((task) =>{
-    
+  tasks.map((task) =>{  
     if(task.data.uniqueId === uniqueId){
       id=task.id;
       mname = task.data.name;
-      let val = task.data.rootPath;
-      if(val.includes(":")){
-         let mstr = val.split(":")
-         for(let i = 0; i< mstr.length; i++){
-           console.log(" :: "+mstr[i])
-           if(mstr[i] === mname)
-            position = i;
-         }
-      } 
     }
-    
   });
+  
+  let occurrence = 0;
  let nameExists = false;
   dbase.map((item) =>{
     let val = item.data.rootPath;
@@ -353,15 +344,21 @@ const handleDelete = async () => {
        let mstr = val.split(":")
        for(let i = 0; i< mstr.length; i++){
          console.log(" :: "+mstr[i])
-         if(mstr[i] === mname)
+         if(mstr[i] === mname){
+           occurrence++;
          nameExists = true;
+         }
        }
     } 
 
   })
-  
-
-  if(nameExists){
+  console.log("occurrence :"+occurrence);
+ /*
+  let a=10;
+  if(a<100)
+    return
+*/
+  if(nameExists && occurrence > 1){
     alert("Name in use in other items! Please delete other sub category items under this name!")
     return;
   }
