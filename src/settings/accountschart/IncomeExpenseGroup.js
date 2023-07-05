@@ -27,9 +27,8 @@ export default function IncomeExpenseGroup() {
   const [type, setType] = useState('Income group') 
   const [name, setName] = useState('')
   const [rootPath, setRootPath] = useState('')
-  const [category, setCategory] = useState("")
-  const [toInitializeCategory, setInitialCategory] = useState(false)
-  const [isSubCategory, setIsSubCategory] = useState(false)
+  const [subGroupOf, setSubGroupOf] = useState("")
+  const [isSubGroupOf, setIsSubGroupOf] = useState(false)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -65,28 +64,19 @@ export default function IncomeExpenseGroup() {
 
     const handleEdit = async () => {
       tasks.map((task) => {
-        if(task.data.name.includes(":")){
-          let lastIndex = task.data.name.lastIndexOf(":")
-          let mcategory = task.data.name.slice(0,lastIndex);         
-          let mname = task.data.name.slice(lastIndex + 1);
+          let msubgroupof = task.data.subgroupof;         
+          let mname = task.data.name;
           let mtype = task.data.type;
           let mrootpath = task.data.rootPath;
-          setCategory(mcategory);
+          setSubGroupOf(msubgroupof);
           setType(mtype);
           setName(mname)
           setRootPath(mrootpath)
-           if(isSubCategory === false  && task.data.mcategory)
-            setIsSubCategory(true)
-        } else {
-          setName(task.data.name)
-          setType(task.data.type)
-          setRootPath(task.data.rootPath)
-          setCategory("")
-        } 
+           if(isSubGroupOf === false  && task.data.msubgroupof)
+            setIsSubGroupOf(true)
       })
       setEdit(true);
       setEditLabel("Edit")
-    //  setInitialCategory(true)
 
     }
   /* function to update firestore */
@@ -95,71 +85,56 @@ export default function IncomeExpenseGroup() {
     let originalName = "";
     let nameExists = false;
     var id="";
+    let mroot = "";
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
       id=task.id
       
     });
-    
-
-    let mname = name;
-    let path = "";
-    if(mname == ""){
+ 
+    if(name == ""){
      alert("Please enter a name..");
       return
     }
-    const batch = writeBatch(db);
-    if(category)
-    mname = category+":"+name
-    path = type+":"+mname;
+    if(subGroupOf)
+      mroot = type+":"+subGroupOf+":"+name;
+    else
+    mroot = type+":"+name;
+
     // check name exists
-    let mtext ="";
-    dbase.map((item) =>{
-      let mpath= item.data.rootPath;
-      if(mpath === path && item.data.uniqueId !== uniqueId ){
-        nameExists = true;
-      }
-      /*
-      let val = item.data.name;
-      
-      if(val.includes(":")){
-         let mstr = val.split(":")
-         for(let i = 0; i< mstr.length; i++){
-           console.log(name+" : "+mstr[i])
-           if(mstr[i] === name)
-           nameExists = true;
-         }
-      }
-      */
-    })
-    
+   dbase.map((item) =>{
+    let val = item.data.rootPath;
+    if(val.includes(":")){
+       let mstr = val.split(":")
+       for(let i = 0; i< mstr.length; i++){
+         console.log(name+" : "+mstr[i])
+         if(mstr[i] === name)
+         nameExists = true;
+       }
+    }
+  })    
 
     if(nameExists){
-      
       alert("Name already exists! Please enter a unique name!")
       return;
     }
     let moriginalName = "";
-
     tasks.map((task) => {
-      let val = task.data.name;
-      if(val.includes(":")){
-        let lastIndex = val.lastIndexOf(":")    
-        moriginalName = val.slice(lastIndex + 1);
-      } else {
-        moriginalName = val;
-      } 
+      moriginalName = task.data.name;
     })
+
+  const batch = writeBatch(db);
 
     if(uniqueId === 'Add New'){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
       batch.set(categoriesRef, {
-          name: mname,
+          name: name,
+          category: subGroupOf,
           type: type,
-          rootPath: path,
+          rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -169,34 +144,38 @@ export default function IncomeExpenseGroup() {
 
       const categoryUpdateRef = doc(db, 'groupsincomeexpense', id);
       batch.update(categoryUpdateRef, {
-          name: mname,
+          name: name,
+          category: subGroupOf,
           type: type,
-          rootPath: path,
+          rootPath: mroot,
           created: Timestamp.now()
       }); 
-    //update similar name references in DB
-        dbase.map((item) =>{
-          let val = item.data.name;
-          let updateName = false;
-          if(val.includes(":")){
-             let mstr = val.split(":")
-             for(let i = 0; i< mstr.length; i++){
-               if(mstr[i] === moriginalName)
-               updateName = true;
+      //update similar name references in DB
+      dbase.map((item) =>{
+        let val2 = item.data.rootPath;
+        let oldRootPath = val2;
+        let updateSubGroupOf = false;
+        if(val2.includes(":")){
+           let mstr = val2.split(":")
+           for(let i = 0; i< mstr.length; i++){
+             if(mstr[i] === moriginalName){
+             updateSubGroupOf = true;
+             console.log(mstr[i]+"..ok here")
              }
-          }
-    
-          if(updateName){
-            console.log("updating similar name references in DB..")
-            let oldName = item.data.name;
-            let oldPath = item.data.rootPath;
-            let revisedName = oldName.replace(moriginalName, name)
-            let newRootPath = type+":"+revisedName;
+           }
+        }
+  
+        if(updateSubGroupOf){
+          console.log("updating similar name references in DB..")
+          let oldSubGroupOf = item.data.subgroupof;
+          let revisedSubGroupOf = oldSubGroupOf.replace(moriginalName, name)
+          let revisedRootPath = oldRootPath.replace(moriginalName, name)
             const categoryUpdateRefAll = doc(db, 'groupsincomeexpense', item.id);
                batch.update(categoryUpdateRefAll, {
                name: revisedName,
                type: type,
-               rootPath: newRootPath,
+               subgroupof: revisedSubGroupOf,
+               rootPath: revisedRootPath,
                created: Timestamp.now()
               });
           }
@@ -250,8 +229,8 @@ const handleMe = () => {
 } 
 
 const handleChange = () => { 
-  setIsSubCategory(!isSubCategory);
-  setCategory("");
+  setIsSubGroupOf(!isSubGroupOf);
+  setSubGroupOf("");
 } 
 
 
@@ -264,13 +243,13 @@ return (
                 🖨️
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
-              task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
+              task.data.name
             ))} <br/> 
             <b>Type:</b> {tasks.map((task)=>(
               task.data.type
             ))} <br/>                      
-            <b>Group:</b> {tasks.map((task)=>(
-              task.data.name
+            <b>Subgroup of:</b> {tasks.map((task)=>(
+              task.data.subgroupof
             ))} <br/>                      
             <b>Root Path :</b> {tasks.map((task)=>(
               task.data.rootPath
@@ -334,21 +313,21 @@ return (
          })
       }
     </select> </label><br/>           
-           <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
-        {isSubCategory ?
-        <label for="category">Subgroupof <br/><select 
-        name='category' 
-        onChange={(e) => setCategory(e.target.value)  } 
-        value={category}>
+           <input type="checkbox" onChange={handleChange} checked={isSubGroupOf}/> Subgroup of:<br/>
+        {isSubGroupOf ?
+        <label for="subGroupOf">Subgroupof <br/><select 
+        name='subGroupOf' 
+        onChange={(e) => setSubGroupOf(e.target.value)  } 
+        value={subGroupOf}>
         {
           dbase.map((cat, key) =>{
-            if(category === cat.data.name)
+            if(subGroupOf === cat.data.subgroupof)
          return(
-          <option key={key} value={category} selected >{category}</option>
+          <option key={key} value={cat.data.rootPath} selected >{cat.data.rootPath}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );                       
          })
       }

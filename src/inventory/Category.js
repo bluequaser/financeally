@@ -231,7 +231,6 @@ export default function Category() {
     else
     mroot = name;
     // check name exists
-    let mtext ="";
     dbase.map((item) =>{
       let val = item.data.rootPath;
       if(val.includes(":")){
@@ -253,13 +252,7 @@ export default function Category() {
       alert("Name already exists! Please enter a unique name!")
       return;
     }
-    /*
-    let a=10;
-    if(a<100){
-      alert("returning.."+category);
-      return;
-    }
-    */
+
     let moriginalName = "";
     tasks.map((task) => {
       moriginalName = task.data.name;
