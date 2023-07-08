@@ -6,15 +6,12 @@ import { useParams ,
 
 import {collection, query, where,orderBy, onSnapshot, doc,deleteDoc, addDoc, updateDoc, Timestamp, writeBatch} from "firebase/firestore"
 import {db} from '../../firebase'
-//import {getCategories, getCoverTypes} from '../classification'
 import { ComponentToPrint } from './components/ComponentToPrint';
 import { useReactToPrint } from 'react-to-print';
 import MainLayout from '../layouts/MainLayout'
 import { nanoid } from "nanoid";
 
-export default function BalanceSheetGroup() {
-//  let categories = getCategories();
-//  const covertypes = getCoverTypes();
+export default function BalanceSheetGroup2() {
   let navigate = useNavigate();
   let mlocation = useLocation();
   let params = useParams();
@@ -23,12 +20,12 @@ export default function BalanceSheetGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] =  useState([{type: 'Assets group'},{type: 'Fixed Assets group'},{type: 'Current Assets group'},{type: 'Cash and cash equivalents group'},{type: 'Liabilities group'},{type: 'Long Term Liabilities group'},{type: 'Current Liabilities group'},{type: 'Equity group'}])
+  const [typeArray, setTypeArray] = useState([{type: 'Assets group'},{type: 'Fixed Assets group'},{type: 'Current Assets group'},{type: 'Cash and cash equivalents group'},{type: 'Liabilities group'},{type: 'Long Term Liabilities group'},{type: 'Current Liabilities group'},{type: 'Equity group'}])
   const [type, setType] = useState('Assets group') 
   const [name, setName] = useState('')
-  const [rootPath, setRootPath] = useState('')
-  const [subGroupOf, setSubGroupOf] = useState("")
-  const [isSubGroupOf, setIsSubGroupOf] = useState(false)
+  const [category, setCategory] = useState("")
+  const [toInitializeCategory, setInitialCategory] = useState(false)
+  const [isSubCategory, setIsSubCategory] = useState(false)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -64,79 +61,90 @@ export default function BalanceSheetGroup() {
 
     const handleEdit = async () => {
       tasks.map((task) => {
-          let msubgroupof = task.data.subgroupof;         
-          let mname = task.data.name;
+        if(task.data.name.includes(":")){
+          let lastIndex = task.data.name.lastIndexOf(":")
+          let mcategory = task.data.name.slice(0,lastIndex);         
+          let mname = task.data.name.slice(lastIndex + 1);
           let mtype = task.data.type;
-          let mrootpath = task.data.rootPath;
-          setSubGroupOf(msubgroupof);
+          setCategory(mcategory);
           setType(mtype);
           setName(mname)
-          setRootPath(mrootpath)
-           if(isSubGroupOf === false  && task.data.subgroupof)
-            setIsSubGroupOf(true)
+           if(isSubCategory === false)
+            setIsSubCategory(true)
+        } else {
+          setName(task.data.name)
+          setCategory("")
+        } 
       })
       setEdit(true);
       setEditLabel("Edit")
+    //  setInitialCategory(true)
 
     }
   /* function to update firestore */
   const handleUpdate = async () => {
-    let msubgroupof = subGroupOf;
+    
+    let originalName = "";
     let nameExists = false;
     var id="";
-    let mroot = "";
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
       id=task.id
       
     });
- 
-    if(name == ""){
+    
+
+    let mname = name;
+    if(mname == ""){
      alert("Please enter a name..");
       return
     }
-    console.log("name to update =.."+name)
-    if(msubgroupof){
-      mroot = msubgroupof+":"+name;
-      msubgroupof = msubgroupof;
-    }
-    else{
-    mroot = name;
-    }
+    const batch = writeBatch(db);
+    if(category)
+    mname = category+":"+name
+
     // check name exists
-   dbase.map((item) =>{
-    let val = item.data.rootPath;
-    if(val.includes(":")){
-       let mstr = val.split(":")
-       for(let i = 0; i< mstr.length; i++){
-         console.log(name+" : "+mstr[i])
-         if(mstr[i] === name && item.data.uniqueId !== uniqueId)
-         nameExists = true;
-       }
-    }
-  })    
+    let mtext ="";
+    dbase.map((item) =>{
+      let val = item.data.name;
+      
+      if(val.includes(":")){
+         let mstr = val.split(":")
+         for(let i = 0; i< mstr.length; i++){
+           console.log(name+" : "+mstr[i])
+           if(mstr[i] === name)
+           nameExists = true;
+         }
+      }
+
+    })
+    
 
     if(nameExists){
+      
       alert("Name already exists! Please enter a unique name!")
       return;
     }
     let moriginalName = "";
-    tasks.map((task) => {
-      moriginalName = task.data.name;
-    })
 
-  const batch = writeBatch(db);
+    tasks.map((task) => {
+      let val = task.data.name;
+      if(val.includes(":")){
+        let lastIndex = val.lastIndexOf(":")    
+        moriginalName = val.slice(lastIndex + 1);
+      } else {
+        moriginalName = val;
+      } 
+    })
 
     if(uniqueId === 'Add New'){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'groupsbalancesheet', categoriesRefDoc);
       batch.set(categoriesRef, {
-          name: name,
-          subgroupof: msubgroupof,
+          name: mname,
           type: type,
-          rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -146,36 +154,30 @@ export default function BalanceSheetGroup() {
 
       const categoryUpdateRef = doc(db, 'groupsbalancesheet', id);
       batch.update(categoryUpdateRef, {
-          name: name,
-          subgroupof: msubgroupof,
+          name: mname,
           type: type,
-          rootPath: mroot,
           created: Timestamp.now()
       }); 
-      //update similar name references in DB
-      dbase.map((item) =>{
-        let val2 = item.data.rootPath;
-        let oldRootPath = val2;
-        let updateSubGroupOf = false;
-        if(val2.includes(":")){
-           let mstr = val2.split(":")
-           for(let i = 0; i< mstr.length; i++){
-             if(mstr[i] === moriginalName){
-             updateSubGroupOf = true;
-             console.log(mstr[i]+"..ok here")
+    //update similar name references in DB
+        dbase.map((item) =>{
+          let val = item.data.name;
+          let updateName = false;
+          if(val.includes(":")){
+             let mstr = val.split(":")
+             for(let i = 0; i< mstr.length; i++){
+               if(mstr[i] === moriginalName)
+               updateName = true;
              }
-           }
-        }
-  
-        if(updateSubGroupOf){
-          console.log("updating similar name references in DB..")
-          let oldSubGroupOf = item.data.subgroupof;
-          let revisedSubGroupOf = oldSubGroupOf.replace(moriginalName, name)
-          let revisedRootPath = oldRootPath.replace(moriginalName, name)
+          }
+    
+          if(updateName){
+            console.log("updating similar name references in DB..")
+            let oldName = item.data.name;
+            let revisedName = oldName.replace(moriginalName, name)
             const categoryUpdateRefAll = doc(db, 'groupsbalancesheet', item.id);
                batch.update(categoryUpdateRefAll, {
-               subgroupof: revisedSubGroupOf,
-               rootPath: revisedRootPath,
+               name: revisedName,
+               type: type,
                created: Timestamp.now()
               });
           }
@@ -195,39 +197,13 @@ export default function BalanceSheetGroup() {
 const handleDelete = async () => {
  
   var id="";
-  var mname="";
   tasks.map((task) =>{
     
-    if(task.data.uniqueId === uniqueId){
-    id=task.id;
-    mname = task.data.name;
-    }
+    if(task.data.uniqueId === uniqueId)
+    id=task.id
+    
   });
-  let occurrence = 0;
-  
-  dbase.map((item) =>{
-    let val = item.data.rootPath;
-    if(val.includes(":")){
-       let mstr = val.split(":")
-       for(let i = 0; i< mstr.length; i++){
-         console.log(" :: "+mstr[i])
-         if(mstr[i] === mname  && item.data.uniqueId !== uniqueId){
-           occurrence++;
-         }
-       }
-    } else {
-      console.log("val=: "+val);
-      if(val === mname  && item.data.uniqueId !== uniqueId)
-      occurrence++;
-    }  
-  })
 
-  console.log("occurrence :"+occurrence);
-  
-  if(occurrence > 0){
-    alert("Name is in use as a subgroup in other items! Please delete other subgroups using this name!")
-    return;
-  }
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
     return
@@ -255,10 +231,9 @@ const handleMe = () => {
 } 
 
 const handleChange = () => { 
-  setIsSubGroupOf(!isSubGroupOf);
-  setSubGroupOf("");
+  setIsSubCategory(!isSubCategory);
+  setCategory("");
 } 
-
 
 return (
 
@@ -269,17 +244,14 @@ return (
                 🖨️
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
-              task.data.name
+              task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
             ))} <br/> 
             <b>Type:</b> {tasks.map((task)=>(
               task.data.type
             ))} <br/>                      
-            <b>Subgroup of:</b> {tasks.map((task)=>(
-              task.data.subgroupof
-            ))} <br/>                      
-            <b>Root Path :</b> {tasks.map((task)=>(
-              task.data.rootPath
-            ))}     
+            <b>Category:</b> {tasks.map((task)=>(
+              task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
+            ))}   
       <p>
 
         <button
@@ -339,21 +311,21 @@ return (
          })
       }
     </select> </label><br/>           
-           <input type="checkbox" onChange={handleChange} checked={isSubGroupOf}/> Subgroup of:<br/>
-        {isSubGroupOf ?
-        <label for="subGroupOf">Subgroupof <br/><select 
-        name='subGroupOf' 
-        onChange={(e) => setSubGroupOf(e.target.value)  } 
-        value={subGroupOf}>
+           <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
+        {isSubCategory ?
+        <label for="category">Sub Category <br/><select 
+        name='category' 
+        onChange={(e) => setCategory(e.target.value)  } 
+        value={category}>
         {
           dbase.map((cat, key) =>{
-            if(subGroupOf === cat.data.subgroupof)
+            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
          return(
-          <option key={key} value={cat.data.rootPath} selected >{cat.data.rootPath}</option>
+          <option key={key} value={category} selected >{category}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
              );                       
          })
       }
