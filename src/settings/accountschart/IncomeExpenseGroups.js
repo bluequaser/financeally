@@ -42,7 +42,7 @@ export default function IncomeExpenseGroups() {
       Groups : <Link  to="/groupsbalancesheet"><b>Balance Sheet</b></Link> | {" "}   
       <Link  to="/groupsincomeexpense"><b>Income Statement</b></Link> | <br/> 
       Accounts : <Link  to="/accountsbalancesheet"><b>Balance Sheet</b></Link> | {" "} 
-      <Link  to="/locations"><b>Income Statement</b></Link> | <br/> 
+      <Link  to="/accountsincomeexpense"><b>Income Statement</b></Link> | <br/> 
       </nav>
       <b>Manage Income Statement Groups </b>
 

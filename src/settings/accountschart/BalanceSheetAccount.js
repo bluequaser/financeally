@@ -23,7 +23,7 @@ export default function BalanceSheetAccount() {
   const [groupsDB, setGroupsDB] = useState([])
   const [divisionDB, setDivisionsDB] = useState([])
   const [taxCodeDB, setTaxCodeDB] = useState([])
-  const [fundsFlowArray, setFundsFlowArray] = useState([{fundsFlowType: 'Operating activities'},{fundsFlowType: 'Investing activities'},{fundsFlowType: 'Financing activities'}])
+  const [fundsFlowArray, setFundsFlowArray] = useState([{fundsFlowType: 'Operating activities'},{fundsFlowType: 'Investing activities'},{fundsFlowType: 'Financing activities'},{fundsFlowType: 'Cash and cash equivalents'}])
   
   const [entryTypeArray, setEntryTypeArray] = useState([{entryType: "Credit"},{entryType: "Debit"}])
   const [entryType, setEntryType] = useState('Credit')

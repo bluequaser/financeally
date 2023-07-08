@@ -35,6 +35,8 @@ import InventoryItems from './inventory/InventoryItems';
 import InventoryItem from './inventory/InventoryItem';
 import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
 import IncomeExpenseGroup from './settings/accountschart/IncomeExpenseGroup';
+import IncomeExpenseAccounts from './settings/accountschart/IncomeExpenseAccounts';
+import IncomeExpenseAccount from './settings/accountschart/IncomeExpenseAccount';
 import BalanceSheetGroups from './settings/accountschart/BalanceSheetGroups';
 import BalanceSheetGroup from './settings/accountschart/BalanceSheetGroup';
 import BalanceSheetAccounts from './settings/accountschart/BalanceSheetAccounts';
@@ -115,6 +117,17 @@ root.render(
              }
            />
            <Route path=":groupincomeexpenseId" element={<IncomeExpenseGroup />} />
+      </Route>
+     <Route path="accountsincomeexpense" element={<IncomeExpenseAccounts />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select an account</p>
+              </main>
+             }
+           />
+           <Route path=":accountincomeexpenseId" element={<IncomeExpenseAccount />} />
       </Route>
      <Route path="groupsbalancesheet" element={<BalanceSheetGroups />} >
            <Route

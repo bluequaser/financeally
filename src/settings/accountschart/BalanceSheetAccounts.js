@@ -107,7 +107,7 @@ export default function BalanceSheetAccounts() {
 
               to={`/accountsbalancesheet/${task.data.uniqueId}`}
             >
-              {task.data.name}
+              {task.data.rootPath}
             </QueryNavLink>
           ))}
       </nav>
