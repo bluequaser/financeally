@@ -107,7 +107,7 @@ export default function BalanceSheetGroups() {
 
               to={`/groupsbalancesheet/${task.data.uniqueId}`}
             >
-              {task.data.name}
+              {task.data.rootPath}
             </QueryNavLink>
           ))}
       </nav>
