@@ -33,10 +33,10 @@ export default function BalanceSheetAccount() {
   const [division, setDivision] = useState('')
   const [taxCode, setTaxCode] = useState('')
   const [openingBalance, setOpeningBalance] = useState(0.0)
-  const [category, setCategory] = useState("")
+  const [group, setGroup] = useState("")
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [toInitializeCategory, setInitialCategory] = useState(false)
-  const [isSubCategory, setIsSubCategory] = useState(false)
+  const [isGroup, setIsGroup] = useState(false)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -101,23 +101,21 @@ export default function BalanceSheetAccount() {
     const handleEdit = async () => {
       tasks.map((task) => {
         if(task.data.name.includes(":")){
-          let lastIndex = task.data.name.lastIndexOf(":")
-          let mcategory = task.data.name.slice(0,lastIndex);         
-          let mname = task.data.name.slice(lastIndex + 1);
+          let mgroup = task.data.rootPath;         
+          let mname = task.data.name;
           let mtype = task.data.type;
-          setCategory(mcategory);
+          setGroup(mgroup);
           setType(mtype);
           setName(mname)
-           if(isSubCategory === false)
-            setIsSubCategory(true)
+           if(isGroup === false)
+            setIsGroup(true)
         } else {
           setName(task.data.name)
-          setCategory("")
+          setGroup("")
         } 
       })
       setEdit(true);
       setEditLabel("Edit")
-    //  setInitialCategory(true)
 
     }
   /* function to update firestore */
@@ -342,20 +340,20 @@ return (
               placeholder="code" />          
            <br/>
 
-        <label for="category">Group <br/>
+        <label for="group">Group <br/>
         <select 
-        name='category' 
-        onChange={(e) => setCategory(e.target.value)  } 
-        value={category}>
+        name='group' 
+        onChange={(e) => setGroup(e.target.value)  } 
+        value={group}>
         {
           groupsDB.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(group === cat.data.rootPath)
          return(
-          <option key={key} value={category} selected >{category}</option>
+          <option key={key} value={rootPath} selected >{rootPath}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );                       
          })
       }
