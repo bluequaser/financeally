@@ -127,6 +127,7 @@ export default function BalanceSheetAccount() {
     let nameExists = false;
     var id="";
     let mroot = "";
+    let mopeningBalance = openingBalance;
     var today = null;
     if(date)
       today = new Date(date)
@@ -139,7 +140,7 @@ export default function BalanceSheetAccount() {
     var log = today*1;  // outputs a long value
     //new Date(longFormat); gives correct date format, from long to string
     var mdate = yyyy + '-' + mm + '-' + dd;
-
+    let dateToInput = "";
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
@@ -148,7 +149,17 @@ export default function BalanceSheetAccount() {
     });
  
     if(name == ""){
-     alert("Please enter a name..");
+     alert("Please enter a name!");
+      return
+    }
+    if(group == ""){
+      alert("Please enter a group!");
+       return
+     }
+     if(mopeningBalance < 0)
+     mopeningBalance = mopeningBalance * -1;
+    if(!earliestDate){
+      alert("Please enter earlist date account can be active!");
       return
     }
     mroot = group+":"+name;
@@ -200,6 +211,7 @@ export default function BalanceSheetAccount() {
           creditDebit: creditDebit,
           earliestDate: earliestDate,
           longDate: log,
+          rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
