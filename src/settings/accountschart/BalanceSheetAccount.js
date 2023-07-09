@@ -117,27 +117,35 @@ export default function BalanceSheetAccount() {
     }
   /* function to update firestore */
   const handleUpdate = async () => {
-    
-    let originalName = "";
     let nameExists = false;
     var id="";
+    let mroot = "";
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
       id=task.id
       
     });
-    
-
-    let mname = name;
-    if(mname == ""){
+ 
+    if(name == ""){
      alert("Please enter a name..");
       return
     }
+    mroot = group+":"+name;
     const batch = writeBatch(db);
-    if(category)
-    mname = category+":"+name
-
+   // check name exists
+   dbase.map((item) =>{
+    let val = item.data.rootPath;
+    if(val.includes(":")){
+       let mstr = val.split(":")
+       for(let i = 0; i< mstr.length; i++){
+         console.log(name+" : "+mstr[i])
+         if(mstr[i] === name && item.data.uniqueId !== uniqueId)
+         nameExists = true;
+       }
+    }
+  })    
+  
     // check name exists
     let mtext ="";
     dbase.map((item) =>{
@@ -404,7 +412,7 @@ return (
         value={taxCode}>
         {
           taxCodeDB.map((cat, key) =>{
-            if(taxCode === cat.name)
+            if(taxCode === cat.data.title)
          return(
           <option key={key} value={taxCode} selected >{taxCode}</option>
            );

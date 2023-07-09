@@ -96,7 +96,7 @@ export default function BalanceSheetGroup() {
      alert("Please enter a name..");
       return
     }
-    console.log("name to update =.."+name)
+    
     if(msubgroupof){
       mroot = msubgroupof+":"+name;
       msubgroupof = msubgroupof;
