@@ -158,19 +158,24 @@ export default function BalanceSheetAccount() {
       moriginalName = task.data.name;
     })
     const batch = writeBatch(db);
-
+/*
     let a =10;
     if(a<100){
       alert("Name : "+name+", Code : "+code+", Group : "+group+", FundsFlowType : "+fundsFlowType+", Division : "+division+", Tax Code : "+taxCode)
       return;
     }
+*/
     if(uniqueId === 'Add New'){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'chartofaccounts', categoriesRefDoc);
       batch.set(categoriesRef, {
-          name: mname,
-          type: type,
+          name: name,
+          code: code,
+          group: group,
+          fundsFlowType: fundsFlowType,
+          division: division,
+          taxCode: taxCode,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
