@@ -33,10 +33,9 @@ export default function BalanceSheetAccount() {
   const [division, setDivision] = useState('')
   const [taxCode, setTaxCode] = useState('')
   const [openingBalance, setOpeningBalance] = useState(0.0)
+  const [creditDebit, setCreditDebit] = useState(0.0)
   const [group, setGroup] = useState("")
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
-  const [toInitializeCategory, setInitialCategory] = useState(false)
-  const [isGroup, setIsGroup] = useState(false)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -100,19 +99,18 @@ export default function BalanceSheetAccount() {
 
     const handleEdit = async () => {
       tasks.map((task) => {
-        if(task.data.name.includes(":")){
-          let mgroup = task.data.rootPath;         
           let mname = task.data.name;
-          let mtype = task.data.type;
+          let mcode = task.data.code;
+          let mgroup = task.data.rootPath;     
+          let mfundsflow = task.data.fundsflowtype;
+          let mdivision = task.data.division;
+          let mtaxcode = task.data.taxcode;
+          setName(mname);
+          setCode(mcode);
           setGroup(mgroup);
-          setType(mtype);
-          setName(mname)
-           if(isGroup === false)
-            setIsGroup(true)
-        } else {
-          setName(task.data.name)
-          setGroup("")
-        } 
+          setFundsFlowArray(mfundsflow);
+          setDivision(mdivision);
+          setTaxCode(mtaxcode);
       })
       setEdit(true);
       setEditLabel("Edit")
