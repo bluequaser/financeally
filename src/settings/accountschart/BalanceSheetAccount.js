@@ -25,9 +25,8 @@ export default function BalanceSheetAccount() {
   const [taxCodeDB, setTaxCodeDB] = useState([])
   const [fundsFlowArray, setFundsFlowArray] = useState([{fundsFlowType: 'Operating activities'},{fundsFlowType: 'Investing activities'},{fundsFlowType: 'Financing activities'},{fundsFlowType: 'Cash and cash equivalents'}])
   
-  const [entryTypeArray, setEntryTypeArray] = useState([{entryType: "Credit"},{entryType: "Debit"}])
-  const [entryType, setEntryType] = useState('Credit')
-  const [type, setType] = useState('')
+  const [creditDebitArray, setCreditDebitArray] = useState([{entryType: "Credit"},{entryType: "Debit"}])
+  const [creditDebit, setCreditDebit] = useState('Credit')
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [division, setDivision] = useState('')
@@ -37,6 +36,10 @@ export default function BalanceSheetAccount() {
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
+  const [date, setDate] = useState('');
+  const dateInputRef = useRef(null);
+
+
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
       const taskColRef1 = collection(db, 'chartofaccounts');
@@ -95,6 +98,10 @@ export default function BalanceSheetAccount() {
       e.preventDefault();
       setName(e.target.value)
     }
+    const handleDateChange = (e) => {
+          setDate(e.target.value);
+          
+    };
 
     const handleEdit = async () => {
       tasks.map((task) => {
@@ -120,6 +127,19 @@ export default function BalanceSheetAccount() {
     let nameExists = false;
     var id="";
     let mroot = "";
+    var today = null;
+    if(date)
+      today = new Date(date)
+    else
+    today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    var dayInt = today.getDay();    
+    var log = today*1;  // outputs a long value
+    //new Date(longFormat); gives correct date format, from long to string
+    var mdate = yyyy + '-' + mm + '-' + dd;
+
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
@@ -179,6 +199,7 @@ export default function BalanceSheetAccount() {
           openingBalance: openingBalance,
           creditDebit: creditDebit,
           earliestDate: earliestDate,
+          longDate: log,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -198,6 +219,7 @@ export default function BalanceSheetAccount() {
           openingBalance: openingBalance,
           creditDebit: creditDebit,
           earliestDate: earliestDate,
+          longDate: log,
           created: Timestamp.now()
       }); 
     //update similar name references in DB
@@ -383,10 +405,44 @@ return (
            else
            return(
             <option  key={key} value={cat.fundsFlowType} >{cat.fundsFlowType}</option>
+             );
+         })
+      }
+    </select> </label><br/>
+       ------------------------------------<br/>
+       Opening Balance :<br/>
+        <input 
+          name = "openingBalance" 
+          type ="number" 
+          onChange={(e) => setOpeningBalance(e.target.value)} 
+          value={openingBalance}
+          placeholder="0.0" />       
+         <br/>
+      Earliest Date: <br/><input
+        type="date"
+        onChange={handleDateChange}
+        ref={dateInputRef}
+      /><br/>{" "} {date} <br/>
+    <label for="creditDebit"> Credit: Debit<br/>
+        <select 
+        name='creditDebit' 
+        onChange={(e) => setCreditDebit(e.target.value)  } 
+        value={creditDebit}>
+        {
+          creditDebitArray.map((cat, key) =>{
+            if(creditDebit === cat.entryType)
+         return(
+          <option key={key} value={creditDebit} selected >{creditDebit}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.entryType} >{cat.entryType}</option>
              );                       
          })
       }
     </select> </label><br/>
+------------------------------------<br/>
+
     <label for="division"> Division: <br/>
         <select 
         name='division' 
