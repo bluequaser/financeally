@@ -27,13 +27,12 @@ export default function BalanceSheetAccount() {
   
   const [entryTypeArray, setEntryTypeArray] = useState([{entryType: "Credit"},{entryType: "Debit"}])
   const [entryType, setEntryType] = useState('Credit')
-  const [type, setType] = useState('Assets group') 
+  const [type, setType] = useState('')
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [division, setDivision] = useState('')
   const [taxCode, setTaxCode] = useState('')
   const [openingBalance, setOpeningBalance] = useState(0.0)
-  const [creditDebit, setCreditDebit] = useState(0.0)
   const [group, setGroup] = useState("")
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [isEdit, setEdit] = useState(false)
@@ -279,19 +278,25 @@ return (
                 🖨️
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
-              task.data.name.includes(":") ? task.data.name.slice(task.data.name.lastIndexOf(":") + 1) : task.data.name
+              task.data.name
             ))} <br/> 
-            <b>Code:</b><br/> 
-            <b>Type:</b> {tasks.map((task)=>(
-              task.data.type
+            <b>Code:</b> {tasks.map((task)=>(
+              task.data.code
             ))} <br/>                      
             <b>Group:</b> {tasks.map((task)=>(
-              task.data.name.includes(":") ? task.data.name.slice(0,task.data.name.lastIndexOf(":")) : null
+              task.data.group
             ))} <br/>
-          <b>Cash Flow Statement :</b><br/>  
-          <b>Division:</b><br/> 
-          <b>Default Tax Code :</b><br/>
-          <b>Opening Balance :</b> Debit | Credit :<br/>       
+          <b>Cash Flow Statement :</b>{tasks.map((task)=>(
+              task.data.fundsflowtype
+            ))} <br/>  
+          <b>Division:</b>{tasks.map((task)=>(
+              task.data.division ))}<br/> 
+          <b>Default Tax Code :</b>{tasks.map((task)=>(
+              task.data.taxcode ))}<br/>
+          <b>Opening Balance :</b> {tasks.map((task)=>(
+              task.data.openingBalance ))}<br/>
+          <b>Debit | Credit :</b>{tasks.map((task)=>(
+              task.data.creditDebit ))}       
       <p>
 
         <button
@@ -358,12 +363,12 @@ return (
     </select></label> <br/>
     <label for="fundsFlowType"> Cash Flow Statement: <br/>
         <select 
-        name='fundsFlow' 
+        name='fundsFlowType' 
         onChange={(e) => setFundsFlowType(e.target.value)  } 
-        value={type}>
+        value={fundsFlowType}>
         {
           fundsFlowArray.map((cat, key) =>{
-            if(type === cat.fundsFlowType)
+            if(fundsFlowType === cat.fundsFlowType)
          return(
           <option key={key} value={fundsFlowType} selected >{fundsFlowType}</option>
            );
