@@ -159,6 +159,11 @@ export default function BalanceSheetAccount() {
     })
     const batch = writeBatch(db);
 
+    let a =10;
+    if(a<100){
+      alert("Name : "+name+", Code : "+code+", Group : "+group+", FundsFlowType : "+fundsFlowType+", Division : "+division+", Tax Code : "+taxCode)
+      return;
+    }
     if(uniqueId === 'Add New'){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
@@ -339,7 +344,7 @@ return (
           groupsDB.map((cat, key) =>{
             if(group === cat.data.rootPath)
          return(
-          <option key={key} value={rootPath} selected >{rootPath}</option>
+          <option key={key} value={group} selected >{group}</option>
            );
            else
            return(
