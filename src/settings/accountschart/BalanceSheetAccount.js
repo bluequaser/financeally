@@ -36,7 +36,7 @@ export default function BalanceSheetAccount() {
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
-  const [date, setDate] = useState('');
+  const [earliestDate, setEarliestDate] = useState('');
   const dateInputRef = useRef(null);
 
 
@@ -99,7 +99,7 @@ export default function BalanceSheetAccount() {
       setName(e.target.value)
     }
     const handleDateChange = (e) => {
-          setDate(e.target.value);
+          setEarliestDate(e.target.value);
           
     };
 
@@ -124,13 +124,15 @@ export default function BalanceSheetAccount() {
     }
   /* function to update firestore */
   const handleUpdate = async () => {
+   
     let nameExists = false;
     var id="";
     let mroot = "";
     let mopeningBalance = openingBalance;
     var today = null;
-    if(date)
-      today = new Date(date)
+    
+    if(earliestDate)
+      today = new Date(earliestDate)
     else
     today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -158,8 +160,8 @@ export default function BalanceSheetAccount() {
      }
      if(mopeningBalance < 0)
      mopeningBalance = mopeningBalance * -1;
-    if(!earliestDate){
-      alert("Please enter earlist date account can be active!");
+    if(earliestDate ===''){
+      alert("Please enter the earlist date account can be active!");
       return
     }
     mroot = group+":"+name;
@@ -192,9 +194,13 @@ export default function BalanceSheetAccount() {
 
     let a =10;
     if(a<100){
+      alert("hello..")
+      return;    
+    }
+    /*
       alert("Name : "+name+", Code : "+code+", Group : "+group+", FundsFlowType : "+fundsFlowType+", Division : "+division+", Tax Code : "+taxCode+", openingBalance : "+openingBalance+", creditDebit : "+creditDebit+", earliestDate : "+earliestDate)
       return;
-    }
+    */
 
     if(uniqueId === 'Add New'){
 
@@ -423,7 +429,7 @@ return (
          })
       }
     </select> </label><br/>
-       ------------------------------------<br/>
+      
        Opening Balance :<br/>
         <input 
           name = "openingBalance" 
@@ -436,7 +442,7 @@ return (
         type="date"
         onChange={handleDateChange}
         ref={dateInputRef}
-      /><br/>{" "} {date} <br/>
+      /><br/>{" "} {earliestDate} <br/>
     <label for="creditDebit"> Credit: Debit<br/>
         <select 
         name='creditDebit' 
@@ -455,7 +461,6 @@ return (
          })
       }
     </select> </label><br/>
-------------------------------------<br/>
 
     <label for="division"> Division: <br/>
         <select 
