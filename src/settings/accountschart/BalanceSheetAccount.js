@@ -189,13 +189,13 @@ export default function BalanceSheetAccount() {
       moriginalName = task.data.name;
     })
     const batch = writeBatch(db);
-/*
+
     let a =10;
     if(a<100){
-      alert("Name : "+name+", Code : "+code+", Group : "+group+", FundsFlowType : "+fundsFlowType+", Division : "+division+", Tax Code : "+taxCode)
+      alert("Name : "+name+", Code : "+code+", Group : "+group+", FundsFlowType : "+fundsFlowType+", Division : "+division+", Tax Code : "+taxCode+", openingBalance : "+openingBalance+", creditDebit : "+creditDebit+", earliestDate : "+earliestDate)
       return;
     }
-*/
+
     if(uniqueId === 'Add New'){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
@@ -221,7 +221,7 @@ export default function BalanceSheetAccount() {
 
       const categoryUpdateRef = doc(db, 'chartofaccounts', id);
       batch.update(categoryUpdateRef, {
-          name: mname,
+          name: name,
           type: type,
           code: code,
           group: group,
@@ -235,6 +235,7 @@ export default function BalanceSheetAccount() {
           created: Timestamp.now()
       }); 
     //update similar name references in DB
+    /*
         dbase.map((item) =>{
           let val = item.data.name;
           let updateName = false;
@@ -258,6 +259,7 @@ export default function BalanceSheetAccount() {
               });
           }
         })
+        */
     }
         // Commit the batch
         await batch.commit().then(() =>{
