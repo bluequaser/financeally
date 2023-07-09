@@ -132,7 +132,6 @@ export default function BalanceSheetAccount() {
       return
     }
     mroot = group+":"+name;
-    const batch = writeBatch(db);
    // check name exists
    dbase.map((item) =>{
     let val = item.data.rootPath;
@@ -143,25 +142,11 @@ export default function BalanceSheetAccount() {
          if(mstr[i] === name && item.data.uniqueId !== uniqueId)
          nameExists = true;
        }
+    } else {
+      if(item.data.name === name && item.data.uniqueId !== uniqueId)
+        nameExists = true;
     }
-  })    
-  
-    // check name exists
-    let mtext ="";
-    dbase.map((item) =>{
-      let val = item.data.name;
-      
-      if(val.includes(":")){
-         let mstr = val.split(":")
-         for(let i = 0; i< mstr.length; i++){
-           console.log(name+" : "+mstr[i])
-           if(mstr[i] === name)
-           nameExists = true;
-         }
-      }
-
-    })
-    
+  }) 
 
     if(nameExists){
       
@@ -169,16 +154,10 @@ export default function BalanceSheetAccount() {
       return;
     }
     let moriginalName = "";
-
     tasks.map((task) => {
-      let val = task.data.name;
-      if(val.includes(":")){
-        let lastIndex = val.lastIndexOf(":")    
-        moriginalName = val.slice(lastIndex + 1);
-      } else {
-        moriginalName = val;
-      } 
+      moriginalName = task.data.name;
     })
+    const batch = writeBatch(db);
 
     if(uniqueId === 'Add New'){
 
