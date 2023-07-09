@@ -176,6 +176,9 @@ export default function BalanceSheetAccount() {
           fundsFlowType: fundsFlowType,
           division: division,
           taxCode: taxCode,
+          openingBalance: openingBalance,
+          creditDebit: creditDebit,
+          earliestDate: earliestDate,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -187,6 +190,14 @@ export default function BalanceSheetAccount() {
       batch.update(categoryUpdateRef, {
           name: mname,
           type: type,
+          code: code,
+          group: group,
+          fundsFlowType: fundsFlowType,
+          division: division,
+          taxCode: taxCode,
+          openingBalance: openingBalance,
+          creditDebit: creditDebit,
+          earliestDate: earliestDate,
           created: Timestamp.now()
       }); 
     //update similar name references in DB
