@@ -31,6 +31,7 @@ export default function IncomeExpenseAccount() {
   const [code, setCode] = useState('')
   const [division, setDivision] = useState('')
   const [description, setDescription] = useState('')
+  const [type, setType] = useState('')
   const [taxCode, setTaxCode] = useState('')
   const [openingBalance, setOpeningBalance] = useState(0.0)
   const [group, setGroup] = useState("")
@@ -56,7 +57,7 @@ export default function IncomeExpenseAccount() {
     },[])
     
     useEffect(() => {
-      const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
+      const taskColRef = query(collection(db, 'chartofaccounts'), where("type","in",["Income group","Expense group"]),orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDBase(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -108,16 +109,26 @@ export default function IncomeExpenseAccount() {
       tasks.map((task) => {
           let mname = task.data.name;
           let mcode = task.data.code;
-          let mgroup = task.data.rootPath;     
-          let mfundsflow = task.data.fundsflowtype;
+          let description = task.data.description;
+          let type = task.data.type;
+          let mgroup = task.data.group;     
+          let mfundsflow = task.data.fundsFlowType;
           let mdivision = task.data.division;
-          let mtaxcode = task.data.taxcode;
+          let mtaxcode = task.data.taxCode;
+          let openingBal = task.data.openingBalance;
+          let earliestDate = task.data.earliestDate;
+          let creditDebit = task.data.creditDebit;
           setName(mname);
           setCode(mcode);
+          setDescription(description);
+          setType(type);
           setGroup(mgroup);
-          setFundsFlowArray(mfundsflow);
+          setFundsFlowType(mfundsflow);
           setDivision(mdivision);
           setTaxCode(mtaxcode);
+          setOpeningBalance(openingBal);
+          setEarliestDate(earliestDate);
+          setCreditDebit(creditDebit);
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -144,6 +155,7 @@ export default function IncomeExpenseAccount() {
     //new Date(longFormat); gives correct date format, from long to string
     var mdate = yyyy + '-' + mm + '-' + dd;
     let dateToInput = "";
+    let type = "";
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
@@ -156,7 +168,7 @@ export default function IncomeExpenseAccount() {
       return
     }
     if(group == ""){
-      alert("Please enter a group!");
+      alert("Please select a group!");
        return
      }
      if(mopeningBalance < 0)
@@ -165,7 +177,14 @@ export default function IncomeExpenseAccount() {
       alert("Please enter the earlist date account can be active!");
       return
     }
-    mroot = group+":"+name;
+    groupsDB.map((mtask) =>{
+      
+      if(mtask.data.rootPath === group)
+      type = mtask.data.type
+      
+    });
+
+    mroot = name;
    // check name exists
    dbase.map((item) =>{
     let val = item.data.rootPath;
@@ -201,6 +220,7 @@ export default function IncomeExpenseAccount() {
           name: name,
           code: code,
           description: description,
+          type: type,
           group: group,
           fundsFlowType: fundsFlowType,
           division: division,
@@ -223,6 +243,7 @@ export default function IncomeExpenseAccount() {
           type: type,
           code: code,
           description: description,
+          type: type,
           group: group,
           fundsFlowType: fundsFlowType,
           division: division,
@@ -231,6 +252,7 @@ export default function IncomeExpenseAccount() {
           creditDebit: creditDebit,
           earliestDate: earliestDate,
           longDate: log,
+          rootPath: mroot,
           created: Timestamp.now()
       }); 
     //update similar name references in DB
@@ -325,10 +347,13 @@ return (
             ))} <br/> 
             <b>Code :</b> {tasks.map((task)=>(
               task.data.code
-            ))} <br/>   <br/>
+            ))} <br/>  
             <b>Description :</b> {tasks.map((task)=>(
               task.data.description
-            ))} <br/>                    
+            ))} <br/>
+            <b>Type :</b> {tasks.map((task)=>(
+              task.data.type
+            ))}<br/>                                        
             <b>Group :</b> {tasks.map((task)=>(
               task.data.group
             ))} <br/>
@@ -338,7 +363,7 @@ return (
           <b>Division :</b> {tasks.map((task)=>(
               task.data.division ))}<br/> 
           <b>Default Tax Code :</b>{tasks.map((task)=>(
-              task.data.taxcode ))}<br/>
+              task.data.taxCode ))}<br/>
           <b>Opening Balance :</b> {tasks.map((task)=>(
               task.data.openingBalance ))}<br/>
           <b>Earliest Date :</b>{tasks.map((task)=>(
@@ -429,57 +454,6 @@ return (
            return(
             <option  key={key} value={cat.fundsFlowType} >{cat.fundsFlowType}</option>
              );
-         })
-      }
-    </select> </label><br/>
-      
-       Opening Balance :<br/>
-        <input 
-          name = "openingBalance" 
-          type ="number" 
-          onChange={(e) => setOpeningBalance(e.target.value)} 
-          value={openingBalance}
-          placeholder="0.0" />       
-         <br/>
-      Earliest Date: <br/><input
-        type="date"
-        onChange={handleDateChange}
-        ref={dateInputRef}
-      /><br/>{" "} {earliestDate} <br/>
-    <label for="creditDebit"> Credit: Debit<br/>
-        <select 
-        name='creditDebit' 
-        onChange={(e) => setCreditDebit(e.target.value)  } 
-        value={creditDebit}>
-        {
-          creditDebitArray.map((cat, key) =>{
-            if(creditDebit === cat.entryType)
-         return(
-          <option key={key} value={creditDebit} selected >{creditDebit}</option>
-           );
-           else
-           return(
-            <option  key={key} value={cat.entryType} >{cat.entryType}</option>
-             );                       
-         })
-      }
-    </select> </label><br/>
-
-    <label for="division"> Division: <br/>
-        <select 
-        name='division' 
-        onChange={(e) => setDivision(e.target.value)  } 
-        value={division}>
-        {
-          divisionDB.map((cat, key) =>{
-            if(division === cat.name)
-         return(
-          <option key={key} value={division} selected >{division}</option>
-           );
-           else
-           return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
-             );                       
          })
       }
     </select> </label><br/>
