@@ -96,7 +96,6 @@ export default function BalanceSheetGroup() {
      alert("Please enter a name..");
       return
     }
-    
     if(msubgroupof){
       mroot = msubgroupof+":"+name;
       msubgroupof = msubgroupof;

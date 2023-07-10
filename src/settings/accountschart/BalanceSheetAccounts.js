@@ -9,7 +9,7 @@ import {
   Link
 } from 'react-router-dom';
 import { nanoid } from "nanoid";
-import {collection, query, orderBy, onSnapshot, addDoc, Timestamp} from "firebase/firestore"
+import {collection, query, orderBy, onSnapshot, addDoc, Timestamp, where} from "firebase/firestore"
 import {db} from '../../firebase'
 //import MainLayout from '../layouts/MainLayout'
 
@@ -26,7 +26,7 @@ export default function BalanceSheetAccounts() {
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
+      const taskColRef = query(collection(db, 'chartofaccounts'), where("type","in",['Assets group','Fixed Assets group','Current Assets group','Cash and cash equivalents group','Accounts Receivable group','Liabilities group','Long Term Liabilities group','Current Liabilities group','Accounts Payable group','Equity group']),orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -42,7 +42,7 @@ export default function BalanceSheetAccounts() {
       Groups : <Link  to="/groupsbalancesheet"><b>Balance Sheet</b></Link> | {" "}   
       <Link  to="/groupsincomeexpense"><b>Income Statement</b></Link> | <br/> 
       Accounts : <Link  to="/accountsbalancesheet"><b>Balance Sheet</b></Link> | {" "} 
-      <Link  to="/locations"><b>Income Statement</b></Link> | <br/> 
+      <Link  to="/accountsincomeexpense"><b>Income Statement</b></Link> | <br/> 
    </nav>
       <b>Manage Balance Sheet Accounts </b>
 
@@ -107,7 +107,7 @@ export default function BalanceSheetAccounts() {
 
               to={`/accountsbalancesheet/${task.data.uniqueId}`}
             >
-              {task.data.rootPath}
+              {task.data.group+":"+task.data.rootPath}
             </QueryNavLink>
           ))}
       </nav>
