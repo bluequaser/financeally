@@ -192,17 +192,6 @@ export default function BalanceSheetAccount() {
       moriginalName = task.data.name;
     })
     const batch = writeBatch(db);
-/*
-    let a =10;
-    if(a<100){
-      alert("hello..")
-      return;    
-    }
-*/    
-    /*
-      alert("Name : "+name+", Code : "+code+", Group : "+group+", FundsFlowType : "+fundsFlowType+", Division : "+division+", Tax Code : "+taxCode+", openingBalance : "+openingBalance+", creditDebit : "+creditDebit+", earliestDate : "+earliestDate)
-      return;
-    */
 
     if(uniqueId === 'Add New'){
 
@@ -211,6 +200,7 @@ export default function BalanceSheetAccount() {
       batch.set(categoriesRef, {
           name: name,
           code: code,
+          description: description,
           group: group,
           fundsFlowType: fundsFlowType,
           division: division,
@@ -232,6 +222,7 @@ export default function BalanceSheetAccount() {
           name: name,
           type: type,
           code: code,
+          description: description,
           group: group,
           fundsFlowType: fundsFlowType,
           division: division,
