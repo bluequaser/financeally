@@ -30,6 +30,7 @@ export default function BalanceSheetAccount() {
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
   const [division, setDivision] = useState('')
+  const [description, setDescription] = useState('')
   const [taxCode, setTaxCode] = useState('')
   const [openingBalance, setOpeningBalance] = useState(0.0)
   const [group, setGroup] = useState("")
@@ -191,12 +192,13 @@ export default function BalanceSheetAccount() {
       moriginalName = task.data.name;
     })
     const batch = writeBatch(db);
-
+/*
     let a =10;
     if(a<100){
       alert("hello..")
       return;    
     }
+*/    
     /*
       alert("Name : "+name+", Code : "+code+", Group : "+group+", FundsFlowType : "+fundsFlowType+", Division : "+division+", Tax Code : "+taxCode+", openingBalance : "+openingBalance+", creditDebit : "+creditDebit+", earliestDate : "+earliestDate)
       return;
@@ -327,26 +329,33 @@ return (
             <button onClick={handlePrint} >
                 🖨️
               </button> <br/>
-            <b>Name:</b> {tasks.map((task)=>(
+            <b>Name :</b> {tasks.map((task)=>(
               task.data.name
             ))} <br/> 
-            <b>Code:</b> {tasks.map((task)=>(
+            <b>Code :</b> {tasks.map((task)=>(
               task.data.code
-            ))} <br/>                      
-            <b>Group:</b> {tasks.map((task)=>(
+            ))} <br/>   <br/>
+            <b>Description :</b> {tasks.map((task)=>(
+              task.data.description
+            ))} <br/>                    
+            <b>Group :</b> {tasks.map((task)=>(
               task.data.group
             ))} <br/>
-          <b>Cash Flow Statement :</b>{tasks.map((task)=>(
-              task.data.fundsflowtype
+          <b>Cash Flow Statement : </b>{tasks.map((task)=>(
+              task.data.fundsFlowType
             ))} <br/>  
-          <b>Division:</b>{tasks.map((task)=>(
+          <b>Division :</b> {tasks.map((task)=>(
               task.data.division ))}<br/> 
           <b>Default Tax Code :</b>{tasks.map((task)=>(
               task.data.taxcode ))}<br/>
           <b>Opening Balance :</b> {tasks.map((task)=>(
               task.data.openingBalance ))}<br/>
+          <b>Earliest Date :</b>{tasks.map((task)=>(
+              task.data.earliestDate ))}<br/>
           <b>Debit | Credit :</b>{tasks.map((task)=>(
-              task.data.creditDebit ))}       
+                  task.data.creditDebit ))} <br/>
+          <b>Root Path :</b> {tasks.map((task)=>(
+                      task.data.rootPath ))}            
       <p>
 
         <button
@@ -378,8 +387,7 @@ return (
       </div> : 
             <div>
 
-          <b>{editLabel}</b>
-        <br/>
+          <b>{editLabel}</b><br/>
               <input 
               onChange={(e) => setName(e.target.value)} 
               value={name}
@@ -390,8 +398,12 @@ return (
               onChange={(e) => setCode(e.target.value)} 
               value={code}
               size = "10" 
-              placeholder="code" />          
-           <br/>
+              placeholder="code" /> <br/>          
+           <input 
+              onChange={(e) => setDescription(e.target.value)} 
+              value={description}
+              size = "10" 
+              placeholder="description" /> <br/> 
 
         <label for="group">Group <br/>
         <select 
