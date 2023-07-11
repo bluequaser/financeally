@@ -21,6 +21,7 @@ export default function InventoryItem() {
   const [tasks, setTasks] = useState([]) 
   const [itemsDB, setItemsDB] = useState([])
   const [salesDB, setSalesDB] = useState([]) 
+  const [accountsDB, setAccountsDB] = useState([]) 
   const [expenseDB, setExpenseDB] = useState([]) 
   const [taxDB, setTaxDB] = useState([]) 
   const [supplierDB, setSupplierDB] = useState([]) 
@@ -108,6 +109,16 @@ export default function InventoryItem() {
       const taskColRef = query(collection(db, 'divisions'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDivisionDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
+
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'accountschart'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setAccountsDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -344,14 +355,14 @@ return (
         onChange={(e) => setSalesAccount(e.target.value)  } 
         value={salesAccount}>
         {
-          salesDB.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+          accountsDB.map((cat, key) =>{
+            if(cat.data.rootPath == 'salesAccount')
          return(
           <option key={key} value={salesAccount} selected >{salesAccount}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );                       
          })
       }
@@ -392,15 +403,15 @@ return (
         onChange={(e) => setExpenseAccount(e.target.value)  } 
         value={expenseAccount}>
         {
-          expenseDB.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+          accountsDB.map((cat, key) =>{
+            if(expenseAccount === cat.data.rootPath && cat.data.type === 'Income group')
          return(
           <option key={key} value={expenseAccount} selected >{expenseAccount}</option>
            );
-           else
-           return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
-             );                       
+           else return(
+            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
+             ); 
+                            
          })
       }
     </select></label><br/>
