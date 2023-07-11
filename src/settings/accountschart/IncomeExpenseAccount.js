@@ -50,7 +50,7 @@ export default function IncomeExpenseAccount() {
     },[])
     
     useEffect(() => {
-      const taskColRef = query(collection(db, 'chartofaccounts'), where("type","in",["Income group","Expense group"]),orderBy('name'))
+      const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDBase(snapshot.docs.map(doc => ({
           id: doc.id,
