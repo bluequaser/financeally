@@ -118,13 +118,22 @@ export default function InventoryItem() {
     useEffect(() => {
       const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
-        setTasks(snapshot.docs.map(doc => ({
+        setAccountsDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
       })
     },[])
 
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'taxcodes'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setTaxDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
     const handleEdit = async () => {
       tasks.map((task) => {
           setName(task.data.name)
@@ -280,13 +289,13 @@ return (
         value={category}>
         {
           categoryDB.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(category === cat.data.rootPath)
          return(
           <option key={key} value={category} selected >{category}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );                       
          })
       }
@@ -360,10 +369,11 @@ return (
          return(
           <option key={key} value={salesAccount} selected >{salesAccount}</option>
            );
-           else
+           else if(cat.data.type == 'Income group'){
            return(
             <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
-             );                       
+             );      
+           }                 
          })
       }
     </select></label><br/>
@@ -385,13 +395,13 @@ return (
         value={salesTax}>
         {
           taxDB.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(salesTax === cat.data.title)
          return(
           <option key={key} value={salesTax} selected >{salesTax}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.title} >{cat.data.title}</option>
              );                       
          })
       }
@@ -408,10 +418,11 @@ return (
          return(
           <option key={key} value={expenseAccount} selected >{expenseAccount}</option>
            );
-           else return(
+           else if(cat.data.type == 'Income group'){
+             return(
             <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              ); 
-                            
+           }               
          })
       }
     </select></label><br/>
@@ -433,13 +444,13 @@ return (
         value={expenseTax}>
         {
           taxDB.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(expenseTax === cat.data.title)
          return(
           <option key={key} value={expenseTax} selected >{expenseTax}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.title} >{cat.data.title}</option>
              );                       
          })
       }
