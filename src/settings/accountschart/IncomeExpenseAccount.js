@@ -21,25 +21,18 @@ export default function IncomeExpenseAccount() {
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
   const [groupsDB, setGroupsDB] = useState([])
-  const [divisionDB, setDivisionsDB] = useState([])
   const [taxCodeDB, setTaxCodeDB] = useState([])
   const [fundsFlowArray, setFundsFlowArray] = useState([{fundsFlowType: 'Operating activities'},{fundsFlowType: 'Investing activities'},{fundsFlowType: 'Financing activities'},{fundsFlowType: 'Cash and cash equivalents'}])
   
-  const [creditDebitArray, setCreditDebitArray] = useState([{entryType: "Credit"},{entryType: "Debit"}])
-  const [creditDebit, setCreditDebit] = useState('Credit')
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
-  const [division, setDivision] = useState('')
   const [description, setDescription] = useState('')
   const [type, setType] = useState('')
   const [taxCode, setTaxCode] = useState('')
-  const [openingBalance, setOpeningBalance] = useState(0.0)
   const [group, setGroup] = useState("")
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
-  const [earliestDate, setEarliestDate] = useState('');
-  const dateInputRef = useRef(null);
 
 
     /* function to get all tasks from firestore in realtime */ 
@@ -67,19 +60,9 @@ export default function IncomeExpenseAccount() {
     },[])
 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'groupsbalancesheet'), orderBy('name'))
+      const taskColRef = query(collection(db, 'groupsincomeexpense'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setGroupsDB(snapshot.docs.map(doc => ({
-          id: doc.id,
-          data: doc.data()
-        })))
-      })
-    },[])
-
-    useEffect(() => {
-      const taskColRef = query(collection(db, 'divisions'), orderBy('name'))
-      onSnapshot(taskColRef, (snapshot) => {
-        setDivisionsDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -100,10 +83,7 @@ export default function IncomeExpenseAccount() {
       e.preventDefault();
       setName(e.target.value)
     }
-    const handleDateChange = (e) => {
-          setEarliestDate(e.target.value);
-          
-    };
+
 
     const handleEdit = async () => {
       tasks.map((task) => {
@@ -113,22 +93,14 @@ export default function IncomeExpenseAccount() {
           let type = task.data.type;
           let mgroup = task.data.group;     
           let mfundsflow = task.data.fundsFlowType;
-          let mdivision = task.data.division;
           let mtaxcode = task.data.taxCode;
-          let openingBal = task.data.openingBalance;
-          let earliestDate = task.data.earliestDate;
-          let creditDebit = task.data.creditDebit;
           setName(mname);
           setCode(mcode);
           setDescription(description);
           setType(type);
           setGroup(mgroup);
           setFundsFlowType(mfundsflow);
-          setDivision(mdivision);
           setTaxCode(mtaxcode);
-          setOpeningBalance(openingBal);
-          setEarliestDate(earliestDate);
-          setCreditDebit(creditDebit);
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -140,21 +112,7 @@ export default function IncomeExpenseAccount() {
     let nameExists = false;
     var id="";
     let mroot = "";
-    let mopeningBalance = openingBalance;
-    var today = null;
-    
-    if(earliestDate)
-      today = new Date(earliestDate)
-    else
-    today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
-    var dayInt = today.getDay();    
-    var log = today*1;  // outputs a long value
-    //new Date(longFormat); gives correct date format, from long to string
-    var mdate = yyyy + '-' + mm + '-' + dd;
-    let dateToInput = "";
+
     let type = "";
     tasks.map((task) =>{
       
@@ -162,7 +120,7 @@ export default function IncomeExpenseAccount() {
       id=task.id
       
     });
- 
+
     if(name == ""){
      alert("Please enter a name!");
       return
@@ -171,19 +129,13 @@ export default function IncomeExpenseAccount() {
       alert("Please select a group!");
        return
      }
-     if(mopeningBalance < 0)
-     mopeningBalance = mopeningBalance * -1;
-    if(earliestDate ===''){
-      alert("Please enter the earlist date account can be active!");
-      return
-    }
+
     groupsDB.map((mtask) =>{
       
       if(mtask.data.rootPath === group)
       type = mtask.data.type
       
     });
-
     mroot = name;
    // check name exists
    dbase.map((item) =>{
@@ -210,6 +162,13 @@ export default function IncomeExpenseAccount() {
     tasks.map((task) => {
       moriginalName = task.data.name;
     })
+    
+    let a = 10;
+    if(a<100){
+      alert("name : "+name+", code : "+code+", description : "+description+", type : "+type+", group : "+group+", fundsFlowType : "+fundsFlowType+", path : "+mroot)
+      return;
+    }
+    
     const batch = writeBatch(db);
 
     if(uniqueId === 'Add New'){
@@ -223,12 +182,7 @@ export default function IncomeExpenseAccount() {
           type: type,
           group: group,
           fundsFlowType: fundsFlowType,
-          division: division,
           taxCode: taxCode,
-          openingBalance: openingBalance,
-          creditDebit: creditDebit,
-          earliestDate: earliestDate,
-          longDate: log,
           rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
@@ -246,12 +200,7 @@ export default function IncomeExpenseAccount() {
           type: type,
           group: group,
           fundsFlowType: fundsFlowType,
-          division: division,
           taxCode: taxCode,
-          openingBalance: openingBalance,
-          creditDebit: creditDebit,
-          earliestDate: earliestDate,
-          longDate: log,
           rootPath: mroot,
           created: Timestamp.now()
       }); 
@@ -359,17 +308,9 @@ return (
             ))} <br/>
           <b>Cash Flow Statement : </b>{tasks.map((task)=>(
               task.data.fundsFlowType
-            ))} <br/>  
-          <b>Division :</b> {tasks.map((task)=>(
-              task.data.division ))}<br/> 
+            ))} <br/> 
           <b>Default Tax Code :</b>{tasks.map((task)=>(
               task.data.taxCode ))}<br/>
-          <b>Opening Balance :</b> {tasks.map((task)=>(
-              task.data.openingBalance ))}<br/>
-          <b>Earliest Date :</b>{tasks.map((task)=>(
-              task.data.earliestDate ))}<br/>
-          <b>Debit | Credit :</b>{tasks.map((task)=>(
-                  task.data.creditDebit ))} <br/>
           <b>Root Path :</b> {tasks.map((task)=>(
                       task.data.rootPath ))}            
       <p>
