@@ -162,13 +162,13 @@ export default function IncomeExpenseAccount() {
     tasks.map((task) => {
       moriginalName = task.data.name;
     })
-    
+    /*
     let a = 10;
     if(a<100){
       alert("name : "+name+", code : "+code+", description : "+description+", type : "+type+", group : "+group+", fundsFlowType : "+fundsFlowType+", path : "+mroot)
       return;
     }
-    
+    */
     const batch = writeBatch(db);
 
     if(uniqueId === 'Add New'){

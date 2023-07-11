@@ -26,7 +26,7 @@ export default function IncomeExpenseAccounts() {
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'chartofaccounts'), where("type","in",["Income group","Expense group"]), orderBy('name'))
+      const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -107,7 +107,8 @@ export default function IncomeExpenseAccounts() {
 
               to={`/accountsincomeexpense/${task.data.uniqueId}`}
             >
-              {task.data.group+":"+task.data.rootPath}
+              { task.data.type == 'Income group' ? task.data.group+":"+task.data.name : 
+              task.data.type == 'Expense group' ?  task.data.group+":"+task.data.name : null}
             </QueryNavLink>
           ))}
       </nav>

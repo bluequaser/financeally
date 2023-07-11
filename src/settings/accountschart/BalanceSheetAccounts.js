@@ -26,7 +26,7 @@ export default function BalanceSheetAccounts() {
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'chartofaccounts'), where("type","in",['Assets group','Fixed Assets group','Current Assets group','Cash and cash equivalents group','Accounts Receivable group','Liabilities group','Long Term Liabilities group','Current Liabilities group','Accounts Payable group','Equity group']),orderBy('name'))
+      const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -91,7 +91,6 @@ export default function BalanceSheetAccounts() {
           mname = mname.toLowerCase();
           //return mname.startsWith(filter.toLowerCase());
             return mname.includes(filter.toLowerCase());
-
           })
           .map((task,index) => (
  
@@ -107,7 +106,7 @@ export default function BalanceSheetAccounts() {
 
               to={`/accountsbalancesheet/${task.data.uniqueId}`}
             >
-              {task.data.group+":"+task.data.rootPath}
+              { task.data.type != 'Income group' && task.data.type != 'Expense group' ? task.data.group+":"+task.data.name : null}
             </QueryNavLink>
           ))}
       </nav>
