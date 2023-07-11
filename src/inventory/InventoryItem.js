@@ -116,9 +116,9 @@ export default function InventoryItem() {
     },[])
 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'accountschart'), orderBy('name'))
+      const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
-        setAccountsDB(snapshot.docs.map(doc => ({
+        setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -404,7 +404,7 @@ return (
         value={expenseAccount}>
         {
           accountsDB.map((cat, key) =>{
-            if(expenseAccount === cat.data.rootPath && cat.data.type === 'Income group')
+            if(expenseAccount == cat.data.rootPath && cat.data.type == 'Income group')
          return(
           <option key={key} value={expenseAccount} selected >{expenseAccount}</option>
            );
