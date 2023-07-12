@@ -191,6 +191,8 @@ export default function InventoryItem() {
           division: division,
           qtyAtHand: qtyAtHand,
           reorderQty: reorderQty,
+          earliestDate: earliestDate,
+          longDate: log,
           itemsAccount: itemsAccount,
           itemDescription: itemDescription,
           salesAccount: salesAccount,
@@ -202,6 +204,7 @@ export default function InventoryItem() {
           purchasePrice: purchasePrice,
           expenseTax: expenseTax,
           supplier: supplier,
+          rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -217,6 +220,8 @@ export default function InventoryItem() {
         division: division,
         qtyAtHand: qtyAtHand,
         reorderQty: reorderQty,
+        earliestDate: earliestDate,
+        longDate: log,
         itemsAccount: itemsAccount,
         itemDescription: itemDescription,
         salesAccount: salesAccount,
@@ -228,6 +233,7 @@ export default function InventoryItem() {
         purchasePrice: purchasePrice,
         expenseTax: expenseTax,
         supplier: supplier,
+        rootPath: mroot,
         created: Timestamp.now()
       }); 
 
