@@ -33,7 +33,7 @@ export default function InventoryItem() {
   const [division, setDivision] = useState('') 
   const [qtyAtHand, setQtyAtHand] = useState(0.0);
   const [reorderQty, setReorderQty] = useState(0.0);
-  const [date, setDate] = useState('');
+  const [earliestDate, setEarliestDate] = useState('');
   const [itemsAccount, setItemsAccount] = useState("");
   const [itemDescription, setItemDescription] = useState('');
   const [salesAccount, setSalesAccount] = useState('');
@@ -50,8 +50,9 @@ export default function InventoryItem() {
   const dateInputRef = useRef(null); 
 
 
+
   const handleDateChange = (e) => {
-        setDate(e.target.value);
+        setEarliestDate(e.target.value);
   };
 
   /*
@@ -142,33 +143,65 @@ export default function InventoryItem() {
       setEditLabel("Edit")
 
     }
+
   /* function to update firestore */
   const handleUpdate = async () => {
-    
+   
+    let nameExists = false;
     var id="";
+    let mroot = "";
+    var today = null;
+    
+    if(earliestDate)
+      today = new Date(earliestDate)
+    else
+    today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    var dayInt = today.getDay();    
+    var log = today*1;  // outputs a long value
+    //new Date(longFormat); gives correct date format, from long to string
+    var mdate = yyyy + '-' + mm + '-' + dd;
+    let dateToInput = "";
+    let type = "";
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
       id=task.id
       
     });
-    
-
-    let mname = name;
-    if(mname == ""){
-     alert("Please enter a name..");
+    if(name == ""){
+     alert("Please enter a name!");
       return
     }
+
+
     const batch = writeBatch(db);
 
 
     if(uniqueId === 'Add New'){
 
-
       var locationsRefDoc = Math.random().toString(36).slice(2);
       const locationsRef = doc(db, 'itemslist', locationsRefDoc);
       batch.set(locationsRef, {
-          name: mname,
+          name: name,
+          sku: sku,
+          category: category,
+          division: division,
+          qtyAtHand: qtyAtHand,
+          reorderQty: reorderQty,
+          itemsAccount: itemsAccount,
+          itemDescription: itemDescription,
+          salesAccount: salesAccount,
+          salesDescription: salesDescription,
+          salesPrice: salesPrice,
+          salesTax: salesTax,
+          expenseAccount: expenseAccount,
+          expenseDescription: expenseDescription,
+          purchasePrice: purchasePrice,
+          expenseTax: expenseTax,
+          supplier: supplier,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -178,8 +211,24 @@ export default function InventoryItem() {
 
       const locationsUpdateRef = doc(db, 'itemslist', id);
       batch.update(locationsUpdateRef, {
-          name: mname,
-          created: Timestamp.now()
+        name: name,
+        sku: sku,
+        category: category,
+        division: division,
+        qtyAtHand: qtyAtHand,
+        reorderQty: reorderQty,
+        itemsAccount: itemsAccount,
+        itemDescription: itemDescription,
+        salesAccount: salesAccount,
+        salesDescription: salesDescription,
+        salesPrice: salesPrice,
+        salesTax: salesTax,
+        expenseAccount: expenseAccount,
+        expenseDescription: expenseDescription,
+        purchasePrice: purchasePrice,
+        expenseTax: expenseTax,
+        supplier: supplier,
+        created: Timestamp.now()
       }); 
 
     }
@@ -334,7 +383,7 @@ return (
         <input type="date"
             onChange={handleDateChange}
              ref={dateInputRef}
-            /><br/>{" "} {date}<br/>
+            /><br/>{" "} {earliestDate}<br/>
         <label for="itemsAccount"> Inventory Account:<br/>
         <select 
         name='itemsAccount' 
