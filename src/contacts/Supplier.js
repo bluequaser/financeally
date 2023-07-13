@@ -21,6 +21,7 @@ export default function Supplier() {
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([]) 
   const [divisionDB, setDivisionDB] = useState([]) 
+  const [currencyDB, setCurrencyDB] = useState([]) 
   const [name, setName] = useState('') 
   const [code, setCode] = useState('') 
   const [creditLimit, setCreditLimit] = useState(0.0)
@@ -61,6 +62,16 @@ export default function Supplier() {
       const taskColRef = query(collection(db, 'divisions'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDivisionDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
+
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'currencies'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setCurrencyDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -261,28 +272,43 @@ return (
           value={code}
           size = "10" 
           placeholder="Code" /> <br/>
+        Credit Limit : <br/>  
         <input 
           type = "number" 
           onChange={(e) => setCreditLimit(e.target.value)} 
           value={creditLimit}
           size = "10" 
           placeholder="0.0" /> <br/>
-        <input 
-          onChange={(e) => setCurrency(e.target.value)} 
-          value={currency}
-          size = "10" 
-          placeholder="Currency" /> <br/>
+        <label for="currency"> Currency :<br/>
+        <select 
+        name='currency' 
+        onChange={(e) => setCurrency(e.target.value)  } 
+        value={currency}>
+        {
+          currencyDB.map((cat, key) =>{
+            if(currency === cat.data.name)
+         return(
+          <option key={key} value={currency} selected >{currency}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/> 
         <input 
           onChange={(e) => setAddress(e.target.value)} 
           value={address}
           size = "10" 
           placeholder="Address" /> <br/>
           <input 
+            type ="email" 
             onChange={(e) => setEmail(e.target.value)} 
             value={email}
             size = "10" 
             placeholder="Email" /> <br/>
-        <label for="division"> Division<br/>
+        <label for="division"> Division :<br/>
         <select 
         name='division' 
         onChange={(e) => setDivision(e.target.value)  } 
@@ -299,7 +325,8 @@ return (
              );                       
          })
       }
-    </select></label><br/>
+    </select></label><br/> 
+        Starting Balance : <br/>
         <input 
           type = "number" 
           onChange={(e) => setStartingBalance(e.target.value)} 
