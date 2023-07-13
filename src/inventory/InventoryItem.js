@@ -135,6 +135,16 @@ export default function InventoryItem() {
         })))
       })
     },[])
+
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'suppliers'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setSupplierDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
     const handleEdit = async () => {
       tasks.map((task) => {
           setName(task.data.name)
@@ -541,7 +551,7 @@ return (
         value={supplier}>
         {
           supplierDB.map((cat, key) =>{
-            if(supplier === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(supplier === cat.data.name)
          return(
           <option key={key} value={supplier} selected >{supplier}</option>
            );
