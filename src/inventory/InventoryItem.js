@@ -176,7 +176,31 @@ export default function InventoryItem() {
       return
     }
 
-
+    mroot = category+":"+name;
+    let a = 10;
+    if(a<100){
+    alert("name: "+ name+ 
+    ", sku: "+ sku+
+    ", category: "+category+
+    ", division: "+division+
+    ", qtyAtHand: "+qtyAtHand+
+    ", reorderQty: "+reorderQty+
+    ", earliestDate: "+earliestDate+
+    ", longDate: "+log+
+    ", itemsAccount: "+itemsAccount+
+    ", itemDescription: "+itemDescription+
+    ", salesAccount: "+salesAccount+
+    ", salesDescription: "+salesDescription+
+    ", salesPrice: "+salesPrice+
+    ", salesTax: "+salesTax+
+    ", expenseAccount: "+expenseAccount+
+    ", expenseDescription: "+expenseDescription+
+    ", purchasePrice: "+purchasePrice+
+    ", expenseTax: "+expenseTax+
+    ", supplier: "+supplier+
+    ", rootPath: "+mroot);
+      return;
+    }
     const batch = writeBatch(db);
 
 
@@ -440,7 +464,7 @@ return (
             Sales Price:<br/>
             <input type="number" 
               onChange={(e) => setSalesPrice(e.target.value)} 
-              value={qtyAtHand}
+              value={salesPrice}
               size = "5" 
               placeholder="0.0" /><br/>
         <label for="salesTax"> Sales Tax:<br/>
