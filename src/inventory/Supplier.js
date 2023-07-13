@@ -20,7 +20,13 @@ export default function Supplier() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([]) 
-  const [name, setName] = useState('')
+  const [name, setName] = useState('') 
+  const [code, setCode] = useState('') 
+  const [creditLimit, setCreditLimit] = useState(0.0)
+  const [currency, setCurrency] = useState('') 
+  const [address, setAddress] = useState('') 
+  const [email, setEmail] = useState('') 
+  const [division, setDivision] = useState('') 
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
