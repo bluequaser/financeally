@@ -21,7 +21,7 @@ export default function Taxcode() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [accountDB, setAccountDB] = useState([]) 
+  const [accountDB, setAccountDB] = useState([])  
   const [name, setName] = useState('')
   const [title, setTitle] = useState('')
   const [taxAccount, setTaxAccount] = useState('Tax Payable')
@@ -34,7 +34,7 @@ export default function Taxcode() {
       const taskColRef = query(taskColRef1, where("uniqueId","==",uniqueId))
 //      const taskColRef = query(collection(db, 'books'), orderBy('created', 'desc'))
       onSnapshot(taskColRef, (snapshot) => {
-        setTasks(snapshot.docs.map(doc => ({
+        setTasks(snapshot.docs.map(doc => ({ 
           id: doc.id,
           data: doc.data()
         })))
@@ -44,7 +44,7 @@ export default function Taxcode() {
     
     useEffect(() => {
       const taskColRef1 = collection(db, 'chartofaccounts');
-      const taskColRef = query(taskColRef1, where("type","==","Current Liabilities"))
+      const taskColRef = query(taskColRef1, where("type","==","Current Liabilities group"))
 //      const taskColRef = query(collection(db, 'books'), orderBy('created', 'desc'))
       onSnapshot(taskColRef, (snapshot) => {
         setAccountDB(snapshot.docs.map(doc => ({
@@ -276,13 +276,13 @@ return (
         value={title}>
         {
           accountDB.map((cat, key) =>{
-            if(taxAccount === cat.data.taxAccount)
+            if(taxAccount === cat.data.name)
          return(
           <option key={key} value={taxAccount} selected >{taxAccount}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.taxAccount} >{cat.data.taxAccount}</option>
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
              );                       
          })
       }
