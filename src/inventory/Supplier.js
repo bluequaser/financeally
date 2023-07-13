@@ -16,7 +16,7 @@ export default function Supplier() {
   let mlocation = useLocation();
   let params = useParams();
   
-  const[uniqueId,setUniqueId] = useState(params.locationId);
+  const[uniqueId,setUniqueId] = useState(params.supplierId);
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([]) 
@@ -26,7 +26,9 @@ export default function Supplier() {
   const [currency, setCurrency] = useState('') 
   const [address, setAddress] = useState('') 
   const [email, setEmail] = useState('') 
-  const [division, setDivision] = useState('') 
+  const [division, setDivision] = useState('')  
+  const [startingBalance, setStartingBalance] = useState(0.0)  
+  const [taxID, setTaxID] = useState('') 
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -73,8 +75,7 @@ export default function Supplier() {
     });
     
 
-    let mname = name;
-    if(mname == ""){
+    if(name == ""){
      alert("Please enter a name..");
       return
     }
@@ -87,7 +88,15 @@ export default function Supplier() {
       var locationsRefDoc = Math.random().toString(36).slice(2);
       const locationsRef = doc(db, 'suppliers', locationsRefDoc);
       batch.set(locationsRef, {
-          name: mname,
+          name: name,
+          code: code,
+          creditLimit: creditLimit,
+          currency, currency,
+          address: address,
+          email: email,
+          division: division,
+          startingBalance: startingBalance,
+          taxID: taxID,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -97,8 +106,16 @@ export default function Supplier() {
 
       const locationsUpdateRef = doc(db, 'suppliers', id);
       batch.update(locationsUpdateRef, {
-          name: mname,
-          created: Timestamp.now()
+        name: name,
+        code: code,
+        creditLimit: creditLimit,
+        currency, currency,
+        address: address,
+        email: email,
+        division: division,
+        startingBalance: startingBalance,
+        taxID: taxID,
+        created: Timestamp.now()
       }); 
 
     }
