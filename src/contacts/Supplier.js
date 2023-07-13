@@ -231,7 +231,7 @@ return (
           }}
         >
           🗑️Del
-        </button> |{" "}
+        </button> |{" "} 
       </p>
       </div> : 
             <div>
