@@ -33,6 +33,8 @@ import Locations from './inventory/Locations';
 import Location from './inventory/Location';
 import InventoryItems from './inventory/InventoryItems';
 import InventoryItem from './inventory/InventoryItem';
+import Suppliers from './contacts/Suppliers';
+import Supplier from './contacts/Supplier';
 import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
 import IncomeExpenseGroup from './settings/accountschart/IncomeExpenseGroup';
 import IncomeExpenseAccounts from './settings/accountschart/IncomeExpenseAccounts';
@@ -51,6 +53,17 @@ root.render(
     <BrowserRouter>
     <Routes>
      <Route path="/" element={<App />} >
+     <Route path="suppliers" element={<Suppliers />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a supplier</p>
+              </main>
+             }
+           />
+           <Route path=":supplierId" element={<Supplier />} />
+      </Route>
      <Route path="settings" element={<Settings />} />
      <Route path="divisions" element={<Divisions />} >
            <Route

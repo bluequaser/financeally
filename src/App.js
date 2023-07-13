@@ -8,6 +8,7 @@ export default function App() {
       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
         <Link to="/books">Books</Link> |{' '}
         <Link to="/itemslist">Inventory Items</Link> |{' '}
+        <Link to="/suppliers">Suppliers</Link> |{' '}
         <Link to="/settings">Settings</Link> |{' '}
       </nav>
       <Outlet />

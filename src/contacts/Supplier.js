@@ -28,7 +28,7 @@ export default function Supplier() {
   const [email, setEmail] = useState('') 
   const [division, setDivision] = useState('')  
   const [startingBalance, setStartingBalance] = useState(0.0)  
-  const [taxID, setTaxID] = useState('') 
+  const [taxId, setTaxId] = useState('') 
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -58,6 +58,14 @@ export default function Supplier() {
     const handleEdit = async () => {
       tasks.map((task) => {
           setName(task.data.name)
+          setCode(task.data.code) 
+          setCreditLimit(task.data.creditLimit) 
+          setCurrency(task.data.currency)  
+          setAddress(task.data.address)
+          setEmail(task.data.email) 
+          setDivision(task.data.division) 
+          setStartingBalance(task.data.startingBalance) 
+          setTaxId(task.data.taxId)
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -96,7 +104,7 @@ export default function Supplier() {
           email: email,
           division: division,
           startingBalance: startingBalance,
-          taxID: taxID,
+          taxId: taxId,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -114,7 +122,7 @@ export default function Supplier() {
         email: email,
         division: division,
         startingBalance: startingBalance,
-        taxID: taxID,
+        taxId: taxId,
         created: Timestamp.now()
       }); 
 
@@ -172,6 +180,30 @@ return (
               </button> <br/>
             <b>Name:</b> {tasks.map((task)=>(
               task.data.name
+            ))} <br/>
+            <b>Code:</b> {tasks.map((task)=>(
+              task.data.code
+            ))} <br/>
+            <b>Credit Limit:</b> {tasks.map((task)=>(
+              task.data.creditLimit
+            ))} <br/>
+            <b>Currency:</b> {tasks.map((task)=>(
+              task.data.currency
+            ))} <br/>
+            <b>Address:</b> {tasks.map((task)=>(
+              task.data.address
+            ))} <br/>
+            <b>Email:</b> {tasks.map((task)=>(
+              task.data.email
+            ))} <br/>
+            <b>Division:</b> {tasks.map((task)=>(
+              task.data.division
+            ))} <br/>
+            <b>Starting Balance:</b> {tasks.map((task)=>(
+              task.data.startingBalance
+            ))} <br/>
+            <b>Tax Id:</b> {tasks.map((task)=>(
+              task.data.taxId
             ))} 
       <p>
 
@@ -206,20 +238,46 @@ return (
 
           <b>{editLabel}</b>
         <br/>
-          {
 
-              <input 
-              onChange={(e) => setName(e.target.value)} 
-              value={name}
-              size = "10" 
-              placeholder="name" />
-          }
-            
-            <p>
-              <button
+        <input 
+          onChange={(e) => setName(e.target.value)} 
+          value={name}
+          size = "10" 
+          placeholder="Name" /> <br/>
+        <input 
+          onChange={(e) => setCode(e.target.value)} 
+          value={code}
+          size = "10" 
+          placeholder="Code" /> <br/>
+        <input 
+          onChange={(e) => setCreditLimit(e.target.value)} 
+          value={creditLimit}
+          size = "10" 
+          placeholder="Credit Limit" /> <br/>
+        <input 
+          onChange={(e) => setCurrency(e.target.value)} 
+          value={currency}
+          size = "10" 
+          placeholder="Currency" /> <br/>
+        <input 
+          onChange={(e) => setAddress(e.target.value)} 
+          value={address}
+          size = "10" 
+          placeholder="Address" /> <br/>
+          <input 
+            onChange={(e) => setEmail(e.target.value)} 
+            value={email}
+            size = "10" 
+            placeholder="Email" /> <br/>
+        <input 
+          onChange={(e) => setTaxId(e.target.value)} 
+          value={taxId}
+          size = "10" 
+          placeholder="Tax Id" />
+        <p>
+          <button
            onClick={() => {
             handleUpdate();
-           
             navigate("/suppliers" + mlocation.search);
           }}
               >
