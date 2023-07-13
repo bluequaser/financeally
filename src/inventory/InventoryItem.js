@@ -448,7 +448,7 @@ return (
          return(
           <option key={key} value={salesAccount} selected >{salesAccount}</option>
            );
-           else if(cat.data.type == 'Income group'){
+           else if(cat.data.type == 'Income group'){ 
            return(
             <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );      
