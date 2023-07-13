@@ -386,7 +386,7 @@ return (
         value={division}>
         {
           divisionDB.map((cat, key) =>{
-            if(division === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
+            if(division === cat.data.name)
          return(
           <option key={key} value={division} selected >{division}</option>
            );

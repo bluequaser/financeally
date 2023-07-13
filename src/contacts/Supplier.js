@@ -20,6 +20,7 @@ export default function Supplier() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([]) 
+  const [divisionDB, setDivisionDB] = useState([]) 
   const [name, setName] = useState('') 
   const [code, setCode] = useState('') 
   const [creditLimit, setCreditLimit] = useState(0.0)
@@ -49,6 +50,17 @@ export default function Supplier() {
       const taskColRef = query(collection(db, 'suppliers'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setDBase(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
+
+
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'divisions'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setDivisionDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -269,7 +281,25 @@ return (
             onChange={(e) => setEmail(e.target.value)} 
             value={email}
             size = "10" 
-            placeholder="Email" /> <br/> <br/>
+            placeholder="Email" /> <br/>
+        <label for="division"> Division<br/>
+        <select 
+        name='division' 
+        onChange={(e) => setDivision(e.target.value)  } 
+        value={division}>
+        {
+          divisionDB.map((cat, key) =>{
+            if(division === cat.data.name)
+         return(
+          <option key={key} value={division} selected >{division}</option>
+           );
+           else
+           return(
+            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+             );                       
+         })
+      }
+    </select></label><br/>
         <input 
           type = "number" 
           onChange={(e) => setStartingBalance(e.target.value)} 
