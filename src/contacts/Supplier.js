@@ -250,10 +250,11 @@ return (
           size = "10" 
           placeholder="Code" /> <br/>
         <input 
+          type = "number" 
           onChange={(e) => setCreditLimit(e.target.value)} 
           value={creditLimit}
           size = "10" 
-          placeholder="Credit Limit" /> <br/>
+          placeholder="0.0" /> <br/>
         <input 
           onChange={(e) => setCurrency(e.target.value)} 
           value={currency}
@@ -268,7 +269,13 @@ return (
             onChange={(e) => setEmail(e.target.value)} 
             value={email}
             size = "10" 
-            placeholder="Email" /> <br/>
+            placeholder="Email" /> <br/> <br/>
+        <input 
+          type = "number" 
+          onChange={(e) => setStartingBalance(e.target.value)} 
+          value={startingBalance}
+          size = "10" 
+          placeholder="0.0" />
         <input 
           onChange={(e) => setTaxId(e.target.value)} 
           value={taxId}
