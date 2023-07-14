@@ -20,9 +20,13 @@ export default function CurrencyBase() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [store, setStore] = useState([]) 
+  const [supplierDB, setSupplierDB] = useState([])
   const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
+  const [code, setCode] = useState('')
+  const [country, setCountry] = useState('')
+  const [symbol, setSymbol] = useState('')
+  const [decimalPlaces, setDecimalPlaces] = useState(2.0)
   const [category, setCategory] = useState("")
   const [rootPath, setRootPath] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
@@ -63,147 +67,17 @@ export default function CurrencyBase() {
       tasks.map((task) => {
           setName(task.data.name)
           setOriginalName(task.data.name)
-          setCategory(task.data.category)
+          setCode(task.data.code)
+          setCountry(task.data.country)
+          setSymbol(task.data.symbol)
           setRootPath(task.data.rootPath)
-          if(isSubCategory === false && task.data.category)
-          setIsSubCategory(true)
       })
       setEdit(true);
       setEditLabel("Edit")
 
     }
 
-    const handleEdit2 = async () => {
-      tasks.map((task) => {
-        let val = task.data.name;
-        if(val.includes(":")){
-          let lastIndex = val.lastIndexOf(":")
-          let mcategory = val.slice(0,lastIndex);         
-          let mname = val.slice(lastIndex + 1);
-          setCategory(mcategory);
-          setName(mname)
-          setOriginalName(mname)
 
-           if(isSubCategory === false)
-            setIsSubCategory(true)
-        } else {
-          setName(task.data.name)
-          console.log(val)
-          setOriginalName(task.data.name)
-          setCategory("")
-        } 
-      })
-      setEdit(true);
-      setEditLabel("Edit")
-    //  setInitialCategory(true)
-
-    }
-  /* function to update firestore */
-  const handleUpdate2 = async () => {
-    
-    var id="";
-    let originalName = "";
-    let nameExists = false;
-
- 
-    tasks.map((task) =>{
-      if(task.data.uniqueId === uniqueId){
-        id=task.id
-      }
-    });
-    
-
-    let mname = name;
-    if(mname == ""){
-     alert("Please enter a name..");
-      return
-    }
-   
-    if(category)
-    mname = category+":"+name
-
-    // check name exists
-    let mtext ="";
-    dbase.map((item) =>{
-      let val = item.data.name;
-      
-      if(val.includes(":")){
-         let mstr = val.split(":")
-         for(let i = 0; i< mstr.length; i++){
-           console.log(name+" : "+mstr[i])
-           if(mstr[i] === name)
-           nameExists = true;
-         }
-      }
-
-    })
-    
-
-    if(nameExists){
-      
-      alert("Name already exists! Please enter a unique name!")
-      return;
-    }
-    let moriginalName = "";
-    tasks.map((task) => {
-      let val = task.data.name;
-      if(val.includes(":")){
-        let lastIndex = val.lastIndexOf(":")    
-        moriginalName = val.slice(lastIndex + 1);
-      } else {
-        moriginalName = val;
-      } 
-    })
-
-    const batch = writeBatch(db);
-    if(uniqueId === 'Add New'){
-      var categoriesRefDoc = Math.random().toString(36).slice(2);
-      const categoriesRef = doc(db, 'currencybase', categoriesRefDoc);
-      batch.set(categoriesRef, {
-          name: mname,
-          created: Timestamp.now(),
-          uniqueId: nanoid()
-      }); 
-    } else{
-      const categoryUpdateRef = doc(db, 'currencybase', id);
-        batch.update(categoryUpdateRef, {
-          name: mname,
-          created: Timestamp.now()
-        });
-      //update similar name references in DB
-        dbase.map((item) =>{
-          let val = item.data.name;
-          let updateName = false;
-          if(val.includes(":")){
-             let mstr = val.split(":")
-             for(let i = 0; i< mstr.length; i++){
-               if(mstr[i] === moriginalName)
-               updateName = true;
-             }
-          }
-    
-          if(updateName){
-            console.log("updating similar name references in DB..")
-            let oldName = item.data.name;
-            let revisedName = oldName.replace(moriginalName, name)
-            const categoryUpdateRefAll = doc(db, 'currencybase', item.id);
-               batch.update(categoryUpdateRefAll, {
-               name: revisedName,
-               created: Timestamp.now()
-              });
-          }
-        })
-    }
-        // Commit the batch
-        await batch.commit().then(() =>{
-          if(uniqueId === 'Add New')
-          console.log("Success.. adding")
-          else 
-          console.log("Success..updating ")
-        });
-
-
-  }
 
   /* function to update firestore */
   const handleUpdate = async () => {
@@ -414,12 +288,15 @@ return (
             <b>Name:</b> {tasks.map((task)=>(
               task.data.name
             ))} <br/>                
-            <b>Category:</b> {tasks.map((task)=>(
-              task.data.category
+            <b>Code:</b> {tasks.map((task)=>(
+              task.data.code
             ))}   <br/>
-            <b>Path :</b> {tasks.map((task)=>(
-              task.data.rootPath
-            ))}   
+            <b>Country :</b> {tasks.map((task)=>(
+              task.data.country
+            ))}   <br/>
+            <b>Symbol :</b> {tasks.map((task)=>(
+              task.data.symbol
+            ))}      
       <p>
 
         <button
@@ -454,33 +331,32 @@ return (
 
           <b>{editLabel}</b>
         <br/>
-          {
-              <input 
-              onChange={(e) => setName(e.target.value)} 
-              value={name}
-              size = "10" 
-              placeholder="name" />
-          }
-           <br/>
-           <input type="checkbox" onChange={handleChange} checked={isSubCategory}/> Sub Category<br/>
-        {isSubCategory ?
-        <select 
-        name='category' 
-        onChange={(e) => setCategory(e.target.value)  } 
-        value={category}>
-        {
-          dbase.map((cat, key) =>{
-            if(category === cat.data.category)
-         return(
-          <option key={key} value={cat.data.rootPath} selected >{cat.data.rootPath}</option>
-           );
-           else
-           return(
-            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
-             );                       
-         })
-      }
-    </select> : null } 
+        <input 
+          onChange={(e) => setName(e.target.value)} 
+          value={name}
+          size = "10" 
+          placeholder="name" /> <br/>
+        <input 
+          onChange={(e) => setCode(e.target.value)} 
+          value={code}
+          size = "10" 
+          placeholder="code" /> <br/>
+        <input 
+          onChange={(e) => setSymbol(e.target.value)} 
+          value={symbol}
+          size = "10" 
+          placeholder="symbol" /> <br/>
+        <input 
+          onChange={(e) => setCountry(e.target.value)} 
+          value={country}
+          size = "10"  
+          placeholder="country" /> <br/> Decimal Places : <br/>
+        <input 
+          type="number" 
+          onChange={(e) => setDecimalPlaces(e.target.value)} 
+          value={decimalPlaces}
+          size = "10" 
+          placeholder="2" /> <br/>
             <p>
               <button
            onClick={() => {

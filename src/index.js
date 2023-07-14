@@ -67,6 +67,17 @@ root.render(
            <Route path=":supplierId" element={<Supplier />} />
       </Route>
      <Route path="settings" element={<Settings />} />
+     <Route path="currencybase" element={<CurrenciesBase />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a currency</p>
+              </main>
+             }
+           />
+           <Route path=":currencybaseId" element={<CurrencyBase />} />
+      </Route>
      <Route path="divisions" element={<Divisions />} >
            <Route
              index

@@ -7,7 +7,7 @@ const Settings =() =>{
     <div>
     <b>Settings</b>
     <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-        <Link to="/basecurrency">Base Currency</Link> |{' '}
+        <Link to="/currencybase">Base Currency</Link> |{' '}
         <Link to="/currencies">Currencies</Link> |{' '}
         <Link to="/categories">Inventory</Link> |{' '}
         <Link to="/groupsincomeexpense">Chart of Accounts</Link> |{' '}
