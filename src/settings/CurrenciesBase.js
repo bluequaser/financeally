@@ -41,7 +41,7 @@ export default function CurrenciesBase() {
       <b>Manage Base Currency </b>
 
     <div style={{ display: 'flex' }}>
-      
+     
       <nav style={{ borderRight: 'solid 1px', padding: '1rem' }}>
       <QueryNavLink
               
@@ -57,7 +57,6 @@ export default function CurrenciesBase() {
             >
               <button>+Add New</button> 
             </QueryNavLink>
-
         Filter:<br/>
 
         <input
@@ -80,7 +79,7 @@ export default function CurrenciesBase() {
           .filter((task) => {
             let filter = searchParams.get('filter');
             if (!filter) return true;
-            let mname = task.data.rootPath
+            let mname = task.data.name
           mname = mname.toLowerCase();
           //return mname.startsWith(filter.toLowerCase());
             return mname.includes(filter.toLowerCase());
@@ -100,7 +99,7 @@ export default function CurrenciesBase() {
 
               to={`/currencybase/${task.data.uniqueId}`}
             >
-              {task.data.rootPath}
+              {task.data.name}
             </QueryNavLink>
           ))}
       </nav>
