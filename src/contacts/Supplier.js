@@ -69,7 +69,7 @@ export default function Supplier() {
     },[])
 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'currencies'), orderBy('name'))
+      const taskColRef = query(collection(db, 'currencybase'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setCurrencyDB(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -286,13 +286,13 @@ return (
         value={currency}>
         {
           currencyDB.map((cat, key) =>{
-            if(currency === cat.data.name)
+            if(currency === cat.data.symbol)
          return(
           <option key={key} value={currency} selected >{currency}</option>
            );
            else
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.symbol} >{cat.data.symbol}</option>
              );                       
          })
       }
@@ -332,7 +332,7 @@ return (
           onChange={(e) => setStartingBalance(e.target.value)} 
           value={startingBalance}
           size = "10" 
-          placeholder="0.0" />
+          placeholder="0.0" /> <br/>
         <input 
           onChange={(e) => setTaxId(e.target.value)} 
           value={taxId}

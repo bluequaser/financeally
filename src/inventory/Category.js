@@ -27,6 +27,7 @@ export default function Category() {
   const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
   const [category, setCategory] = useState("")
+  const [isActive, setIsActive] = useState(true)
   const [rootPath, setRootPath] = useState("")
   const [toInitializeCategory, setInitialCategory] = useState(false)
   const [isSubCategory, setIsSubCategory] = useState(false)
@@ -71,6 +72,8 @@ export default function Category() {
           setRootPath(task.data.rootPath)
           if(isSubCategory === false && task.data.category)
           setIsSubCategory(true)
+          if(task.data.isActive === "no")
+            setIsActive(false)
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -215,6 +218,7 @@ export default function Category() {
     let originalName = "";
     let mroot = "";
     let nameExists = false;
+    let active = "yes";
 
     tasks.map((task) =>{
       if(task.data.uniqueId === uniqueId){
@@ -258,6 +262,9 @@ export default function Category() {
       moriginalName = task.data.name;
     })
 
+    if(!isActive)
+    active = "no";
+
     const batch = writeBatch(db);
     if(uniqueId === 'Add New'){
       
@@ -266,6 +273,7 @@ export default function Category() {
       batch.set(categoriesRef, {
           name: name,
           category: category,
+          isActive: active,
           rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
@@ -275,6 +283,7 @@ export default function Category() {
         batch.update(categoryUpdateRef, {
           name: name,
           category: category,
+          isActive: active,
           rootPath: mroot,
           created: Timestamp.now()
         });
@@ -421,6 +430,9 @@ return (
             <b>Category:</b> {tasks.map((task)=>(
               task.data.category
             ))}   <br/>
+            <b>isActive :</b> {tasks.map((task)=>(
+              task.data.isActive
+            ))} <br/>     
             <b>Path :</b> {tasks.map((task)=>(
               task.data.rootPath
             ))}   
@@ -484,7 +496,12 @@ return (
              );                       
          })
       }
-    </select> : null } 
+    </select> : null } <br/>
+            {uniqueId === 'Add New' ? null : 
+            <input type="checkbox" 
+            onChange={(e) => setIsActive(!isActive)} 
+            checked={isActive}/> }
+             {uniqueId === 'Add New' ? null : <span>isActive</span>} 
             <p>
               <button
            onClick={() => {

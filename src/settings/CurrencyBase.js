@@ -25,8 +25,10 @@ export default function CurrencyBase() {
   const [code, setCode] = useState('')
   const [country, setCountry] = useState('')
   const [symbol, setSymbol] = useState('')
+  const [originalSymbol, setOriginalSymbol] = useState('')
   const [decimalPlaces, setDecimalPlaces] = useState(2.0)
   const [isBaseCurrency, setIsBaseCurrency] = useState(false)
+  const [isActive, setIsActive] = useState(true)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -52,6 +54,16 @@ export default function CurrencyBase() {
       })
     },[])
 
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'suppliers'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setSupplierDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
+
     const handleEdit = async () => {
       tasks.map((task) => {
           setName(task.data.name)
@@ -61,6 +73,9 @@ export default function CurrencyBase() {
           setDecimalPlaces(task.data.decimalPlaces)
           if(task.data.isBaseCurrency === "yes")
             setIsBaseCurrency(true)
+          if(task.data.isActive === "no")
+            setIsActive(false)
+          setOriginalSymbol(task.data.symbol)
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -75,6 +90,7 @@ export default function CurrencyBase() {
     let count = 0;
     let nameExists = false;
     let baseCurrency = "no";
+    let active = "yes";
     tasks.map((task) =>{
       if(task.data.uniqueId === uniqueId){
         id=task.id
@@ -90,7 +106,9 @@ export default function CurrencyBase() {
        return
      }
      if(isBaseCurrency)
-     baseCurrency = "yes";
+      baseCurrency = "yes";
+     if(!isActive)
+      active = "no";
 /*
     let a=10;
     if(a<100){
@@ -110,6 +128,7 @@ export default function CurrencyBase() {
           country: country,
           decimalPlaces: decimalPlaces,
           isBaseCurrency: baseCurrency,
+          isActive: active,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -122,13 +141,14 @@ export default function CurrencyBase() {
           country: country,
           decimalPlaces: decimalPlaces,
           isBaseCurrency: baseCurrency,
+          isActive: active,
           created: Timestamp.now()
         });
 
     }
     if(isBaseCurrency){
       dbase.map((index) =>{
-        if(index.data.isBaseCurrency === 'yes' && index.data.uniqueId !== uniquiId){
+        if(index.data.isBaseCurrency === 'yes' && index.data.uniqueId !== uniqueId){
         const categoryUpdateRef2 = doc(db, 'currencybase', index.id);
         batch.update(categoryUpdateRef2, {
           isBaseCurrency: "no",
@@ -137,6 +157,16 @@ export default function CurrencyBase() {
       }
      })
     }
+
+    supplierDB.map((sup) =>{
+      if(sup.data.currency === originalSymbol){
+        const categoryUpdateRef3 = doc(db, 'suppliers', sup.id);
+        batch.update(categoryUpdateRef3, {
+          currency: symbol,
+          created: Timestamp.now()
+        });
+      }
+    });
         // Commit the batch
         await batch.commit().then(() =>{
           if(uniqueId === 'Add New')
@@ -201,8 +231,14 @@ return (
             <b>Symbol :</b> {tasks.map((task)=>(
               task.data.symbol
             ))}    <br/>
-            <b>Decimal Plaaces :</b> {tasks.map((task)=>(
+            <b>Decimal Places :</b> {tasks.map((task)=>(
               task.data.decimalPlace
+            ))}    <br/>
+            <b>Base Currency :</b> {tasks.map((task)=>(
+              task.data.isBaseCurrency
+            ))}    <br/>
+            <b>isActive :</b> {tasks.map((task)=>(
+              task.data.isActive
             ))}      
       <p>
 
@@ -266,7 +302,12 @@ return (
           placeholder="2" /> <br/> 
            <input type="checkbox" 
            onChange={(e) => setIsBaseCurrency(!isBaseCurrency)} 
-           checked={isBaseCurrency}/> Base Currency
+           checked={isBaseCurrency}/> Base Currency <br/> 
+           {uniqueId === 'Add New' ? null : 
+           <input type="checkbox" 
+           onChange={(e) => setIsActive(!isActive)} 
+           checked={isActive}/>  } 
+            {uniqueId === 'Add New' ? null : <span>isActive</span>} 
             <p>
               <button
            onClick={() => {
