@@ -181,6 +181,16 @@ const handleDelete = async () => {
  
   var id="";
   var mname="";
+  let currencyInUse = false;
+  supplierDB.map((sup) =>{
+    if(sup.data.currency === originalSymbol){
+      currencyInUse = true;
+    }
+  });
+  if(currencyInUse == true){
+    alert("Cannot delete! The currency is already in use in other accounts. You should set to inactive instead, to discontinue it's further use.");
+    return;
+  }
   tasks.map((task) =>{  
     if(task.data.uniqueId === uniqueId){
       id=task.id;
