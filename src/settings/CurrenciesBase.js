@@ -55,7 +55,7 @@ export default function CurrenciesBase() {
 
               to={`/currencybase/${addNew}`}
             >
-              <button>+Add New</button> 
+            <button>+Add New</button>
             </QueryNavLink>
         Filter:<br/>
 
@@ -99,7 +99,7 @@ export default function CurrenciesBase() {
 
               to={`/currencybase/${task.data.uniqueId}`}
             >
-              {task.data.name}
+              {task.data.name} | {task.data.symbol}
             </QueryNavLink>
           ))}
       </nav>

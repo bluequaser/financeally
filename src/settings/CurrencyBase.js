@@ -26,6 +26,7 @@ export default function CurrencyBase() {
   const [country, setCountry] = useState('')
   const [symbol, setSymbol] = useState('')
   const [decimalPlaces, setDecimalPlaces] = useState(2.0)
+  const [isBaseCurrency, setIsBaseCurrency] = useState(false)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -58,6 +59,8 @@ export default function CurrencyBase() {
           setCountry(task.data.country)
           setSymbol(task.data.symbol)
           setDecimalPlaces(task.data.decimalPlaces)
+          if(task.data.isBaseCurrency === "yes")
+            setIsBaseCurrency(true)
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -71,7 +74,7 @@ export default function CurrencyBase() {
     let id="";
     let count = 0;
     let nameExists = false;
-
+    let baseCurrency = "no";
     tasks.map((task) =>{
       if(task.data.uniqueId === uniqueId){
         id=task.id
@@ -86,6 +89,8 @@ export default function CurrencyBase() {
       alert("Please enter a short symbol..");
        return
      }
+     if(isBaseCurrency)
+     baseCurrency = "yes";
 /*
     let a=10;
     if(a<100){
@@ -104,6 +109,7 @@ export default function CurrencyBase() {
           symbol: symbol,
           country: country,
           decimalPlaces: decimalPlaces,
+          isBaseCurrency: baseCurrency,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -115,9 +121,13 @@ export default function CurrencyBase() {
           symbol: symbol,
           country: country,
           decimalPlaces: decimalPlaces,
+          isBaseCurrency: baseCurrency,
           created: Timestamp.now()
         });
 
+    }
+    if(isBaseCurrency){
+      
     }
         // Commit the batch
         await batch.commit().then(() =>{
@@ -245,7 +255,10 @@ return (
           onChange={(e) => setDecimalPlaces(e.target.value)} 
           value={decimalPlaces}
           size = "10" 
-          placeholder="2" /> <br/>
+          placeholder="2" /> <br/> 
+           <input type="checkbox" 
+           onChange={(e) => setIsBaseCurrency(!isBaseCurrency)} 
+           checked={isBaseCurrency}/> Base Currency
             <p>
               <button
            onClick={() => {
