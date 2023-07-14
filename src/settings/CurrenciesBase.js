@@ -59,7 +59,7 @@ export default function CurrenciesBase() {
 
               to={`/categories/${addNew}`}
             >
-              <button>+Add New</button>
+              <button>+Add New</button> 
             </QueryNavLink>
 
 
