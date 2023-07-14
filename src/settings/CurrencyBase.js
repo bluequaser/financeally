@@ -127,7 +127,15 @@ export default function CurrencyBase() {
 
     }
     if(isBaseCurrency){
-      
+      dbase.map((index) =>{
+        if(index.data.isBaseCurrency === 'yes' && index.data.uniqueId !== uniquiId){
+        const categoryUpdateRef2 = doc(db, 'currencybase', index.id);
+        batch.update(categoryUpdateRef2, {
+          isBaseCurrency: "no",
+          created: Timestamp.now()
+        });
+      }
+     })
     }
         // Commit the batch
         await batch.commit().then(() =>{
