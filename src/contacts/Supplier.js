@@ -290,7 +290,7 @@ return (
          return(
           <option key={key} value={currency} selected >{currency}</option>
            );
-           else
+           else if(cat.data.isActive === 'yes')
            return(
             <option  key={key} value={cat.data.symbol} >{cat.data.symbol}</option>
              );                       

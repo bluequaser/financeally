@@ -27,6 +27,7 @@ export default function CurrencyBase() {
   const [symbol, setSymbol] = useState('')
   const [originalSymbol, setOriginalSymbol] = useState('')
   const [decimalPlaces, setDecimalPlaces] = useState(2.0)
+  const [exchangeRate, convertToBaseRate] = useState(1.00)
   const [isBaseCurrency, setIsBaseCurrency] = useState(false)
   const [isActive, setIsActive] = useState(true)
   const [isEdit, setEdit] = useState(false)
@@ -188,7 +189,7 @@ const handleDelete = async () => {
     }
   });
   if(currencyInUse == true){
-    alert("Cannot delete! The currency is already in use in other accounts. You should set to inactive instead, to discontinue it's further use.");
+    alert("Cannot delete! The currency is already in use in other accounts. You should set it to inactive instead, to discontinue it's further use.");
     return;
   }
   tasks.map((task) =>{  
@@ -246,6 +247,10 @@ return (
             ))}    <br/>
             <b>Base Currency :</b> {tasks.map((task)=>(
               task.data.isBaseCurrency
+            ))}    <br/>
+             <b>Exchange Rate :</b><br/>
+              {tasks.map((task)=>(
+              "1 "+task.data.symbol+" = "+ task.data.exchangeRate
             ))}    <br/>
             <b>isActive :</b> {tasks.map((task)=>(
               task.data.isActive
@@ -309,7 +314,13 @@ return (
           onChange={(e) => setDecimalPlaces(e.target.value)} 
           value={decimalPlaces}
           size = "10" 
-          placeholder="2" /> <br/> 
+          placeholder="2" /> <br/> <br/>
+          <input 
+            type = "number" 
+            onChange={(e) => convertToBaseRate(e.target.value)} 
+            value={exchangeRate}
+            size = "10" 
+            placeholder="1.00" /> <br/>
            <input type="checkbox" 
            onChange={(e) => setIsBaseCurrency(!isBaseCurrency)} 
            checked={isBaseCurrency}/> Base Currency <br/> 

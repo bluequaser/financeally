@@ -38,7 +38,7 @@ export default function CurrenciesBase() {
   
   return (
     <div>
-      <b>Manage Base Currency </b>
+      <b>Manage Base Currencies </b>
 
     <div style={{ display: 'flex' }}>
      
