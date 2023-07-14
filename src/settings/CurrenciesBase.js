@@ -38,11 +38,7 @@ export default function CurrenciesBase() {
   
   return (
     <div>
-      <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-      <Link  to="/locations"><b>Location</b></Link> | {" "} 
-      <Link  to="/categories"><b>Categories</b></Link> 
-   </nav>
-      <b>Manage Categories </b>
+      <b>Manage Base Currency </b>
 
     <div style={{ display: 'flex' }}>
       
@@ -57,7 +53,7 @@ export default function CurrenciesBase() {
                 };
               }}
 
-              to={`/categories/${addNew}`}
+              to={`/currencybase/${addNew}`}
             >
               <button>+Add New</button> 
             </QueryNavLink>
