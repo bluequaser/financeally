@@ -22,7 +22,6 @@ export default function CurrencyBase() {
   const [dbase, setDBase] = useState([])
   const [supplierDB, setSupplierDB] = useState([])
   const [name, setName] = useState('')
-  const [originalName, setOriginalName] = useState('')
   const [code, setCode] = useState('')
   const [country, setCountry] = useState('')
   const [symbol, setSymbol] = useState('')
@@ -66,11 +65,10 @@ export default function CurrencyBase() {
     const handleEdit = async () => {
       tasks.map((task) => {
           setName(task.data.name)
-          setOriginalName(task.data.name)
           setCode(task.data.code)
           setCountry(task.data.country)
           setSymbol(task.data.symbol)
-          setRootPath(task.data.rootPath)
+          setDecimalPlaces(task.data.decimalPlaces)
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -82,9 +80,9 @@ export default function CurrencyBase() {
   /* function to update firestore */
   const handleUpdate = async () => {
     var id="";
-    let originalName = "";
-    let mroot = "";
+    let count = 0;
     let nameExists = false;
+    let moriginalName = "";
 
     tasks.map((task) =>{
       if(task.data.uniqueId === uniqueId){
@@ -95,35 +93,33 @@ export default function CurrencyBase() {
     if(name == ""){
      alert("Please enter a name..");
       return
-    }
-    if(category)
-      mroot = category+":"+name;
-    else
-    mroot = name;
+    } 
+    if(symbol == ""){
+      alert("Please enter a short symbol..");
+       return
+     }
+
     // check name exists
     dbase.map((item) =>{
-      let val = item.data.rootPath;
-      if(val.includes(":")){
-         let mstr = val.split(":")
-         for(let i = 0; i< mstr.length; i++){
-           console.log(name+" : "+mstr[i])
-           if(mstr[i] === name)
-           nameExists = true;
-         }
-      } else {
-        if(val === name)
+        if(item.data.name === name && item.data.uniqueId !== uniqueId){
           nameExists = true;
-      }
-
+          count = 1;
+        }
+          if(item.data.symbol === symbol && item.data.uniqueId !== uniqueId){
+            nameExists = true;
+            count = 2;
+          }
     })
     
-
-    if(nameExists){
+    if(nameExists && count === 1){
       alert("Name already exists! Please enter a unique name!")
       return;
     }
+    if(nameExists && count === 2){
+      alert("Symbol already exists! Please enter a unique symbol!")
+      return;
+    }
 
-    let moriginalName = "";
     tasks.map((task) => {
       moriginalName = task.data.name;
     })
@@ -135,8 +131,10 @@ export default function CurrencyBase() {
       const categoriesRef = doc(db, 'currencybase', categoriesRefDoc);
       batch.set(categoriesRef, {
           name: name,
-          category: category,
-          rootPath: mroot,
+          code: code,
+          symbol: symbol,
+          country: country,
+          decimalPlaces: decimalPlaces,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
@@ -144,8 +142,10 @@ export default function CurrencyBase() {
       const categoryUpdateRef = doc(db, 'currencybase', id);
         batch.update(categoryUpdateRef, {
           name: name,
-          category: category,
-          rootPath: mroot,
+          code: code,
+          symbol: symbol,
+          country: country,
+          decimalPlaces: decimalPlaces,
           created: Timestamp.now()
         });
       //update similar name references in DB
@@ -296,6 +296,9 @@ return (
             ))}   <br/>
             <b>Symbol :</b> {tasks.map((task)=>(
               task.data.symbol
+            ))}    <br/>
+            <b>Decimal Plaaces :</b> {tasks.map((task)=>(
+              task.data.decimalPlace
             ))}      
       <p>
 
