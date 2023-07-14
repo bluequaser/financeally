@@ -27,6 +27,8 @@ import Divisions from './settings/Divisions';
 import Division from './settings/Division';
 import TaxCodes from './settings/TaxCodes';
 import TaxCode from './settings/TaxCode';
+import CurrenciesBase from './settings/CurrenciesBase';
+import CurrencyBase from './settings/CurrencyBase';
 import Categories from './inventory/Categories';
 import Category from './inventory/Category';
 import Locations from './inventory/Locations';
