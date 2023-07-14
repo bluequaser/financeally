@@ -62,7 +62,6 @@ export default function CurrenciesBase() {
               <button>+Add New</button> 
             </QueryNavLink>
 
-
         Filter:<br/>
 
         <input
