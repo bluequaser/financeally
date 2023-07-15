@@ -162,6 +162,7 @@ export default function IncomeExpenseAccount() {
     tasks.map((task) => {
       moriginalName = task.data.name;
     })
+    mroot = group+":"+name;
     /*
     let a = 10;
     if(a<100){
@@ -183,7 +184,7 @@ export default function IncomeExpenseAccount() {
           group: group,
           fundsFlowType: fundsFlowType,
           taxCode: taxCode,
-          rootPath: mroot,
+          rootPath: group+":"+name,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
