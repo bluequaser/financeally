@@ -23,8 +23,8 @@ export default function BalanceSheetGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] =  useState([{type: 'Assets group'},{type: 'Fixed Assets group'},{type: 'Current Assets group'},{type: 'Cash and cash equivalents group'},{type: 'Accounts Receivable group'},{type: 'Inventory group'},{type: 'Liabilities group'},{type: 'Long Term Liabilities group'},{type: 'Current Liabilities group'},{type: 'Accounts Payable group'},{type: 'Equity group'}])
-  const [type, setType] = useState('Assets group') 
+  const [typeArray, setTypeArray] =  useState([{type: 'Assets'},{type: 'Fixed Assets'},{type: 'Current Assets'},{type: 'Cash and cash equivalents'},{type: 'Accounts Receivable'},{type: 'Inventory'},{type: 'Liabilities'},{type: 'Long Term Liabilities'},{type: 'Current Liabilities'},{type: 'Accounts Payable'},{type: 'Equity'}])
+  const [type, setType] = useState('Assets') 
   const [name, setName] = useState('')
   const [rootPath, setRootPath] = useState('')
   const [subGroupOf, setSubGroupOf] = useState("")
@@ -85,6 +85,7 @@ export default function BalanceSheetGroup() {
     let nameExists = false;
     var id="";
     let mroot = "";
+    let groupsInitialized = false;
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
@@ -105,6 +106,8 @@ export default function BalanceSheetGroup() {
     }
     // check name exists
    dbase.map((item) =>{
+     if(item.data.name === 'Inventory')
+       groupsInitialized = true;
     let val = item.data.rootPath;
     if(val.includes(":")){
        let mstr = val.split(":")
@@ -126,6 +129,20 @@ export default function BalanceSheetGroup() {
     })
 
   const batch = writeBatch(db);
+  if( groupsInitialized === false){
+    typeArray.map((item) =>{
+    var categoriesRefDoc = Math.random().toString(36).slice(2);
+    const categoriesRef = doc(db, 'groupsbalancesheet', categoriesRefDoc);
+    batch.set(categoriesRef, {
+        name: item.type,
+        subgroupof: "",
+        type: item.type,
+        rootPath: item.type,
+        created: Timestamp.now(),
+        uniqueId: nanoid()
+    }); 
+   })
+  }
 
     if(uniqueId === 'Add New'){
 
