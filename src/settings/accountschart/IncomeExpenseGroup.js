@@ -85,6 +85,8 @@ export default function IncomeExpenseGroup() {
     let nameExists = false;
     var id="";
     let mroot = "";
+    
+    let groupsInitialized = false;
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
@@ -106,6 +108,8 @@ export default function IncomeExpenseGroup() {
     }
     // check name exists
    dbase.map((item) =>{
+    if(item.data.name === 'Inventory')
+      groupsInitialized = true;
     let val = item.data.rootPath;
     if(val.includes(":")){
        let mstr = val.split(":")
@@ -127,8 +131,22 @@ export default function IncomeExpenseGroup() {
     })
 
   const batch = writeBatch(db);
+  if( groupsInitialized === false){
+    typeArray.map((item) =>{
+    var categoriesRefDoc = Math.random().toString(36).slice(2);
+    const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
+    batch.set(categoriesRef, {
+        name: item.type,
+        subgroupof: "",
+        type: item.type,
+        rootPath: item.type,
+        created: Timestamp.now(),
+        uniqueId: nanoid()
+    }); 
+   })
+  }
 
-    if(uniqueId === 'Add New'){
+    if(uniqueId === 'Add New' && groupsInitialized === true){
 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
@@ -142,7 +160,7 @@ export default function IncomeExpenseGroup() {
       }); 
 
     }
-    else{
+    else if(groupsInitialized === true){
 
       const categoryUpdateRef = doc(db, 'groupsincomeexpense', id);
       batch.update(categoryUpdateRef, {
