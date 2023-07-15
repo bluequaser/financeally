@@ -136,7 +136,7 @@ export default function BalanceSheetGroup() {
         name: item.type,
         subgroupof: "",
         type: item.type,
-        rootPath: item.type,
+        rootPath: item.rootPath,
         created: Timestamp.now(),
         uniqueId: nanoid()
     }); 
