@@ -23,7 +23,7 @@ export default function IncomeExpenseGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] = useState([{type: 'Income',subgroupof: ''},{type: 'Expense', subgroupof: ''},{type: 'Cost of sales',subgroupof: 'Income'},{type: 'Gain on Asset Disposal',subgroupof: 'Income'},{type: 'Gain on Foreign Exchange',subgroupof: 'Income'},{type: 'Salaries and Wages',subgroupof: 'Expense'},{type: 'Loss on Asset Disposal',subgroupof: 'Expense'},{type: 'Loss on Foreign Exchange',subgroupof: 'Expense'},{type: 'Depreciation',subgroupof: 'Expense'}])
+  const [typeArray, setTypeArray] = useState([{type: 'Income',subgroupof: '',rootPath: 'Income'},{type: 'Expense', subgroupof: '', rootPath: 'Expense'},{type: 'Cost of sales',subgroupof: 'Income', rootPath: 'Income:Cost of sales'},{type: 'Gain on Asset Disposal',subgroupof: 'Income', rootPath: 'Income:Gain on Asset Disposal'},{type: 'Gain on Foreign Exchange',subgroupof: 'Income', rootPath: 'Income:Gain on Foreign Exchange'},{type: 'Salaries and Wages',subgroupof: 'Expense', rootPath: 'Expense:Salaries and Wages'},{type: 'Loss on Asset Disposal',subgroupof: 'Expense', rootPath: 'Expense:Loss on Asset Disposal'},{type: 'Loss on Foreign Exchange',subgroupof: 'Expense', rootPath: 'Expense:Loss on Foreign Exchange'},{type: 'Depreciation',subgroupof: 'Expense', rootPath: 'Expense:Depreciation'}])
   const [type, setType] = useState('Income') 
   const [name, setName] = useState('')
   const [rootPath, setRootPath] = useState('')
@@ -139,7 +139,7 @@ export default function IncomeExpenseGroup() {
         name: item.type,
         subgroupof: item.subgroupof,
         type: item.type,
-        rootPath: item.type,
+        rootPath: item.rootPath,
         created: Timestamp.now(),
         uniqueId: nanoid()
     }); 
