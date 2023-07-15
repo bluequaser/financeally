@@ -108,7 +108,7 @@ export default function IncomeExpenseGroup() {
     }
     // check name exists
    dbase.map((item) =>{
-    if(item.data.name === 'Inventory')
+    if(item.data.name === 'Income')
       groupsInitialized = true;
     let val = item.data.rootPath;
     if(val.includes(":")){
