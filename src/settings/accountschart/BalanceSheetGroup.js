@@ -134,7 +134,7 @@ export default function BalanceSheetGroup() {
     const categoriesRef = doc(db, 'groupsbalancesheet', categoriesRefDoc);
     batch.set(categoriesRef, {
         name: item.type,
-        subgroupof: "",
+        subgroupof: item.subgroupof,
         type: item.type,
         rootPath: item.rootPath,
         created: Timestamp.now(),
