@@ -99,7 +99,6 @@ export default function BalanceSheetGroup() {
     }
     if(msubgroupof){
       mroot = msubgroupof+":"+name;
-      msubgroupof = msubgroupof;
     }
     else{
     mroot = name;
@@ -144,8 +143,8 @@ export default function BalanceSheetGroup() {
    })
   }
 
-    if(uniqueId === 'Add New'){
-
+    if(uniqueId === 'Add New' && groupsInitialized === true){
+ 
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'groupsbalancesheet', categoriesRefDoc);
       batch.set(categoriesRef, {
@@ -158,7 +157,7 @@ export default function BalanceSheetGroup() {
       }); 
 
     }
-    else{
+    else if(groupsInitialized === true){
 
       const categoryUpdateRef = doc(db, 'groupsbalancesheet', id);
       batch.update(categoryUpdateRef, {
