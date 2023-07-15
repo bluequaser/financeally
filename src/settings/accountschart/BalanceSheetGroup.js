@@ -23,7 +23,7 @@ export default function BalanceSheetGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] =  useState([{type: 'Assets'},{type: 'Fixed Assets'},{type: 'Current Assets'},{type: 'Cash and cash equivalents'},{type: 'Accounts Receivable'},{type: 'Inventory'},{type: 'Liabilities'},{type: 'Long Term Liabilities'},{type: 'Current Liabilities'},{type: 'Accounts Payable'},{type: 'Equity'}])
+  const [typeArray, setTypeArray] =  useState([{type: 'Assets',subgroupof: ''},{type: 'Fixed Assets',subgroupof: 'Assets'},{type: 'Assets Disposal',subgroupof: 'Fixed Assets'},{type: 'Accumulated Depreciation',subgroupof: 'Fixed Assets'},{type: 'Current Assets',subgroupof: 'Assets'},{type: 'Cash and cash equivalents',subgroupof: 'Current Assets'},{type: 'Accounts Receivable',subgroupof: 'Current Assets'},{type: 'Inventory',subgroupof: 'Current Assets'},{type: 'Liabilities',subgroupof: ''},{type: 'Long Term Liabilities',subgroupof: 'Liabilities'},{type: 'Current Liabilities',subgroupof: 'Liabilities'},{type: 'Accounts Payable',subgroupof: 'Current Liabilities'},{type: 'Equity',subgroupof: ''},{type: 'Retained Earnings',subgroupof: 'Equity'}])
   const [type, setType] = useState('Assets') 
   const [name, setName] = useState('')
   const [rootPath, setRootPath] = useState('')

@@ -23,8 +23,8 @@ export default function IncomeExpenseGroup() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [typeArray, setTypeArray] = useState([{type: 'Income group'},{type: 'Expense group'}])
-  const [type, setType] = useState('Income group') 
+  const [typeArray, setTypeArray] = useState([{type: 'Income',subgroupof: ''},{type: 'Expense', subgroupof: ''},{type: 'Cost of sales',subgroupof: 'Income'},{type: 'Gain on Asset Disposal',subgroupof: 'Income'},{type: 'Gain on Foreign Exchange',subgroupof: 'Income'},{type: 'Salaries and Wages',subgroupof: 'Expense'},{type: 'Loss on Asset Disposal',subgroupof: 'Expense'},{type: 'Loss on Foreign Exchange',subgroupof: 'Expense'},{type: 'Depreciation',subgroupof: 'Expense'}])
+  const [type, setType] = useState('Income') 
   const [name, setName] = useState('')
   const [rootPath, setRootPath] = useState('')
   const [subGroupOf, setSubGroupOf] = useState("")
@@ -137,7 +137,7 @@ export default function IncomeExpenseGroup() {
     const categoriesRef = doc(db, 'groupsincomeexpense', categoriesRefDoc);
     batch.set(categoriesRef, {
         name: item.type,
-        subgroupof: "",
+        subgroupof: item.subgroupof,
         type: item.type,
         rootPath: item.type,
         created: Timestamp.now(),
