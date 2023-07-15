@@ -107,7 +107,7 @@ export default function IncomeExpenseAccounts() {
 
               to={`/accountsincomeexpense/${task.data.uniqueId}`}
             >
-              {task.data.rootPath}
+              {task.data.group.startsWith('Income') || task.data.group.startsWith('Expense') ? task.data.type+":"+task.data.name : null}
             </QueryNavLink>
           ))}
       </nav>

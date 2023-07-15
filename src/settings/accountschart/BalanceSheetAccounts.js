@@ -106,7 +106,7 @@ export default function BalanceSheetAccounts() {
 
               to={`/accountsbalancesheet/${task.data.uniqueId}`}
             >
-              { task.data.type != 'Income group' && task.data.type != 'Expense group' ? task.data.group+":"+task.data.name : null}
+              { task.data.group.startsWith('Assets') || task.data.group.startsWith('Liabilities') || task.data.group.startsWith('Equity') ? task.data.type+":"+task.data.name : null}
             </QueryNavLink>
           ))}
       </nav>

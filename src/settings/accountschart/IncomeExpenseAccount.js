@@ -184,7 +184,7 @@ export default function IncomeExpenseAccount() {
           group: group,
           fundsFlowType: fundsFlowType,
           taxCode: taxCode,
-          rootPath: group+":"+name,
+          rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
