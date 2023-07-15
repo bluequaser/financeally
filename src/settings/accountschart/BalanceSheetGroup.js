@@ -313,7 +313,7 @@ return (
           }}
         >
            Done
-        </button>        
+        </button>{' | '}        
         <button
           onClick={() => {
             handleDelete();
