@@ -99,7 +99,7 @@ export default function CurrenciesBase() {
 
               to={`/currencybase/${task.data.uniqueId}`}
             >
-              {task.data.name} | {task.data.symbol}
+              {task.data.symbol}
             </QueryNavLink>
           ))}
       </nav>

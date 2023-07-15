@@ -27,7 +27,8 @@ export default function CurrencyBase() {
   const [symbol, setSymbol] = useState('')
   const [originalSymbol, setOriginalSymbol] = useState('')
   const [decimalPlaces, setDecimalPlaces] = useState(2.0)
-  const [exchangeRate, convertToBaseRate] = useState(1.00)
+  const [exchangeRate, setExchangeRate] = useState(1.0)
+  const [reverseExchangeRate, setReverseExchangeRate] = useState(1.0)
   const [isBaseCurrency, setIsBaseCurrency] = useState(false)
   const [isActive, setIsActive] = useState(true)
   const [isEdit, setEdit] = useState(false)
@@ -72,6 +73,8 @@ export default function CurrencyBase() {
           setCountry(task.data.country)
           setSymbol(task.data.symbol)
           setDecimalPlaces(task.data.decimalPlaces)
+          setExchangeRate(task.data.exchangeRate)
+          setReverseExchangeRate(task.data.reverseExchangeRate)
           if(task.data.isBaseCurrency === "yes")
             setIsBaseCurrency(true)
           if(task.data.isActive === "no")
@@ -92,6 +95,12 @@ export default function CurrencyBase() {
     let nameExists = false;
     let baseCurrency = "no";
     let active = "yes";
+    let mexchangeRate = exchangeRate;
+    let mreverseExchangeRate = reverseExchangeRate;
+      if(mexchangeRate <= 0)
+        mexchangeRate = 1;
+      if(mreverseExchangeRate <= 0)
+        mreverseExchangeRate = 1;
     tasks.map((task) =>{
       if(task.data.uniqueId === uniqueId){
         id=task.id
@@ -129,6 +138,8 @@ export default function CurrencyBase() {
           country: country,
           decimalPlaces: decimalPlaces,
           isBaseCurrency: baseCurrency,
+          exchangeRate: mexchangeRate,
+          reverseExchangeRate: mreverseExchangeRate,
           isActive: active,
           created: Timestamp.now(),
           uniqueId: nanoid()
@@ -142,6 +153,8 @@ export default function CurrencyBase() {
           country: country,
           decimalPlaces: decimalPlaces,
           isBaseCurrency: baseCurrency,
+          exchangeRate: mexchangeRate,
+          reverseExchangeRate: mreverseExchangeRate,
           isActive: active,
           created: Timestamp.now()
         });
@@ -211,6 +224,13 @@ const handleDelete = async () => {
   }
 }
 
+const convertRates = (value) => {
+  let rate = Number(value);
+  setExchangeRate(rate);
+  let reverseRate = 1/rate;
+  reverseRate = Math.round(reverseRate * 1000000) / 1000000;
+  setReverseExchangeRate(reverseRate); 
+}
 
 const componentRef = useRef();
     
@@ -223,7 +243,7 @@ const handlePrint = () => {
 }
 
 return (
-
+  
     <main style={{ padding: "1rem" }}>
       { isEdit == false && uniqueId !== "Add New" ? 
       <div>
@@ -250,8 +270,16 @@ return (
             ))}    <br/>
              <b>Exchange Rate :</b><br/>
               {tasks.map((task)=>(
-              "1 "+task.data.symbol+" = "+ task.data.exchangeRate
-            ))}    <br/>
+              "1 "+task.data.symbol+" = "
+            ))}
+               {tasks.map((task)=>(
+              task.data.isBaseCurrency === 'yes' ? exchangeRate+" "+task.data.symbol : 
+              dbase.map((cur)=>(
+                  cur.data.isBaseCurrency === 'yes' ? +task.data.exchangeRate+" "+cur.data.symbol : ""
+                ))   
+
+            ))}   
+             <br/>
             <b>isActive :</b> {tasks.map((task)=>(
               task.data.isActive
             ))}      
@@ -314,13 +342,26 @@ return (
           onChange={(e) => setDecimalPlaces(e.target.value)} 
           value={decimalPlaces}
           size = "10" 
-          placeholder="2" /> <br/> <br/>
+          placeholder="2" /> <br/> <b>Exchange Rate :</b> <br/>
+           {tasks.map((task)=>(
+              "1 "+task.data.symbol+" = "
+            ))}
+            {dbase.map((cur)=>(
+              cur.data.isBaseCurrency === 'yes' ? cur.data.symbol : ""
+            ))}   
           <input 
             type = "number" 
-            onChange={(e) => convertToBaseRate(e.target.value)} 
+            onChange={(e) => convertRates(e.target.value)} 
             value={exchangeRate}
             size = "10" 
-            placeholder="1.00" /> <br/>
+            placeholder="1.00" /> <br/> <b>Reverse Exchange Rate :</b> <br/>
+            {dbase.map((cur)=>(
+              cur.data.isBaseCurrency === 'yes' ? "1 "+cur.data.symbol+" = " : ""
+            ))} 
+            {tasks.map((task)=>(
+              task.data.symbol + " "+reverseExchangeRate
+            ))}   
+            <br/>
            <input type="checkbox" 
            onChange={(e) => setIsBaseCurrency(!isBaseCurrency)} 
            checked={isBaseCurrency}/> Base Currency <br/> 
