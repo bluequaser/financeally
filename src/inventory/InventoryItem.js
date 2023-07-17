@@ -501,11 +501,11 @@ return (
         value={expenseAccount}>
         {
           accountsDB.map((cat, key) =>{
-            if(expenseAccount == cat.data.rootPath && cat.data.type == 'Income group')
+            if(expenseAccount == cat.data.rootPath && cat.data.type == 'Cost of sales')
          return(
           <option key={key} value={expenseAccount} selected >{expenseAccount}</option>
            );
-           else if(cat.data.type == 'Income group'){
+           else if(cat.data.type == 'Cost of sales'){
              return(
             <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              ); 
