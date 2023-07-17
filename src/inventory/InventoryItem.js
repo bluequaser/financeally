@@ -20,9 +20,7 @@ export default function InventoryItem() {
 
   const [tasks, setTasks] = useState([]) 
   const [itemsDB, setItemsDB] = useState([])
-  const [salesDB, setSalesDB] = useState([]) 
   const [accountsDB, setAccountsDB] = useState([]) 
-  const [expenseDB, setExpenseDB] = useState([]) 
   const [taxDB, setTaxDB] = useState([]) 
   const [supplierDB, setSupplierDB] = useState([]) 
   const [divisionDB, setDivisionDB] = useState([]) 
@@ -454,11 +452,11 @@ return (
         value={salesAccount}>
         {
           accountsDB.map((cat, key) =>{
-            if(cat.data.rootPath == 'salesAccount')
+            if(cat.data.rootPath == salesAccount)
          return(
           <option key={key} value={salesAccount} selected >{salesAccount}</option>
            );
-           else if(cat.data.type == 'Income group'){ 
+           else if(cat.data.type == 'Income'){ 
            return(
             <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );      
