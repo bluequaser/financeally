@@ -30,6 +30,7 @@ export default function IncomeExpenseAccount() {
   const [type, setType] = useState('')
   const [taxCode, setTaxCode] = useState('')
   const [group, setGroup] = useState("")
+  const [majorGroup, setMajorGroup] = useState("Income Statement")
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
@@ -185,6 +186,7 @@ export default function IncomeExpenseAccount() {
           fundsFlowType: fundsFlowType,
           taxCode: taxCode,
           rootPath: mroot,
+          majorGroup: majorGroup,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 

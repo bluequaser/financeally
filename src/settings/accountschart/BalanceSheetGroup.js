@@ -138,6 +138,7 @@ export default function BalanceSheetGroup() {
         subgroupof: item.subgroupof,
         type: item.type,
         rootPath: item.rootPath,
+        majorGroup: majorGroup,
         created: Timestamp.now(),
         uniqueId: nanoid()
     }); 
@@ -153,6 +154,7 @@ export default function BalanceSheetGroup() {
           subgroupof: msubgroupof,
           type: type,
           rootPath: mroot,
+          majorGroup: majorGroup,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 

@@ -35,6 +35,7 @@ export default function BalanceSheetAccount() {
   const [taxCode, setTaxCode] = useState('')
   const [openingBalance, setOpeningBalance] = useState(0.0)
   const [group, setGroup] = useState("")
+  const [majorGroup, setMajorGroup] = useState("Balance Sheet")
   const [fundsFlowType, setFundsFlowType] = useState("Operating activities")
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
@@ -238,6 +239,7 @@ dbase.map((item) =>{
           earliestDate: earliestDate,
           longDate: log,
           rootPath: mroot,
+          majorGroup: majorGroup,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 
