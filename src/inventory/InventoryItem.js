@@ -526,10 +526,10 @@ return (
         <select 
         name='expensesAccount' 
         onChange={(e) => setExpensesAccount(e.target.value)  } 
-        value={expenseAccount}>
+        value={expensesAccount}>
         {
           accountsDB.map((cat, key) =>{
-            if(expenseAccounts == cat.data.rootPath && cat.data.type == 'Cost of sales')
+            if(expensesAccount == cat.data.rootPath && cat.data.type == 'Cost of sales')
          return(
           <option key={key} value={expensesAccount} selected >{expensesAccount}</option>
            );
