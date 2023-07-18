@@ -27,21 +27,22 @@ export default function InventoryItem() {
   const [categoryDB, setCategoryDB] = useState([]) 
   const [name, setName] = useState('')
   const [sku, setSKU] = useState('')
+  const [unit, setUnit] = useState('')
   const [category, setCategory] = useState("")
   const [division, setDivision] = useState('') 
   const [qtyAtHand, setQtyAtHand] = useState(0.0);
   const [reorderQty, setReorderQty] = useState(0.0);
   const [earliestDate, setEarliestDate] = useState('');
   const [itemsAccount, setItemsAccount] = useState("");
-  const [itemDescription, setItemDescription] = useState('');
+  const [itemsDescription, setItemsDescription] = useState('');
   const [salesAccount, setSalesAccount] = useState('');
   const [salesDescription, setSalesDescription] = useState('');
   const [salesPrice, setSalesPrice] = useState(0.0);
   const [salesTax, setSalesTax] = useState('')
-  const [expenseAccount, setExpenseAccount] = useState('');
-  const [expenseDescription, setExpenseDescription] = useState('');
-  const [purchasePrice, setPurchasePrice] = useState(0.0);
-  const [expenseTax, setExpenseTax] = useState('')
+  const [expensesAccount, setExpensesAccount] = useState('');
+  const [expensesDescription, setExpensesDescription] = useState('');
+  const [purchasesPrice, setPurchasesPrice] = useState(0.0);
+  const [expensesTax, setExpensesTax] = useState('')
   const [supplier, setSupplier] = useState('')
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
@@ -146,6 +147,25 @@ export default function InventoryItem() {
     const handleEdit = async () => {
       tasks.map((task) => {
           setName(task.data.name)
+          setSKU(task.data.sku)
+          setUnit(task.data.unit)
+          setCategory(task.data.categroy)
+          setDivision(task.data.division)
+          setQtyAtHand(task.data.qtyAtHand)
+          setReorderQty(task.data.reorderQty)
+          setEarliestDate(task.data.earliestDate)
+          setLog(task.data.log)
+          setItemsAccount(task.data.itemsAccount)
+          setItemsDescription(task.data.itemsDescription) 
+          setSalesAccount(task.data.salesAccount)
+          setSalesDescription(task.data.salesDescription)
+          setSalesPrice(task.data.salesPrice)
+          setSalesTax(task.data.salesTax)
+          setExpensesAccount(task.data.expensesAccount)
+          setExpensesDescription(task.data.expensesDescription)
+          setPurchasesPrice(task.data.purchasesPrice)
+          setExpensesTax(task.data.expensesTax)
+          setSupplier(task.data.supplier)
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -189,22 +209,23 @@ export default function InventoryItem() {
     if(a<100){
     alert("name: "+ name+ 
     ", sku: "+ sku+
+    ". unit: "+unit+
     ", category: "+category+
     ", division: "+division+
     ", qtyAtHand: "+qtyAtHand+
     ", reorderQty: "+reorderQty+
     ", earliestDate: "+earliestDate+
     ", longDate: "+log+
-    ", itemsAccount: "+itemsAccount+
-    ", itemDescription: "+itemDescription+
+    ", itemsAccount: "+itemssAccount+
+    ", itemDescription: "+itemsDescription+
     ", salesAccount: "+salesAccount+
     ", salesDescription: "+salesDescription+
     ", salesPrice: "+salesPrice+
     ", salesTax: "+salesTax+
-    ", expenseAccount: "+expenseAccount+
-    ", expenseDescription: "+expenseDescription+
-    ", purchasePrice: "+purchasePrice+
-    ", expenseTax: "+expenseTax+
+    ", expenseAccount: "+expensesAccount+
+    ", expenseDescription: "+expensesDescription+
+    ", purchasePrice: "+purchasesPrice+
+    ", expenseTax: "+expensesTax+
     ", supplier: "+supplier+
     ", rootPath: "+mroot);
       return;
@@ -219,6 +240,7 @@ export default function InventoryItem() {
       batch.set(locationsRef, {
           name: name,
           sku: sku,
+          unit: unit,
           category: category,
           division: division,
           qtyAtHand: qtyAtHand,
@@ -226,15 +248,15 @@ export default function InventoryItem() {
           earliestDate: earliestDate,
           longDate: log,
           itemsAccount: itemsAccount,
-          itemDescription: itemDescription,
+          itemDescription: itemsDescription,
           salesAccount: salesAccount,
           salesDescription: salesDescription,
           salesPrice: salesPrice,
           salesTax: salesTax,
-          expenseAccount: expenseAccount,
-          expenseDescription: expenseDescription,
-          purchasePrice: purchasePrice,
-          expenseTax: expenseTax,
+          expenseAccount: expensesAccount,
+          expenseDescription: expensesDescription,
+          purchasePrice: purchasesPrice,
+          expenseTax: expensesTax,
           supplier: supplier,
           rootPath: mroot,
           created: Timestamp.now(),
@@ -248,6 +270,7 @@ export default function InventoryItem() {
       batch.update(locationsUpdateRef, {
         name: name,
         sku: sku,
+        unit: unit,
         category: category,
         division: division,
         qtyAtHand: qtyAtHand,
@@ -255,15 +278,15 @@ export default function InventoryItem() {
         earliestDate: earliestDate,
         longDate: log,
         itemsAccount: itemsAccount,
-        itemDescription: itemDescription,
+        itemDescription: itemsDescription,
         salesAccount: salesAccount,
         salesDescription: salesDescription,
         salesPrice: salesPrice,
         salesTax: salesTax,
-        expenseAccount: expenseAccount,
-        expenseDescription: expenseDescription,
-        purchasePrice: purchasePrice,
-        expenseTax: expenseTax,
+        expenseAccount: expensesAccount,
+        expenseDescription: expensesDescription,
+        purchasePrice: purchasesPrice,
+        expenseTax: expensesTax,
         supplier: supplier,
         rootPath: mroot,
         created: Timestamp.now()
@@ -369,6 +392,11 @@ return (
               value={sku}
               size = "10" 
               placeholder="sku" /><br/>
+              <input 
+              onChange={(e) => setUnit(e.target.value)} 
+              value={unit}
+              size = "10" 
+              placeholder="unit" /><br/>
         <label for="category"> Category<br/>
         <select 
         name='category' 
@@ -441,8 +469,8 @@ return (
       }
     </select></label><br/>
           <input 
-            onChange={(e) => setItemDescription(e.target.value)} 
-            value={itemDescription}
+            onChange={(e) => setItemsDescription(e.target.value)} 
+            value={itemsDescription}
             size = "10" 
             placeholder="Description" /><br/>
         <label for="salesAccount"> Sales Account:<br/>
@@ -494,16 +522,16 @@ return (
       }
     </select></label><br/>
 
-    <label for="expenseAccount"> Expense Account:<br/>
+    <label for="expensesAccount"> Expense Account:<br/>
         <select 
-        name='expenseAccount' 
-        onChange={(e) => setExpenseAccount(e.target.value)  } 
+        name='expensesAccount' 
+        onChange={(e) => setExpensesAccount(e.target.value)  } 
         value={expenseAccount}>
         {
           accountsDB.map((cat, key) =>{
-            if(expenseAccount == cat.data.rootPath && cat.data.type == 'Cost of sales')
+            if(expenseAccounts == cat.data.rootPath && cat.data.type == 'Cost of sales')
          return(
-          <option key={key} value={expenseAccount} selected >{expenseAccount}</option>
+          <option key={key} value={expensesAccount} selected >{expensesAccount}</option>
            );
            else if(cat.data.type == 'Cost of sales'){
              return(
@@ -514,26 +542,26 @@ return (
       }
     </select></label><br/>
           <input 
-            onChange={(e) => setExpenseDescription(e.target.value)} 
-            value={expenseDescription}
+            onChange={(e) => setExpensesDescription(e.target.value)} 
+            value={expensesDescription}
             size = "10" 
             placeholder="Description" /><br/>
             Purchase Price:<br/>
             <input type="number" 
-              onChange={(e) => setPurchasePrice(e.target.value)} 
-              value={purchasePrice}
+              onChange={(e) => setPurchasesPrice(e.target.value)} 
+              value={purchasesPrice}
               size = "5" 
               placeholder="0.0" /><br/>
-        <label for="expenseTax"> Expense Tax:<br/>
+        <label for="expensesTax"> Expense Tax:<br/>
         <select 
-        name='expenseTax' 
-        onChange={(e) => setExpenseTax(e.target.value)  } 
-        value={expenseTax}>
+        name='expensesTax' 
+        onChange={(e) => setExpensesTax(e.target.value)  } 
+        value={expensesTax}>
         {
           taxDB.map((cat, key) =>{
-            if(expenseTax === cat.data.title)
+            if(expensesTax === cat.data.title)
          return(
-          <option key={key} value={expenseTax} selected >{expenseTax}</option>
+          <option key={key} value={expensesTax} selected >{expensesTax}</option>
            );
            else
            return(
