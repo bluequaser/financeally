@@ -140,18 +140,9 @@ export default function IncomeExpenseAccount() {
     mroot = name;
    // check name exists
    dbase.map((item) =>{
-    let val = item.data.rootPath;
-    if(val.includes(":")){
-       let mstr = val.split(":")
-       for(let i = 0; i< mstr.length; i++){
-         console.log(name+" : "+mstr[i])
-         if(mstr[i] === name && item.data.uniqueId !== uniqueId)
-         nameExists = true;
-       }
-    } else {
-      if(item.data.name === name && item.data.uniqueId !== uniqueId)
+
+      if(item.data.name === name && item.data.uniqueId !== uniqueId && item.data.majorGroup === 'Income Statement')
         nameExists = true;
-    }
   }) 
 
     if(nameExists){

@@ -206,7 +206,7 @@ export default function BalanceSheetAccount() {
 dbase.map((item) =>{
   let val = item.data.name;
 
-    if(item.data.name === name && item.data.uniqueId !== uniqueId && item.data.type !== 'Income' && item.data.type !== 'Expense' && item.data.type !== 'Cost of sales')
+    if(item.data.name === name && item.data.uniqueId !== uniqueId && item.data.majorGroup === 'Balance Sheet')
       nameExists = true;
 }) 
 
