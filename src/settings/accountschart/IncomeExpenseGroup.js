@@ -31,6 +31,7 @@ export default function IncomeExpenseGroup() {
   const [isSubGroupOf, setIsSubGroupOf] = useState(false)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
+  const [majorGroup, setMajorGroup] = useState('Income Statement')
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
       const taskColRef1 = collection(db, 'groupsincomeexpense');
@@ -140,6 +141,7 @@ export default function IncomeExpenseGroup() {
         subgroupof: item.subgroupof,
         type: item.type,
         rootPath: item.rootPath,
+        majorGroup: majorGroup,
         created: Timestamp.now(),
         uniqueId: nanoid()
     }); 
@@ -155,6 +157,7 @@ export default function IncomeExpenseGroup() {
           subgroupof: msubgroupof,
           type: type,
           rootPath: mroot,
+          majorGroup: majorGroup,
           created: Timestamp.now(),
           uniqueId: nanoid()
       }); 

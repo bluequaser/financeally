@@ -31,6 +31,7 @@ export default function BalanceSheetGroup() {
   const [isSubGroupOf, setIsSubGroupOf] = useState(false)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
+  const [majorGroup, setMajorGroup] = useState('Balance Sheet')
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
       const taskColRef1 = collection(db, 'groupsbalancesheet');
