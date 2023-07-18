@@ -184,8 +184,9 @@ export default function BalanceSheetAccount() {
       
     });
 
-    mroot = name;
+    mroot = cateory+":"+name;
    // check name exists
+/*   
    dbase.map((item) =>{
     let val = item.data.rootPath;
     if(val.includes(":")){
@@ -200,6 +201,13 @@ export default function BalanceSheetAccount() {
         nameExists = true;
     }
   }) 
+*/
+dbase.map((item) =>{
+  let val = item.data.name;
+
+    if(item.data.name === name && item.data.uniqueId !== uniqueId && item.data.type !== 'Income' && item.data.type !== 'Expense' && item.data.type !== 'Cost of sales')
+      nameExists = true;
+}) 
 
     if(nameExists){
       
