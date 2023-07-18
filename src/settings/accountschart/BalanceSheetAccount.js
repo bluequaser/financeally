@@ -184,9 +184,9 @@ export default function BalanceSheetAccount() {
       type = mtask.data.type
       
     });
-
-    mroot = cateory+":"+name;
-   // check name exists
+  
+    mroot = group+":"+name;
+    // check name exists
 /*   
    dbase.map((item) =>{
     let val = item.data.rootPath;
@@ -203,6 +203,7 @@ export default function BalanceSheetAccount() {
     }
   }) 
 */
+
 dbase.map((item) =>{
   let val = item.data.name;
 
@@ -219,6 +220,11 @@ dbase.map((item) =>{
     tasks.map((task) => {
       moriginalName = task.data.name;
     })
+    let a  = 10;
+    if(a < 100){
+      alert("name : "+name+"<br/> code : "+code+"<br/>"+"Description : "+description+"<br/>"+"type : "+type+" group : "+group  )
+      return
+    }
     const batch = writeBatch(db);
 
     if(uniqueId === 'Add New'){
