@@ -195,6 +195,7 @@ export default function InventoryItem() {
     let type = "";
     let mcategory = category;
     let mdivision = division;
+    let minventoryAccount = inventoryAccount;
     let msalesAccount = salesAccount;
     let mexpensesAccount = expensesAccount;
     let counter  = 0;
@@ -217,6 +218,16 @@ export default function InventoryItem() {
          mdivision = div.data.name;
       })
     } 
+    
+    if(inventoryAccount === ""){
+      accountsDB.map((invent, key) =>{
+        if(counter === 0 && invent.data.type === 'Inventory'){
+         minventoryAccount = invent.data.rootPath;
+         counter  = 1;
+        }
+      })
+    } 
+    counter = 0;
     if(salesAccount === ""){
       accountsDB.map((sale, key) =>{
         if(counter === 0 && sale.data.type === 'Income'){
