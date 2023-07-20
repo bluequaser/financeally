@@ -228,7 +228,7 @@ export default function InventoryItem() {
 
     if(expensesAccount === ""){
       accountsDB.map((expense, key) =>{
-        if(key === 0 && expense.data.group.includes('Cost of sales'))
+        if(key === 0 && expense.data.type === 'Cost of sales')
          mexpensesAccount = expense.data.rootPath;
       })
     } else 
