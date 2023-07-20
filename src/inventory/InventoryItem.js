@@ -193,10 +193,11 @@ export default function InventoryItem() {
     var mdate = yyyy + '-' + mm + '-' + dd;
     let dateToInput = "";
     let type = "";
-    let mcategory = "";
-    let mdivision = "";
-    let msalesAccount = "";
-    let mexpensesAccount = "";
+    let mcategory = category;
+    let mdivision = division;
+    let msalesAccount = salesAccount;
+    let mexpensesAccount = expensesAccount;
+    let counter  = 0;
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
@@ -208,32 +209,31 @@ export default function InventoryItem() {
         if(key === 0)
          mcategory = cat.data.rootPath
       })
-    } else 
-    mcategory = category;
+    } 
     
     if(division === ""){
       divisionDB.map((div, key) =>{
         if(key === 0)
          mdivision = div.data.name;
       })
-    } else 
-    mdivision = division;
+    } 
     if(salesAccount === ""){
       accountsDB.map((sale, key) =>{
-        if(key === 0 && sale.data.type === 'Income')
+        if(counter === 0 && sale.data.type === 'Income'){
          msalesAccount = sale.data.rootPath;
+         counter  = 1;
+        }
       })
-    } else
-    msalesAccount = salesAccount;
-
+    } 
+    counter  = 0;
     if(expensesAccount === ""){
       accountsDB.map((expense, key) =>{
-        if(key === 0 && expense.data.type === 'Cost of sales')
+        if(counter == 0 && expense.data.type === 'Cost of sales'){
          mexpensesAccount = expense.data.rootPath;
+         counter  = 1;
+        }
       })
-    } else 
-     mexpensesAccount = expensesAccount;
-
+    } 
     console.log(mcategory +", "+ mdivision)
     if(name == ""){
      alert("Please enter a name!");
@@ -281,7 +281,7 @@ export default function InventoryItem() {
           division: division,
           qtyAtHand: qtyAtHand,
           reorderQty: reorderQty,
-          earliestDate: earliestDate,
+          earliestDate: mdate,
           longDate: log,
           itemsAccount: itemsAccount,
           itemDescription: itemsDescription,
@@ -311,7 +311,7 @@ export default function InventoryItem() {
         division: division,
         qtyAtHand: qtyAtHand,
         reorderQty: reorderQty,
-        earliestDate: earliestDate,
+        earliestDate: mdate,
         longDate: log,
         itemsAccount: itemsAccount,
         itemDescription: itemsDescription,

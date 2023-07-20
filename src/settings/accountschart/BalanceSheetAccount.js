@@ -174,10 +174,7 @@ export default function BalanceSheetAccount() {
      }
      if(mopeningBalance < 0)
      mopeningBalance = mopeningBalance * -1;
-    if(earliestDate ===''){
-      alert("Please enter the earlist date account can be active!");
-      return
-    }
+
     groupsDB.map((mtask) =>{
       
       if(mtask.data.rootPath === group)
@@ -242,7 +239,7 @@ dbase.map((item) =>{
           taxCode: taxCode,
           openingBalance: openingBalance,
           creditDebit: creditDebit,
-          earliestDate: earliestDate,
+          earliestDate: mdate,
           longDate: log,
           rootPath: mroot,
           majorGroup: majorGroup,
@@ -266,7 +263,7 @@ dbase.map((item) =>{
           taxCode: taxCode,
           openingBalance: openingBalance,
           creditDebit: creditDebit,
-          earliestDate: earliestDate,
+          earliestDate: mdate,
           longDate: log,
           rootPath: mroot,
           created: Timestamp.now()
@@ -305,8 +302,6 @@ dbase.map((item) =>{
           else 
           console.log("Success..updating ")
         });
-
-
   }
 /* function to delete a document from firstore */ 
 const handleDelete = async () => {
