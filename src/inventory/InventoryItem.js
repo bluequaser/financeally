@@ -498,7 +498,7 @@ return (
             if(cat.data.rootPath === inventoryAccount)
          return( 
           <option key={key} value={inventoryAccount} selected >{inventoryAccount}</option>
-           );
+           ); 
            else if(cat.data.type === 'Inventory')
            return(
             <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
