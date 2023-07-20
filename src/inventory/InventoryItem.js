@@ -33,8 +33,8 @@ export default function InventoryItem() {
   const [qtyAtHand, setQtyAtHand] = useState(0.0);
   const [reorderQty, setReorderQty] = useState(0.0);
   const [earliestDate, setEarliestDate] = useState('');
-  const [itemsAccount, setItemsAccount] = useState("");
-  const [itemsDescription, setItemsDescription] = useState('');
+  const [inventoryAccount, setInventoryAccount] = useState("");
+  const [inventoryDescription, setInventoryDescription] = useState('');
   const [salesAccount, setSalesAccount] = useState('');
   const [salesDescription, setSalesDescription] = useState('');
   const [salesPrice, setSalesPrice] = useState(0.0);
@@ -155,8 +155,8 @@ export default function InventoryItem() {
           setReorderQty(task.data.reorderQty)
           setEarliestDate(task.data.earliestDate)
           setLog(task.data.log)
-          setItemsAccount(task.data.itemsAccount)
-          setItemsDescription(task.data.itemsDescription) 
+          setInventoryAccount(task.data.inventoryAccount)
+          setInventoryDescription(task.data.inventoryDescription) 
           setSalesAccount(task.data.salesAccount)
           setSalesDescription(task.data.salesDescription)
           setSalesPrice(task.data.salesPrice)
@@ -241,6 +241,7 @@ export default function InventoryItem() {
     }
 
     mroot = mcategory+":"+name;
+    /*
     let a = 10;
     if(a<100){
     alert("name: "+ name+ 
@@ -252,8 +253,8 @@ export default function InventoryItem() {
     ", reorderQty: "+reorderQty+
     ", earliestDate: "+mdate+
     ", longDate: "+log+
-    ", itemsAccount: "+itemsAccount+
-    ", itemDescription: "+itemsDescription+
+    ", inventoryAccount: "+inventoryAccount+
+    ", inventoryDescription: "+inventoryDescription+
     ", salesAccount: "+msalesAccount+
     ", salesDescription: "+salesDescription+
     ", salesPrice: "+salesPrice+
@@ -266,6 +267,7 @@ export default function InventoryItem() {
     ", rootPath: "+mroot);
       return;
     }
+    */
     const batch = writeBatch(db);
 
 
@@ -283,8 +285,8 @@ export default function InventoryItem() {
           reorderQty: reorderQty,
           earliestDate: mdate,
           longDate: log,
-          itemsAccount: itemsAccount,
-          itemDescription: itemsDescription,
+          inventoryAccount: inventoryAccount,
+          inventoryDescription: inventoryDescription,
           salesAccount: salesAccount,
           salesDescription: salesDescription,
           salesPrice: salesPrice,
@@ -313,8 +315,8 @@ export default function InventoryItem() {
         reorderQty: reorderQty,
         earliestDate: mdate,
         longDate: log,
-        itemsAccount: itemsAccount,
-        itemDescription: itemsDescription,
+        inventoryAccount: inventoryAccount,
+        inventoryDescription: inventoryDescription,
         salesAccount: salesAccount,
         salesDescription: salesDescription,
         salesPrice: salesPrice,
@@ -486,27 +488,27 @@ return (
             onChange={handleDateChange}
              ref={dateInputRef}
             /><br/>{" "} {earliestDate}<br/>
-        <label for="itemsAccount"> Inventory Account:<br/>
+        <label for="inventoryAccount"> Inventory Account:<br/>
         <select 
-        name='itemsAccount' 
-        onChange={(e) => setItemsAccount(e.target.value)  } 
-        value={itemsAccount}>
+        name='inventoryAccount' 
+        onChange={(e) => setInventoryAccount(e.target.value)  } 
+        value={inventoryAccount}>
         {
-          itemsDB.map((cat, key) =>{
-            if(category === cat.data.name.slice(0,cat.data.name.lastIndexOf(":")))
-         return(
-          <option key={key} value={itemsAccount} selected >{itemsAccount}</option>
+          accountsDB.map((cat, key) =>{
+            if(cat.data.rootPath === inventoryAccount)
+         return( 
+          <option key={key} value={inventoryAccount} selected >{inventoryAccount}</option>
            );
-           else
+           else if(cat.data.type === 'Inventory')
            return(
-            <option  key={key} value={cat.data.name} >{cat.data.name}</option>
+            <option  key={key} value={cat.data.rootPath} >{cat.data.rootPath}</option>
              );                       
          })
       }
     </select></label><br/>
           <input 
-            onChange={(e) => setItemsDescription(e.target.value)} 
-            value={itemsDescription}
+            onChange={(e) => setInventoryDescription(e.target.value)} 
+            value={inventoryDescription}
             size = "10" 
             placeholder="Description" /><br/>
         <label for="salesAccount"> Sales Account:<br/>
