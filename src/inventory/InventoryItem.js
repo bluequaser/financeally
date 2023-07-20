@@ -203,7 +203,18 @@ export default function InventoryItem() {
      alert("Please enter a name!");
       return
     }
-
+    if(category === ""){
+      categoryDB.map((cat, key) =>{
+        if(key === 0)
+         setCategory(cat.data.rootPath)
+      })
+    }
+    if(division === ""){
+      divisionDB.map((div, key) =>{
+        if(key === 0)
+         setDivision(div.data.rootPath)
+      })
+    }
     mroot = category+":"+name;
     let a = 10;
     if(a<100){
