@@ -218,7 +218,7 @@ export default function InventoryItem() {
          mdivision = div.data.name;
       })
     } 
-    
+
     if(inventoryAccount === ""){
       accountsDB.map((invent, key) =>{
         if(counter === 0 && invent.data.type === 'Inventory'){
@@ -226,7 +226,7 @@ export default function InventoryItem() {
          counter  = 1;
         }
       })
-    } 
+    }  
     counter = 0;
     if(salesAccount === ""){
       accountsDB.map((sale, key) =>{
