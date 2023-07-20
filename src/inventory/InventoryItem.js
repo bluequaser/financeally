@@ -193,47 +193,72 @@ export default function InventoryItem() {
     var mdate = yyyy + '-' + mm + '-' + dd;
     let dateToInput = "";
     let type = "";
+    let mcategory = "";
+    let mdivision = "";
+    let msalesAccount = "";
+    let mexpensesAccount = "";
     tasks.map((task) =>{
       
       if(task.data.uniqueId === uniqueId)
       id=task.id
       
     });
+    if(category === ""){
+      categoryDB.map((cat, key) =>{
+        if(key === 0)
+         mcategory = cat.data.rootPath
+      })
+    } else 
+    mcategory = category;
+    
+    if(division === ""){
+      divisionDB.map((div, key) =>{
+        if(key === 0)
+         mdivision = div.data.name;
+      })
+    } else 
+    mdivision = division;
+    if(salesAccount === ""){
+      accountsDB.map((sale, key) =>{
+        if(key === 0 && sale.data.type === 'Income')
+         msalesAccount = sale.data.rootPath;
+      })
+    } else
+    msalesAccount = salesAccount;
+
+    if(expensesAccount === ""){
+      accountsDB.map((expense, key) =>{
+        if(key === 0 && expense.data.group.includes('Cost of sales'))
+         mexpensesAccount = expense.data.rootPath;
+      })
+    } else 
+     mexpensesAccount = expensesAccount;
+
+    console.log(mcategory +", "+ mdivision)
     if(name == ""){
      alert("Please enter a name!");
       return
     }
-    if(category === ""){
-      categoryDB.map((cat, key) =>{
-        if(key === 0)
-         setCategory(cat.data.rootPath)
-      })
-    }
-    if(division === ""){
-      divisionDB.map((div, key) =>{
-        if(key === 0)
-         setDivision(div.data.rootPath)
-      })
-    }
-    mroot = category+":"+name;
+
+    mroot = mcategory+":"+name;
     let a = 10;
     if(a<100){
     alert("name: "+ name+ 
     ", sku: "+ sku+
     ". unit: "+unit+
-    ", category: "+category+
-    ", division: "+division+
+    ", category: "+mcategory+
+    ", division: "+mdivision+
     ", qtyAtHand: "+qtyAtHand+
     ", reorderQty: "+reorderQty+
-    ", earliestDate: "+earliestDate+
+    ", earliestDate: "+mdate+
     ", longDate: "+log+
-    ", itemsAccount: "+itemssAccount+
+    ", itemsAccount: "+itemsAccount+
     ", itemDescription: "+itemsDescription+
-    ", salesAccount: "+salesAccount+
+    ", salesAccount: "+msalesAccount+
     ", salesDescription: "+salesDescription+
     ", salesPrice: "+salesPrice+
     ", salesTax: "+salesTax+
-    ", expenseAccount: "+expensesAccount+
+    ", expenseAccount: "+mexpensesAccount+
     ", expenseDescription: "+expensesDescription+
     ", purchasePrice: "+purchasesPrice+
     ", expenseTax: "+expensesTax+
