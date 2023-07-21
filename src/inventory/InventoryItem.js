@@ -45,6 +45,7 @@ export default function InventoryItem() {
   const [purchasesPrice, setPurchasesPrice] = useState(0.0);
   const [expensesTax, setExpensesTax] = useState('')
   const [supplier, setSupplier] = useState('')
+  const [isActive, setIsActive] = useState(true)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
   const dateInputRef = useRef(null); 
@@ -168,16 +169,18 @@ export default function InventoryItem() {
           setPurchasesPrice(task.data.purchasesPrice)
           setExpensesTax(task.data.expensesTax)
           setSupplier(task.data.supplier)
+          if(task.data.isActive === "no")
+            setIsActive(false)
       })
       setEdit(true);
       setEditLabel("Edit")
-      console.log("ok here5")
 
     }
 
   /* function to update firestore */
   const handleUpdate = async () => {
    
+    let active = "yes";
     let nameExists = false;
     var id="";
     let mroot = "";
@@ -284,8 +287,11 @@ export default function InventoryItem() {
       return;
     }
     */
-    const batch = writeBatch(db);
 
+    if(!isActive)
+    active = "no";
+
+    const batch = writeBatch(db);
 
     if(uniqueId === 'Add New'){
 
@@ -312,6 +318,7 @@ export default function InventoryItem() {
           purchasesPrice: purchasesPrice,
           expensesTax: expensesTax,
           supplier: supplier,
+          isActive: active,
           rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
@@ -342,6 +349,7 @@ export default function InventoryItem() {
         purchasesPrice: purchasesPrice,
         expensesTax: expensesTax,
         supplier: supplier,
+        isActive: active,
         rootPath: mroot,
         created: Timestamp.now()
       }); 
@@ -455,6 +463,9 @@ return (
             <b>Supplier :</b> {tasks.map((task)=>(
               task.data.supplier
             ))}  <br/>
+            <b>isActive :</b> {tasks.map((task)=>(
+              task.data.isActive
+            ))} <br/>
             <b>Root Path :</b> {tasks.map((task)=>(
               task.data.rootPath
             ))}
@@ -698,7 +709,12 @@ return (
              );                       
          })
       }
-    </select></label><br/>
+    </select></label><br/> 
+            {uniqueId === 'Add New' ? null : 
+            <input type="checkbox" 
+            onChange={(e) => setIsActive(!isActive)} 
+            checked={isActive}/> }
+             {uniqueId === 'Add New' ? null : <span>isActive</span>} <br/>
             <p>
               <button
            onClick={() => {
