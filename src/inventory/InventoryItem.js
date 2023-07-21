@@ -19,7 +19,7 @@ export default function InventoryItem() {
   const[uniqueId,setUniqueId] = useState(params.itemlistId);
 
   const [tasks, setTasks] = useState([]) 
-  const [itemsDB, setItemDB] = useState([])
+  const [itemsDB, setItemsDB] = useState([])
   const [accountsDB, setAccountsDB] = useState([]) 
   const [taxDB, setTaxDB] = useState([]) 
   const [supplierDB, setSupplierDB] = useState([]) 
@@ -88,7 +88,7 @@ export default function InventoryItem() {
     useEffect(() => {
       const taskColRef = query(collection(db, 'itemslist'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
-        setItemDB(snapshot.docs.map(doc => ({
+        setItemsDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))

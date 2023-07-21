@@ -23,7 +23,7 @@ export default function Category() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [itemsDB, setItemDB] = useState([])
+  const [itemsDB, setItemsDB] = useState([])
   const [table, setTable] = useState('categories') 
   const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
@@ -61,7 +61,7 @@ export default function Category() {
     useEffect(() => {
       const taskColRef = query(collection(db, 'itemslist'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
-        setItemDB(snapshot.docs.map(doc => ({
+        setItemsDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
