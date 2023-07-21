@@ -23,6 +23,7 @@ export default function Category() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
+  const [itemsDB, setItemDB] = useState([])
   const [table, setTable] = useState('categories') 
   const [name, setName] = useState('')
   const [originalName, setOriginalName] = useState('')
@@ -57,6 +58,15 @@ export default function Category() {
       })
     },[])
 
+    useEffect(() => {
+      const taskColRef = query(collection(db, 'itemslist'), orderBy('name'))
+      onSnapshot(taskColRef, (snapshot) => {
+        setItemDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
 
 
     const handleNameChange = async (e) => {
@@ -235,6 +245,7 @@ export default function Category() {
     else
     mroot = name;
     // check name exists
+    /*
     dbase.map((item) =>{
       let val = item.data.rootPath;
       if(val.includes(":")){
@@ -250,7 +261,13 @@ export default function Category() {
       }
 
     })
-    
+    */
+    dbase.map((item) =>{
+      let val = item.data.name;
+      if(val === name && item.data.uniqueId !== uniqueId )
+           nameExists = true;
+
+    })
 
     if(nameExists){
       alert("Name already exists! Please enter a unique name!")
@@ -314,7 +331,26 @@ export default function Category() {
                rootPath: revisedRootPath,
                created: Timestamp.now()
               });
-          }
+
+              itemsDB.map((mitem) =>{
+                let oldcategory = mitem.data.category;
+                let oldItemslistRootPath = mitem.data.rootPath;
+                let revisedItemslistCategory = oldCategory.replace(moriginalName, name)
+                let revisedItemslistRootPath = "";
+                if(revisedItemslistCategory)
+                  revisedItemslistRootPath = revisedItemslistCategory+":"+name;
+                else
+                  revisedItemslistRootPath = name;
+                const itemslistUpdateRef = doc(db, 'itemslist', mitem.id);
+                   batch.update(itemslistUpdateRef, {
+                   category: revisedItemslistCategory,
+                   rootPath: revisedItemslistRootPath,
+                   created: Timestamp.now()
+                  });
+              });
+
+
+          }// end if(updateCategory)..
         })
     }
         // Commit the batch

@@ -19,7 +19,7 @@ export default function InventoryItem() {
   const[uniqueId,setUniqueId] = useState(params.itemlistId);
 
   const [tasks, setTasks] = useState([]) 
-  const [itemsDB, setItemsDB] = useState([])
+  const [itemsDB, setItemDB] = useState([])
   const [accountsDB, setAccountsDB] = useState([]) 
   const [taxDB, setTaxDB] = useState([]) 
   const [supplierDB, setSupplierDB] = useState([]) 
@@ -88,7 +88,7 @@ export default function InventoryItem() {
     useEffect(() => {
       const taskColRef = query(collection(db, 'itemslist'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
-        setItemsDB(snapshot.docs.map(doc => ({
+        setItemDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -219,7 +219,7 @@ export default function InventoryItem() {
       })
     } 
 
-    if(inventoryAccount === ""){
+    if(minventoryAccount === ""){
       accountsDB.map((invent, key) =>{
         if(counter === 0 && invent.data.type === 'Inventory'){
          minventoryAccount = invent.data.rootPath;
@@ -228,7 +228,7 @@ export default function InventoryItem() {
       })
     }  
     counter = 0;
-    if(salesAccount === ""){
+    if(msalesAccount === ""){
       accountsDB.map((sale, key) =>{
         if(counter === 0 && sale.data.type === 'Income'){
          msalesAccount = sale.data.rootPath;
@@ -237,7 +237,7 @@ export default function InventoryItem() {
       })
     } 
     counter  = 0;
-    if(expensesAccount === ""){
+    if(mexpensesAccount === ""){
       accountsDB.map((expense, key) =>{
         if(counter == 0 && expense.data.type === 'Cost of sales'){
          mexpensesAccount = expense.data.rootPath;
@@ -250,8 +250,10 @@ export default function InventoryItem() {
      alert("Please enter a name!");
       return
     }
-
-    mroot = mcategory+":"+name;
+    if(mcategory)
+     mroot = mcategory+":"+name;
+    else 
+     mroot = name;
     /*
     let a = 10;
     if(a<100){
@@ -296,13 +298,13 @@ export default function InventoryItem() {
           reorderQty: reorderQty,
           earliestDate: mdate,
           longDate: log,
-          inventoryAccount: inventoryAccount,
+          inventoryAccount: minventoryAccount,
           inventoryDescription: inventoryDescription,
-          salesAccount: salesAccount,
+          salesAccount: msalesAccount,
           salesDescription: salesDescription,
           salesPrice: salesPrice,
           salesTax: salesTax,
-          expenseAccount: expensesAccount,
+          expenseAccount: mexpensesAccount,
           expenseDescription: expensesDescription,
           purchasePrice: purchasesPrice,
           expenseTax: expensesTax,
@@ -393,8 +395,62 @@ return (
             <button onClick={handlePrint} >
                 🖨️
               </button> <br/>
-            <b>Name:</b> {tasks.map((task)=>(
+            <b>Name :</b> {tasks.map((task)=>(
               task.data.name
+            ))} <br/>
+            <b>SKU :</b> {tasks.map((task)=>(
+              task.data.sku
+            ))} <br/>
+            <b>Unit :</b> {tasks.map((task)=>(
+              task.data.unit
+            ))} <br/>
+            <b>Category :</b> {tasks.map((task)=>(
+              task.data.category
+            ))} <br/>
+            <b>Division :</b> {tasks.map((task)=>(
+              task.data.division
+            ))} <br/>
+            <b>Qty at hand :</b> {tasks.map((task)=>(
+              task.data.qtyAtHand
+            ))} <br/>
+            <b>Reorder Qty :</b> {tasks.map((task)=>(
+              task.data.reorderQty
+            ))} <br/>
+            <b>Earliest Date :</b> {tasks.map((task)=>(
+              task.data.earliestDate
+            ))} <br/>
+            <b>Inventory Account :</b> {tasks.map((task)=>(
+              task.data.inventoryAccount
+            ))} <br/>
+            <b>Description :</b> {tasks.map((task)=>(
+              task.data.inventoryDescription
+            ))} <br/>
+            <b>Sales Account :</b> {tasks.map((task)=>(
+              task.data.salesAccount
+            ))} <br/>
+            <b>Description :</b> {tasks.map((task)=>(
+              task.data.salesDescription
+            ))} <br/>
+            <b>Sales Price :</b> {tasks.map((task)=>(
+              task.data.salesPrice
+            ))} <br/>
+            <b>Tax :</b> {tasks.map((task)=>(
+              task.data.salesTax
+            ))} <br/>
+            <b>Expense Account :</b> {tasks.map((task)=>(
+              task.data.expenseAccount
+            ))} <br/>
+            <b>Description :</b> {tasks.map((task)=>(
+              task.data.expenseDescription
+            ))} <br/>
+            <b>Purchase Price :</b> {tasks.map((task)=>(
+              task.data.purchasePrice
+            ))} <br/>
+            <b>Tax :</b> {tasks.map((task)=>(
+              task.data.expenseTax
+            ))} <br/>
+            <b>Supplier :</b> {tasks.map((task)=>(
+              task.data.supplier
             ))} 
       <p>
 
