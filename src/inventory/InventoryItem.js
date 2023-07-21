@@ -305,9 +305,9 @@ export default function InventoryItem() {
           salesPrice: salesPrice,
           salesTax: salesTax,
           expenseAccount: mexpensesAccount,
-          expenseDescription: expensesDescription,
-          purchasePrice: purchasesPrice,
-          expenseTax: expensesTax,
+          expensesDescription: expensesDescription,
+          purchasesPrice: purchasesPrice,
+          expensesTax: expensesTax,
           supplier: supplier,
           rootPath: mroot,
           created: Timestamp.now(),
@@ -334,10 +334,10 @@ export default function InventoryItem() {
         salesDescription: salesDescription,
         salesPrice: salesPrice,
         salesTax: salesTax,
-        expenseAccount: expensesAccount,
-        expenseDescription: expensesDescription,
-        purchasePrice: purchasesPrice,
-        expenseTax: expensesTax,
+        expensesAccount: expensesAccount,
+        expensesDescription: expensesDescription,
+        purchasesPrice: purchasesPrice,
+        expensesTax: expensesTax,
         supplier: supplier,
         rootPath: mroot,
         created: Timestamp.now()
@@ -438,16 +438,16 @@ return (
               task.data.salesTax
             ))} <br/>
             <b>Expense Account :</b> {tasks.map((task)=>(
-              task.data.expenseAccount
+              task.data.expensesAccount
             ))} <br/>
             <b>Description :</b> {tasks.map((task)=>(
-              task.data.expenseDescription
+              task.data.expensesDescription
             ))} <br/>
             <b>Purchase Price :</b> {tasks.map((task)=>(
-              task.data.purchasePrice
+              task.data.purchasesPrice
             ))} <br/>
             <b>Tax :</b> {tasks.map((task)=>(
-              task.data.expenseTax
+              task.data.expensesTax
             ))} <br/>
             <b>Supplier :</b> {tasks.map((task)=>(
               task.data.supplier
