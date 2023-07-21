@@ -304,7 +304,7 @@ export default function InventoryItem() {
           salesDescription: salesDescription,
           salesPrice: salesPrice,
           salesTax: salesTax,
-          expenseAccount: mexpensesAccount,
+          expensesAccount: mexpensesAccount,
           expensesDescription: expensesDescription,
           purchasesPrice: purchasesPrice,
           expensesTax: expensesTax,
