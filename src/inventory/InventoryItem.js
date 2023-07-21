@@ -33,6 +33,7 @@ export default function InventoryItem() {
   const [qtyAtHand, setQtyAtHand] = useState(0.0);
   const [reorderQty, setReorderQty] = useState(0.0);
   const [earliestDate, setEarliestDate] = useState('');
+  const [log, setLog] = useState(0.0);
   const [inventoryAccount, setInventoryAccount] = useState("");
   const [inventoryDescription, setInventoryDescription] = useState('');
   const [salesAccount, setSalesAccount] = useState('');
@@ -145,11 +146,12 @@ export default function InventoryItem() {
       })
     },[])
     const handleEdit = async () => {
+
       tasks.map((task) => {
           setName(task.data.name)
           setSKU(task.data.sku)
           setUnit(task.data.unit)
-          setCategory(task.data.categroy)
+          setCategory(task.data.category)
           setDivision(task.data.division)
           setQtyAtHand(task.data.qtyAtHand)
           setReorderQty(task.data.reorderQty)
@@ -169,6 +171,7 @@ export default function InventoryItem() {
       })
       setEdit(true);
       setEditLabel("Edit")
+      console.log("ok here5")
 
     }
 
@@ -451,7 +454,10 @@ return (
             ))} <br/>
             <b>Supplier :</b> {tasks.map((task)=>(
               task.data.supplier
-            ))} 
+            ))}  <br/>
+            <b>Root Path :</b> {tasks.map((task)=>(
+              task.data.rootPath
+            ))}
       <p>
 
         <button
