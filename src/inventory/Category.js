@@ -332,13 +332,13 @@ export default function Category() {
                created: Timestamp.now()
               });
 
-              itemsDB.map((mitem) =>{
-                let oldcategory = mitem.data.category;
-                let oldItemslistRootPath = mitem.data.rootPath;
-                let revisedItemslistCategory = oldCategory.replace(moriginalName, name)
-                let revisedItemslistRootPath = "";
+            itemsDB.map((mitem) =>{
+              let oldItemslistCategory = mitem.data.category;
+              let oldItemslistRootPath = mitem.data.rootPath;
+              let revisedItemslistCategory = oldItemslistCategory.replace(moriginalName, name)
+              let revisedItemslistRootPath = "";
                 if(revisedItemslistCategory)
-                  revisedItemslistRootPath = revisedItemslistCategory+":"+name;
+                  revisedItemslistRootPath = revisedItemslistCategory+":"+mitem.data.name;
                 else
                   revisedItemslistRootPath = name;
                 const itemslistUpdateRef = doc(db, 'itemslist', mitem.id);
