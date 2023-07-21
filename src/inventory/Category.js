@@ -364,13 +364,15 @@ export default function Category() {
 
 /* function to delete a document from firstore */ 
 const handleDelete = async () => {
- 
+ let message = "";
   var id="";
   var mname="";
+  let mrootPath = "";
   tasks.map((task) =>{  
     if(task.data.uniqueId === uniqueId){
       id=task.id;
       mname = task.data.name;
+      mrootPath = task.data.rootPath;
     }
   });
   
@@ -390,14 +392,26 @@ const handleDelete = async () => {
       if(val === mname && item.data.uniqueId !== uniqueId)
       occurrence++;
     } 
-
   })
+
   console.log("occurrence :"+occurrence);
   if(occurrence > 0){
     alert("Name is in use as a subcategory in other items! Please delete other subcategories using this name!")
     return;
   }
+  occurrence = 0;
 
+  itemsDB.map((item) =>{
+    let val = item.data.category;
+    if(val === mrootPath){
+      occurrence++;
+      message = "Category is in use as a category of an existing Item in the Items List! Edit or remove it's use in the Items List first!"
+    }
+  })
+  if(occurrence > 0){
+    alert(message)
+    return;
+  }
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)
     return
