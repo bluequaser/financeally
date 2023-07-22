@@ -22,6 +22,8 @@ import App from './App';
 import Expenses from './routes/expenses';
 import Books from "./routes/Books";
 import Book from "./routes/Book";
+import PosPages from "./pos/pages/PosPages";
+import PosPage from "./pos/pages/PosPage";
 import Settings from './settings/Settings';
 import Divisions from './settings/Divisions';
 import Division from './settings/Division';
@@ -55,6 +57,17 @@ root.render(
     <BrowserRouter>
     <Routes>
      <Route path="/" element={<App />} >
+     <Route path="pospages" element={<PosPages />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a check</p>
+              </main>
+             }
+           />
+           <Route path=":pospageId" element={<PosPage />} />
+      </Route>
      <Route path="suppliers" element={<Suppliers />} >
            <Route
              index
