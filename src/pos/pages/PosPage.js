@@ -21,6 +21,9 @@ function POSPage() {
 
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [categoryDB, setCategoryDB] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [itemsDB, setItemsDB] = useState([]);
   const [dbase, setDBase] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartDB, setCartDB] = useState([]);
@@ -75,6 +78,26 @@ function POSPage() {
     const taskColRef = query(collection(db, 'cart'), orderBy('name'))
     onSnapshot(taskColRef, (snapshot) => {
       setDBase(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+  },[])
+
+  useEffect(() => {
+    const taskColRef = query(collection(db, 'itemslist'), orderBy('name'))
+    onSnapshot(taskColRef, (snapshot) => {
+      setItemsDB(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+  },[])
+
+  useEffect(() => {
+    const taskColRef = query(collection(db, 'categories'), orderBy('name'))
+    onSnapshot(taskColRef, (snapshot) => {
+      setCategoryDB(snapshot.docs.map(doc => ({
         id: doc.id,
         data: doc.data()
       })))
@@ -1208,10 +1231,11 @@ if(a < 100){
     setTotalAmount(newTotalAmount);
   },[cart])
 
+  /*
   useEffect(() => {
     fetchMainGroup();
   },[]);
-
+*/
   useEffect(() => {
     fetchFamilyGroup();
     
@@ -1219,7 +1243,7 @@ if(a < 100){
 
      /* function to get all tasks from firestore in realtime */ 
      useEffect(() => {
-      const taskColRef = query(collection(db, 'stores'), orderBy('name'))
+      const taskColRef = query(collection(db, 'locations'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setStores(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -1229,7 +1253,7 @@ if(a < 100){
     },[])
   /* function to get all tasks from firestore in realtime */ 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'taxrates'), orderBy('created', 'desc'))
+    const taskColRef = query(collection(db, 'taxcodes'), orderBy('name'))
     onSnapshot(taskColRef, (snapshot) => {
       setTaxCodes(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -1240,7 +1264,7 @@ if(a < 100){
   
   /* function to get all tasks from firestore in realtime */ 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'currency_base'), orderBy('created', 'desc'))
+    const taskColRef = query(collection(db, 'currencybase'), orderBy('name'))
     onSnapshot(taskColRef, (snapshot) => {
       setBaseCurrency(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -1651,6 +1675,9 @@ if(a < 100){
     }, 3000);   
     */
   }
+
+
+
     return (
     <MainLayout>
       <div className='row'>Count: {count}
@@ -1695,14 +1722,14 @@ if(a < 100){
             onChange={(e) => setMainGroupChanged(e.target.value)  } 
             value={mainGroupVal}>
             {
-              mainGroup.map((task) => {
-                if(task === mainGroupVal)
+              categoryDB.map((task, key) => {
+                if(task.data.name === mainGroupVal)
              return(
-              <option value={task} selected >{task}</option>
+              <option value={task.data.name} selected >{task.data.name}</option>
                );
-               else
+               else if(task.data.category === '')
                return(
-                <option value={task} >{task}</option>
+                <option value={task.data.name} >{task.data.name}</option>
                  );                       
              })
           }
