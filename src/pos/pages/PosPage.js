@@ -6,14 +6,22 @@ import { ComponentToPrint } from '../components/ComponentToPrint';
 import { useReactToPrint } from 'react-to-print';
 import { getProducts } from '../menuitems_complete';
 import {db} from '../../firebase'
-import { writeBatch, doc, addDoc, collection, Timestamp, query, orderBy, onSnapshot, where, setDoc } from "firebase/firestore"; 
-import { useNavigate, useLocation } from 'react-router-dom';
-
+import { writeBatch, doc, addDoc, collection, Timestamp, query, orderBy, onSnapshot, where, setDoc, deleteDoc, updateDoc } from "firebase/firestore"; 
+import {useState, useRef, useEffect} from 'react'
+import { useParams ,
+  useNavigate,
+  useLocation} from "react-router-dom";
+  import { nanoid } from "nanoid";
+  
 function POSPage() {
+  let params = useParams();
   const location = useLocation(); 
   const navigate = useNavigate();  
+  const[uniqueId,setUniqueId] = useState(params.pospageId);
+
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [dbase, setDBase] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartDB, setCartDB] = useState([]);
   const [inventoryRegDB, setInventoryRegDB] = useState([]);
@@ -49,50 +57,30 @@ function POSPage() {
         
   };
 
-  useEffect(() => {
-    let uniqueID = Math.random().toString(36).slice(2);
-      setUniqueID(uniqueID)
-  },[])
 
   useEffect(() => {
-/*
-    const taskColRef = query(collection(db, 'cart'), where("invoice_ref","==",invoice_ref),orderBy('created', 'asc'))
-*/
     const taskColRef1 = collection(db, 'cart');
-    const taskColRef = query(taskColRef1, where("invoice_ref","==",invoice_ref))
+    const taskColRef = query(taskColRef1, where("uniqueId","==",uniqueId))
+//      const taskColRef = query(collection(db, 'books'), orderBy('created', 'desc'))
     onSnapshot(taskColRef, (snapshot) => {
-      setCartDB(snapshot.docs.map(doc => ({
+      setTasks(snapshot.docs.map(doc => ({
         id: doc.id,
         data: doc.data()
       })))
     })
-    console.log("querying DB..")
-  },[count])
 
+  },[])
+  
   useEffect(() => {
-    /*
-        const taskColRef = query(collection(db, 'cart'), where("invoice_ref","==",invoice_ref),orderBy('created', 'asc'))
-    */
-        const taskColRef1 = collection(db, 'inventoryregister_pos');
-        const taskColRef = query(taskColRef1)
-        onSnapshot(taskColRef, (snapshot) => {
-          setInventoryRegDB(snapshot.docs.map(doc => ({
-            id: doc.id,
-            data: doc.data()
-          })))
-        })
-    console.log("querying Inventory..")
-  },[count])
-
-/*
-  useEffect(() => {
-    let newTotalAmount = 0;
-    cartDB.map((icart,key) => {
-      newTotalAmount = newTotalAmount + parseInt(icart.data.totalAmount);
+    const taskColRef = query(collection(db, 'cart'), orderBy('name'))
+    onSnapshot(taskColRef, (snapshot) => {
+      setDBase(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
     })
-    setTotalAmount(newTotalAmount);
-  },[cartDB])
-*/
+  },[])
+
   function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

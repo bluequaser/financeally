@@ -19,14 +19,13 @@ function QueryNavLink({ to, ...props }) {
 
 export default function PosPages() {
   const [tasks, setTasks] = useState([])
-  const [name, setName] =  useState([])
   const [addNew, setNew] = useState("Add New")
   const [filterby, setFilterBy] = useState("name")
 
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'openchecks'), orderBy('name'))
+      const taskColRef = query(collection(db, 'cart'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -39,7 +38,7 @@ export default function PosPages() {
   
   return (
     <div>
-      <b>Manage POS </b>
+      <b>Manage Point-of-Sale </b>
 
     <div style={{ display: 'flex' }}>
       
