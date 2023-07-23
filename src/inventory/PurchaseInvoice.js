@@ -194,7 +194,7 @@ const updateProductToCart = async(product) =>{
         }
       });
 
-      console.log("findProductInCart = "+findProductInCart+", sku= "+product.sku+", uid= "+uid)
+      console.log("findProductInCart = "+findProductInCart+", uniqueId= "+product.data.suniqueId+", uid= "+uid)
       await inventoryRegDB.map((stock) =>{
         if(stock.data.sku === product.sku){
             stockQtyInHand += stock.data.quantity;
