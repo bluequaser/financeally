@@ -1709,11 +1709,12 @@ if(a < 100){
 
         </div>
       <div>
-      <input
+      
+      Date : <input
         type="date"
         onChange={handleDateChange}
         ref={dateInputRef}
-      />{" "} Selected Date: {date}
+      /><br/> {"   "} {date}
     </div>
         <div>      
           <label for="maingroup">Category</label>
@@ -1744,14 +1745,14 @@ if(a < 100){
             value={familyGroupVal}>
             {
    
-              familyGroup.map((task) => {
-                if(task === familyGroupVal)
+              categoryDB.map((task, key) => {
+                if(task.data.name === familyGroupVal)
              return(
-              <option value={task} selected >{task}</option>
+              <option value={familyGroupVal} selected >{familyGroupVal}</option>
                );
-               else
+               else if((task.data.rootPath.split(":").length - 1) === 1 && task.data.category === mainGroupVal)
                return(
-                <option value={task} >{task}</option>
+                <option value={task.data.name} >{task.data.name}</option>
                  );                       
              })
           }
