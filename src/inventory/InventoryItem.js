@@ -26,6 +26,7 @@ export default function InventoryItem() {
   const [divisionDB, setDivisionDB] = useState([]) 
   const [categoryDB, setCategoryDB] = useState([]) 
   const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [sku, setSKU] = useState('')
   const [unit, setUnit] = useState('')
@@ -133,6 +134,7 @@ export default function InventoryItem() {
 
       tasks.map((task) => {
           setName(task.data.name)
+          setDescription(task.data.description)
           setImageUrl(task.data.imageUrl)
           setSKU(task.data.sku)
           setUnit(task.data.unit)
@@ -284,6 +286,7 @@ export default function InventoryItem() {
       const locationsRef = doc(db, 'itemslist', locationsRefDoc);
       batch.set(locationsRef, {
           name: name,
+          description: description,
           imageUrl: imageUrl,
           sku: sku,
           unit: unit,
@@ -316,6 +319,7 @@ export default function InventoryItem() {
       const locationsUpdateRef = doc(db, 'itemslist', id);
       batch.update(locationsUpdateRef, {
         name: name,
+        description: description,
         imageUrl: imageUrl,
         sku: sku,
         unit: unit,
@@ -498,6 +502,12 @@ return (
               value={name}
               size = "10" 
               placeholder="name" /><br/>
+              
+              <input 
+              onChange={(e) => setDescription(e.target.value)} 
+              value={description}
+              size = "10" 
+              placeholder="Description" /><br/>
 
               <input 
               onChange={(e) => setImageUrl(e.target.value)} 
