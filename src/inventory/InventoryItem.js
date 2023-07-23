@@ -438,6 +438,9 @@ return (
             <b>Description :</b> {tasks.map((task)=>(
               task.data.inventoryDescription
             ))} <br/>
+            <b>hasSalesAccount :</b> {tasks.map((task)=>(
+              task.data.hasSalesAccount
+            ))} <br/>
             <b>Sales Account :</b> {tasks.map((task)=>(
               task.data.salesAccount
             ))} <br/>
