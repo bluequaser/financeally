@@ -72,7 +72,7 @@ function PurchaseInvoice() {
   },[])
   
   useEffect(() => {
-    const taskColRef = query(collection(db, 'inventory_register_fa'), orderBy('log','desc'))
+    const taskColRef = query(collection(db, 'inventory_register_fa'), orderBy('log','asc'))
     onSnapshot(taskColRef, (snapshot) => {
       setInventoryRegDB(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -177,8 +177,8 @@ const updateProductToCart = async(product) =>{
   let stockValueInHand = 0;
   let averageCostPrice = 0;
   let stockRegisterValue = 0;
-    if(product.costprice > 0)
-      averageCostPrice = product.costprice ;
+    if(product.data.purchasesPrice > 0)
+      averageCostPrice = product.data.purchasesPrice ;
       /*
     let findProductInCart = await cartDB.map((cart) =>{
         return cart.data.sku === product.sku
@@ -187,7 +187,7 @@ const updateProductToCart = async(product) =>{
   let findProductInCart ="no";
   let uid = "";
       await cartDB.map((cart) =>{
-        if(cart.data.sku === product.sku){
+        if(cart.data.uniqueId === product.data.uniqueId){
           findProductInCart = "yes";
           mqty = cart.data.quantity + 1;
           uid = cart.data.uid
@@ -298,8 +298,8 @@ const updateProductToCart = async(product) =>{
     const cartEditRef = doc(db, 'cart', cartEditDoc);
     batch.update(cartEditRef,{
       quantity: mqty,
-      netAmount: (product.price * mqty) - tax,
-      totalAmount: product.price * mqty,
+      netAmount: (product.data.price * mqty) - tax,
+      totalAmount: product.data.price * mqty,
       tax: tax
     })
   } else {
