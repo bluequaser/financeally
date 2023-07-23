@@ -37,6 +37,8 @@ import Locations from './inventory/Locations';
 import Location from './inventory/Location';
 import InventoryItems from './inventory/InventoryItems';
 import InventoryItem from './inventory/InventoryItem';
+import PurchaseInvoices from './inventory/PurchaseInvoices';
+import PurchaseInvoice from './inventory/PurchaseInvoice';
 import Suppliers from './contacts/Suppliers';
 import Supplier from './contacts/Supplier';
 import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
@@ -67,6 +69,17 @@ root.render(
              }
            />
            <Route path=":pospageId" element={<PosPage />} />
+      </Route>
+     <Route path="purchases" element={<PurchaseInvoices />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a Purchase Invoice</p>
+              </main>
+             }
+           />
+           <Route path=":purchaseId" element={<PurchaseInvoice />} />
       </Route>
      <Route path="suppliers" element={<Suppliers />} >
            <Route

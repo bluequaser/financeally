@@ -57,24 +57,6 @@ export default function InventoryItem() {
         setEarliestDate(e.target.value);
   };
 
-  /*
-
-
-
-       var today = null;
-        if(date)
-          today = new Date(date)
-        else
-        today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
-        var dayInt = today.getDay();    
-        var log = today*1;  // outputs a long value
-        //new Date(longFormat); gives correct date format, from long to string
-        var mdate = yyyy + '-' + mm + '-' + dd;
-
-  */
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
       const taskColRef1 = collection(db, 'itemslist');
@@ -516,7 +498,7 @@ return (
               value={name}
               size = "10" 
               placeholder="name" /><br/>
-              
+
               <input 
               onChange={(e) => setImageUrl(e.target.value)} 
               value={imageUrl}

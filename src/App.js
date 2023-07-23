@@ -10,6 +10,7 @@ export default function App() {
         <Link to="/pospages">Point-of-Sale</Link> |{' '}
         <Link to="/itemslist">Items List</Link> |{' '}
         <Link to="/suppliers">Suppliers</Link> |{' '}
+        <Link to="/purchases">Purchases</Link> |{' '}
         <Link to="/settings">Settings</Link> |{' '}
       </nav>
       <Outlet />
