@@ -26,6 +26,7 @@ export default function InventoryItem() {
   const [divisionDB, setDivisionDB] = useState([]) 
   const [categoryDB, setCategoryDB] = useState([]) 
   const [name, setName] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
   const [sku, setSKU] = useState('')
   const [unit, setUnit] = useState('')
   const [category, setCategory] = useState("")
@@ -150,6 +151,7 @@ export default function InventoryItem() {
 
       tasks.map((task) => {
           setName(task.data.name)
+          setImageUrl(task.data.imageUrl)
           setSKU(task.data.sku)
           setUnit(task.data.unit)
           setCategory(task.data.category)
@@ -264,6 +266,7 @@ export default function InventoryItem() {
     let a = 10;
     if(a<100){
     alert("name: "+ name+ 
+    ", imageUrl: "+ imageUrl+
     ", sku: "+ sku+
     ". unit: "+unit+
     ", category: "+mcategory+
@@ -299,6 +302,7 @@ export default function InventoryItem() {
       const locationsRef = doc(db, 'itemslist', locationsRefDoc);
       batch.set(locationsRef, {
           name: name,
+          imageUrl: imageUrl,
           sku: sku,
           unit: unit,
           category: category,
@@ -330,6 +334,7 @@ export default function InventoryItem() {
       const locationsUpdateRef = doc(db, 'itemslist', id);
       batch.update(locationsUpdateRef, {
         name: name,
+        imageUrl: imageUrl,
         sku: sku,
         unit: unit,
         category: category,
@@ -408,6 +413,9 @@ return (
               </button> <br/>
             <b>Name :</b> {tasks.map((task)=>(
               task.data.name
+            ))} <br/>
+            <b>Image URL :</b> {tasks.map((task)=>(
+              task.data.imageUrl
             ))} <br/>
             <b>SKU :</b> {tasks.map((task)=>(
               task.data.sku
@@ -508,6 +516,12 @@ return (
               value={name}
               size = "10" 
               placeholder="name" /><br/>
+              
+              <input 
+              onChange={(e) => setImageUrl(e.target.value)} 
+              value={imageUrl}
+              size = "10" 
+              placeholder="image url" /><br/>
 
               <input 
               onChange={(e) => setSKU(e.target.value)} 

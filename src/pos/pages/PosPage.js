@@ -802,7 +802,7 @@ const updateProductToCart = async(product) =>{
     })
 
     if(count > 0){
-      // Delete the city 'LA'
+      // Delete debtors ledger
       const deleteDebtorsLedgerRef = doc(db, "debtorsledger_pos", m_invoice_number);
       batch.delete(deleteDebtorsLedgerRef);
     }
@@ -1770,14 +1770,15 @@ if(a < 100){
           </div>
         <div className='col-lg-8'>
           {isLoading ? 'Loading' : <div className='row'>
-              {displayProducts.map((product, key) =>
+              {itemsDB.map((product, key) =>
                 <div key={key} className='col-lg-4 mb-4'>
                   <div className='pos-item px-3 text-center border' onClick={() => updateProductToCart(product)}>
-                      <p><img src={product.image} className="img-fluid"  />{product.name} {product.currency} {product.price}</p>
-                      
-                      
+                      {product.data.rootPath.split(":")[0] === mainGroupVal && product.data.rootPath.split(":")[1] === familyGroupVal ? 
+                      <p> <img src={product.data.imageUrl} className="img-fluid"  />{product.data.name} {baseCurrency.map((cur, key) =>
+                          cur.data.isBaseCurrency === 'yes' ? cur.data.symbol : null 
+                      )} {product.data.salesPrice}</p>
+                      : null }
                   </div>
-
                 </div>
               )}
             </div>}
