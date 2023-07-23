@@ -48,6 +48,7 @@ export default function InventoryItem() {
   const [expensesTax, setExpensesTax] = useState('')
   const [supplier, setSupplier] = useState('')
   const [isActive, setIsActive] = useState(true)
+  const [hasSalesAccount, setHasSalesAccount] = useState(true)
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
   const dateInputRef = useRef(null); 
@@ -157,6 +158,8 @@ export default function InventoryItem() {
           setSupplier(task.data.supplier)
           if(task.data.isActive === "no")
             setIsActive(false)
+            if(task.data.hasSalesAccount === "no")
+              setHasSalesAccount(false)
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -167,6 +170,7 @@ export default function InventoryItem() {
   const handleUpdate = async () => {
    
     let active = "yes";
+    let mhasSalesAccount = "yes";
     let nameExists = false;
     var id="";
     let mroot = "";
@@ -276,8 +280,10 @@ export default function InventoryItem() {
     */
 
     if(!isActive)
-    active = "no";
-
+      active = "no";
+    if(!hasSalesAccount)
+      mhasSalesAccount = "no";
+    
     const batch = writeBatch(db);
 
     if(uniqueId === 'Add New'){
@@ -308,6 +314,7 @@ export default function InventoryItem() {
           expensesTax: expensesTax,
           supplier: supplier,
           isActive: active,
+          hasSalesAccount: mhasSalesAccount,
           rootPath: mroot,
           created: Timestamp.now(),
           uniqueId: nanoid()
@@ -341,6 +348,7 @@ export default function InventoryItem() {
         expensesTax: expensesTax,
         supplier: supplier,
         isActive: active,
+        hasSalesAccount: mhasSalesAccount,
         rootPath: mroot,
         created: Timestamp.now()
       }); 
@@ -601,6 +609,14 @@ return (
             value={inventoryDescription}
             size = "10" 
             placeholder="Description" /><br/>
+
+         <input 
+          name ="hasSalesAccount" 
+          type="checkbox" 
+          onChange={(e) => setHasSalesAccount(!hasSalesAccount)} 
+          checked={hasSalesAccount}/> has Sales Account <br/>
+      {hasSalesAccount ? 
+      <div>
         <label for="salesAccount"> Sales Account:<br/>
         <select 
         name='salesAccount' 
@@ -649,7 +665,7 @@ return (
          })
       }
     </select></label><br/>
-
+      </div> : null }
     <label for="expensesAccount"> Expense Account:<br/>
         <select 
         name='expensesAccount' 
