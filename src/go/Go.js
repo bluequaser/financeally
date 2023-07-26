@@ -1,7 +1,6 @@
 import React from 'react';
-import GoColumn from  '../Go/GoColumn.js'
-import GoCell from  '../Go/GoCell.js'
-
+import GoColumn from  './GoColumn.js'
+import GoCell from  './GoCell.js'
 
 export default class Go extends React.Component {
 constructor(){

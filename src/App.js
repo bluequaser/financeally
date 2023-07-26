@@ -12,6 +12,7 @@ export default function App() {
         <Link to="/suppliers">Suppliers</Link> |{' '}
         <Link to="/purchases">Purchases</Link> |{' '}
         <Link to="/settings">Settings</Link> |{' '}
+        <Link to="/go">Go Game</Link> |
       </nav>
       <Outlet />
     </div>

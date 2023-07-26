@@ -49,6 +49,10 @@ import BalanceSheetGroups from './settings/accountschart/BalanceSheetGroups';
 import BalanceSheetGroup from './settings/accountschart/BalanceSheetGroup';
 import BalanceSheetAccounts from './settings/accountschart/BalanceSheetAccounts';
 import BalanceSheetAccount from './settings/accountschart/BalanceSheetAccount';
+
+import Go from './go/Go';
+import GoColumn from './go/GoColumn';
+import GoCell from './go/GoCell';
 import './style.css';
 
 const rootElement = document.getElementById('root');
@@ -59,6 +63,7 @@ root.render(
     <BrowserRouter>
     <Routes>
      <Route path="/" element={<App />} >
+     <Route path="go" element={<Go />} />
      <Route path="pospages" element={<PosPages />} >
            <Route
              index
