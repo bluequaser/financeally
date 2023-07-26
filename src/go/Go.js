@@ -432,7 +432,12 @@ componentDidUpdate(){
 
     render(){
         return (
-            <div className="go">
+            <div    style={{ height: "530px",
+            width: "530px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center"}}>
                 {this.state.boardRender}
             </div>
         )
