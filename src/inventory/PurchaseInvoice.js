@@ -17,7 +17,7 @@ function PurchaseInvoice() {
   let params = useParams();
   const location = useLocation(); 
   const navigate = useNavigate();  
-  const[uniqueId,setUniqueId] = useState(params.purchaseId);
+  const[uniqueId,setUniqueId] = useState("");
 
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,12 +44,13 @@ function PurchaseInvoice() {
  const [currency, setCurrency] = useState("");
  const [checkNumber, setCheckNumber] = useState(0)
  const [invoice_ref, setInvoiceRef] = useState(0)
- const [invoice_number, setInvoiceNumber] = useState("")
+ const [invoice_number, setInvoiceNumber] = useState(params.purchaseId)
  const [count, setCount] = useState(0)
  const [updateStatus,  setUpdateStatus] = useState("NONE")
  const [qty, setQty] = useState(1);
  const [qtyManual, setQtyManual] = useState(false);
  const [uniqueID, setUniqueID] = useState("");
+ const [editLabel, setEditLabel] = useState('+Add New')
   const toastOptions = {
     autoClose: 400,
     pauseOnHover: true,
@@ -61,25 +62,26 @@ function PurchaseInvoice() {
 
   useEffect(() => {
     const taskColRef1 = collection(db, 'purchases_day_book_fa');
-    const taskColRef = query(taskColRef1, where("uniqueId","==",uniqueId))
+    const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
     onSnapshot(taskColRef, (snapshot) => {
-      setTasks(snapshot.docs.map(doc => ({
+      setCartDB(snapshot.docs.map(doc => ({
         id: doc.id,
         data: doc.data()
       })))
     })
 
   },[])
-  
+
+
   useEffect(() => {
     const taskColRef = query(collection(db, 'inventory_register_fa'), orderBy('log','asc'))
-    onSnapshot(taskColRef, (snapshot) => {
-      setInventoryRegDB(snapshot.docs.map(doc => ({
-        id: doc.id,
-        data: doc.data()
-      })))
-    })
-  },[])
+      onSnapshot(taskColRef, (snapshot) => {
+        setInventoryRegDB(snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data()
+        })))
+      })
+    },[])
 
   useEffect(() => {
     const taskColRef = query(collection(db, 'itemslist'), orderBy('rootPath','asc'))
@@ -113,7 +115,7 @@ function PurchaseInvoice() {
     },[])
   /* function to get all tasks from firestore in realtime */ 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'taxcodes'), orderBy('name'))
+    const taskColRef = query(collection(db, 'taxCodes'), orderBy('name'))
     onSnapshot(taskColRef, (snapshot) => {
       setTaxCodes(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -171,14 +173,9 @@ batch.commit()
 
 const updateProductToCart = async(product) =>{
   let m_invoice_ref = 0;
-  let m_invoice_number = "";
+  let m_invoice_number = invoice_number;
+   
   let mqty = qty;
-  let stockQtyInHand = 0;
-  let stockValueInHand = 0;
-  let averageCostPrice = 0;
-  let stockRegisterValue = 0;
-    if(product.data.purchasesPrice > 0)
-      averageCostPrice = product.data.purchasesPrice ;
       /*
     let findProductInCart = await cartDB.map((cart) =>{
         return cart.data.sku === product.sku
@@ -368,9 +365,6 @@ const updateProductToCart = async(product) =>{
     unit: product.data.unit,
     category: product.data.category,
     division: product.data.division,
-    qtyAtHand: product.data.qtyAtHand,
-    reorderQty: product.data.reorderQty,
-    earliestDate: product.data.mdate,
     longDate: log,
     inventoryAccount: product.data.inventoryAccount,
     inventoryDescription: product.data.inventoryDescription,
@@ -560,6 +554,8 @@ const updateProductToCart = async(product) =>{
   }// end else if findProductInCart ="yes"
     // Commit the batch
     await batch.commit().then(() =>{
+      if(editLabel === '+Add New')
+        setEditLabel("Edit")
       if(count == 0)
         setUpdateStatus("Success")
         setCount((c) => c + 1)
