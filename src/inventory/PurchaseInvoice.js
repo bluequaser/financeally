@@ -24,6 +24,7 @@ function PurchaseInvoice() {
   const [categoryDB, setCategoryDB] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [itemsDB, setItemsDB] = useState([]);
+  const [supplierDB, setSupplierDB] = useState([]);
   const [dbase, setDBase] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartDB, setCartDB] = useState([]);
@@ -126,7 +127,17 @@ function PurchaseInvoice() {
   
   /* function to get all tasks from firestore in realtime */ 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'currencybase'), orderBy('name'))
+    const taskColRef = query(collection(db, 'suppliers'), orderBy('name'))
+    onSnapshot(taskColRef, (snapshot) => {
+      setSupplierDB(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+  },[])
+
+  useEffect(() => {
+    const taskColRef = query(collection(db, 'currencybase'), orderBy('title'))
     onSnapshot(taskColRef, (snapshot) => {
       setBaseCurrency(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -172,10 +183,13 @@ batch.commit()
 
 
 const updateProductToCart = async(product) =>{
-  let m_invoice_ref = 0;
+  let m_invoice_ref = invoice_ref;
   let m_invoice_number = invoice_number;
-   
+  let employee = '';
+  let m_currency = currency;
   let mqty = qty;
+  if(mqty <= 0)
+    mqty = 1;
       /*
     let findProductInCart = await cartDB.map((cart) =>{
         return cart.data.sku === product.sku
@@ -186,30 +200,12 @@ const updateProductToCart = async(product) =>{
       await cartDB.map((cart) =>{
         if(cart.data.uniqueId === product.data.uniqueId){
           findProductInCart = "yes";
-          mqty = cart.data.quantity + 1;
+          mqty = cart.data.quantity + mqty;
           uid = cart.data.uid
         }
       });
-
-      console.log("findProductInCart = "+findProductInCart+", uniqueId= "+product.data.suniqueId+", uid= "+uid)
-      await inventoryRegDB.map((stock) =>{
-        if(stock.data.sku === product.sku){
-            stockQtyInHand += stock.data.quantity;
-            let mquantity = stock.data.quantity;
-            let mcostprice = stock.data.costprice;
-            stockValueInHand += mquantity * mcostprice;
-        }
-      });
-
-  if(stockValueInHand > 0)
-    averageCostPrice = (stockValueInHand / stockQtyInHand) ;
-  if(averageCostPrice > 0)
-   stockRegisterValue = mqty * averageCostPrice * -1
-   console.log("averageCostPrice= : "+averageCostPrice+", stockRegisterValue = "+stockRegisterValue)
-
-  if(mqty === 0)
-    mqty = 1;
-  if(invoice_ref === 0){
+ 
+  if(invoice_number === "Add New"){
     let maxLimit = 999999;
     let minLimit = 999;
     let range = maxLimit - minLimit;
@@ -218,10 +214,7 @@ const updateProductToCart = async(product) =>{
     m_invoice_number = Math.random().toString(36).slice(2);
     setInvoiceNumber(m_invoice_number)
     setInvoiceRef(m_invoice_ref)
-  } else {
-    m_invoice_ref = invoice_ref
-    m_invoice_number = invoice_number
-  }
+  } 
 
     let producttaxcode = 0;
     let taxrate = 0;
@@ -233,7 +226,7 @@ const updateProductToCart = async(product) =>{
     if(date)
       today = new Date(date)
     else
-    today = new Date();
+      today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
@@ -241,18 +234,30 @@ const updateProductToCart = async(product) =>{
     var log = today*1;  // outputs a long value
     //new Date(longFormat); gives correct date format, from long to string
     var mdate = yyyy + '-' + mm + '-' + dd;
-    var employee = '';
     var timestamp = Timestamp.now()
     var taxRateArray = [];
     var taxNameArray = [];
     var taxArray = [];
     var taxAccountArray = [];
     var grandTotal = 0;
-    if(!currency){
-      baseCurrency.map((task) =>{
-        setCurrency(task.data.symbol);
+    if(!m_ccurrency){
+      supplierDB.map((task) =>{
+        if(task.data.currency){
+          m_currency= task.data.currency;
+          setCurrency(task.data.currency);
+        }
       })
     }
+
+    if(!m_ccurrency){
+      baseCurrency.map((task) =>{
+        if(task.data.isBaseCurrency === 'yes'){
+          m_currency= task.data.symbol;
+          setCurrency(task.data.symbol);
+        }
+      })
+    }
+    
     await cartDB.map((cart) =>{
       grandTotal += cart.data.totalAmount;
       if(cart.data.sku === product.sku){
