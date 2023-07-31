@@ -269,11 +269,11 @@ const updateProductToCart = async(product) =>{
     });
     let m_counter = 0;
     taxcode.map((mtaxcode, key) => {
-      producttaxcode =product.tax_code_sale;
+      producttaxcode =product.data.salesTaxCode;
       
       if(mtaxcode.data.title === producttaxcode){
-        let cur_taxrate = mtaxcode.data.rate;
-        taxrate +=  mtaxcode.data.rate;
+        let cur_taxrate = mtaxcode.data.taxRate;
+        taxrate +=  cur_taxrate;
 
         taxRateArray[m_counter] = cur_taxrate; 
         taxNameArray[m_counter] = mtaxcode.data.name;  
