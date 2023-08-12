@@ -41,7 +41,8 @@ function PurchaseInvoice() {
  const [store, setStores] = useState([]);
  const [taxcode, setTaxCodes] = useState([]);
  const [storeSelected, setStoreSelected] = useState("");
- const [baseCurrency, setBaseCurrency] = useState([]);
+ const [supplier, setSupplier] = useState("");
+ const [baseCurrencyDB, setBaseCurrencyDB] = useState([]);
  const [currency, setCurrency] = useState("");
  const [checkNumber, setCheckNumber] = useState(0)
  const [invoice_ref, setInvoiceRef] = useState(0)
@@ -116,7 +117,7 @@ function PurchaseInvoice() {
     },[])
   /* function to get all tasks from firestore in realtime */ 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'taxCodes'), orderBy('name'))
+    const taskColRef = query(collection(db, 'taxcodes'), orderBy('name'))
     onSnapshot(taskColRef, (snapshot) => {
       setTaxCodes(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -137,15 +138,16 @@ function PurchaseInvoice() {
   },[])
 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'currencybase'), orderBy('title'))
+    const taskColRef = query(collection(db, 'currencybase'), orderBy('name'))
     onSnapshot(taskColRef, (snapshot) => {
-      setBaseCurrency(snapshot.docs.map(doc => ({
+      setBaseCurrencyDB(snapshot.docs.map(doc => ({
         id: doc.id,
         data: doc.data()
       })))
     })
   },[])
 
+ 
   function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -187,6 +189,18 @@ const updateProductToCart = async(product) =>{
   let m_invoice_number = invoice_number;
   let employee = '';
   let m_currency = currency;
+  let producttaxcode = 0;
+  let taxrate = 0;
+  let mtax = 0;
+  let tax = 0;
+  let amount = 0;
+  let totalamount = 0;
+  let grandTotal = 0;
+  let taxRateArray = [];
+  let taxNameArray = [];
+  let taxArray = [];
+  let taxAccountArray = [];
+  let today = null;
   let mqty = qty;
   if(mqty <= 0)
     mqty = 1;
@@ -198,7 +212,8 @@ const updateProductToCart = async(product) =>{
   let findProductInCart ="no";
   let uid = "";
       await cartDB.map((cart) =>{
-        if(cart.data.uniqueId === product.data.uniqueId){
+        grandTotal += cart.data.totalAmount;
+        if(cart.data.sku === product.data.sku){
           findProductInCart = "yes";
           mqty = cart.data.quantity + mqty;
           uid = cart.data.uid
@@ -212,17 +227,9 @@ const updateProductToCart = async(product) =>{
     m_invoice_ref = Math.random() * range;
     m_invoice_ref = Math.floor(m_invoice_ref);
     m_invoice_number = Math.random().toString(36).slice(2);
-    setInvoiceNumber(m_invoice_number)
-    setInvoiceRef(m_invoice_ref)
   } 
 
-    let producttaxcode = 0;
-    let taxrate = 0;
-    let mtax = 0;
-    let tax = 0;
-    let amount = 0;
-    let totalamount = 0;
-    var today = null;
+
     if(date)
       today = new Date(date)
     else
@@ -235,12 +242,7 @@ const updateProductToCart = async(product) =>{
     //new Date(longFormat); gives correct date format, from long to string
     var mdate = yyyy + '-' + mm + '-' + dd;
     var timestamp = Timestamp.now()
-    var taxRateArray = [];
-    var taxNameArray = [];
-    var taxArray = [];
-    var taxAccountArray = [];
-    var grandTotal = 0;
-    if(!m_ccurrency){
+     if(!m_ccurrency){
       supplierDB.map((task) =>{
         if(task.data.currency){
           m_currency= task.data.currency;
@@ -250,7 +252,7 @@ const updateProductToCart = async(product) =>{
     }
 
     if(!m_ccurrency){
-      baseCurrency.map((task) =>{
+      baseCurrencyDB.map((task) =>{
         if(task.data.isBaseCurrency === 'yes'){
           m_currency= task.data.symbol;
           setCurrency(task.data.symbol);
@@ -258,15 +260,6 @@ const updateProductToCart = async(product) =>{
       })
     }
     
-    await cartDB.map((cart) =>{
-      grandTotal += cart.data.totalAmount;
-      if(cart.data.sku === product.sku){
-        console.log("sku= "+product.sku)
-      } else {
-       
-
-      }
-    });
     let m_counter = 0;
     taxcode.map((mtaxcode, key) => {
       producttaxcode =product.data.salesTaxCode;
@@ -567,6 +560,10 @@ const updateProductToCart = async(product) =>{
         setQty(1)
         setQtyManual(false)
         setTotalAmount(grandTotal + (product.price * mqty))
+        if(invoice_number === 'Add New'){
+          setInvoiceNumber(m_invoice_number)
+          setInvoiceRef(m_invoice_ref)
+        }
     });
   
 }
@@ -709,6 +706,24 @@ const updateProductToCart = async(product) =>{
                  );                       
              })
           }
+        </select><br/> 
+          <label for="suppliers">Supplier :</label>{" "}
+        <select 
+            name='suppliers' 
+            onChange={(e) => setSupplierDB(e.target.value)  } 
+            value={supplier}>
+            {
+              supplierDB.map((task) => {
+                if(task.data.name === supplier)
+             return(
+              <option value={task.data.name} selected >{task.data.name}</option>
+               );
+               else
+               return(
+                <option value={task.data.name} >{task.data.name}</option>
+                 );                       
+             })
+          }
         </select>
 
         </div>
@@ -719,7 +734,25 @@ const updateProductToCart = async(product) =>{
         onChange={handleDateChange}
         ref={dateInputRef}
       /><br/> {"   "} {date}
-    </div>
+    </div>  <br/> 
+          <label for="currency">Currency :</label>
+        <select 
+            name='currency' 
+            onChange={(e) => setCurrency(e.target.value)  } 
+            value={currency}>
+            {
+              baseCurrencyDB.map((task) => {
+                if(task.data.symbol === currency)
+             return(
+              <option value={task.data.symbol} selected >{task.data.symbol}</option>
+               );
+               else
+               return(
+                <option value={task.data.symbol} >{task.data.symbol}</option>
+                 );                       
+             })
+          }
+        </select><br/>
         <div>      
           <label for="maingroup">Category</label>
         <select 
@@ -778,9 +811,7 @@ const updateProductToCart = async(product) =>{
                 <div key={key} className='col-lg-4 mb-4'>
                   <div className='pos-item px-3 text-center border' onClick={() => updateProductToCart(product)}>
                       {product.data.rootPath.split(":")[0] === mainGroupVal && product.data.rootPath.split(":")[1] === familyGroupVal ? 
-                      <p> <img src={product.data.imageUrl} className="img-fluid"  />{product.data.name} {baseCurrency.map((cur, key) =>
-                          cur.data.isBaseCurrency === 'yes' ? cur.data.symbol : null 
-                      )} {product.data.salesPrice}</p>
+                      <p> <img src={product.data.imageUrl} className="img-fluid"  />{product.data.name} {product.data.sku} {product.data.salesPrice}</p>
                       : null }
                   </div>
                 </div>
