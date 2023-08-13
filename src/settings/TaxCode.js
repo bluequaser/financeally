@@ -21,11 +21,13 @@ export default function Taxcode() {
 
   const [tasks, setTasks] = useState([])
   const [dbase, setDBase] = useState([])
-  const [accountDB, setAccountDB] = useState([])  
+  const [accountDB, setAccountDB] = useState([])
+  const [defaultDB, setDefaultDB] = useState([{title: 'No Tax'}])
   const [name, setName] = useState('')
   const [title, setTitle] = useState('')
   const [taxAccount, setTaxAccount] = useState('Tax Payable')
   const [taxRate, setTaxRate] = useState(0.0)
+  const [systemAccount, setSystemAccount] = useState('no')
   const [isEdit, setEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('+Add New')
     /* function to get all tasks from firestore in realtime */ 
@@ -44,7 +46,7 @@ export default function Taxcode() {
     
     useEffect(() => {
       const taskColRef1 = collection(db, 'chartofaccounts');
-      const taskColRef = query(taskColRef1, where("type","==","Current Liabilities group"))
+      const taskColRef = query(taskColRef1, where("type","==","Tax Payable"))
 //      const taskColRef = query(collection(db, 'books'), orderBy('created', 'desc'))
       onSnapshot(taskColRef, (snapshot) => {
         setAccountDB(snapshot.docs.map(doc => ({
@@ -78,6 +80,7 @@ export default function Taxcode() {
           setName( task.data.name);
           setTaxRate( task.data.taxRate);
           setTaxAccount( task.data.taxAccount);
+          setSystemAccount( task.data.systemAccount);
       })
       setEdit(true);
       setEditLabel("Edit")
@@ -85,16 +88,23 @@ export default function Taxcode() {
     }
   /* function to update firestore */
   const handleUpdate = async () => {
-    
-    var id="";
-  
- 
+     
+  if(systemAccount === 'yes'){
+    alert("Cannot modify! This is a system setting.")
+    return
+  }
+    let dbExists = false;
+    let id="";
     tasks.map((task) =>{
       if(task.data.uniqueId === uniqueId){
-        id=task.id
+        id=task.id;
       }
     });
     
+    dbase.map((task) =>{
+      if(task.data.title)
+       dbExists = true;
+    });
 
     let mname = name;
     if(mname == ""){
@@ -103,6 +113,21 @@ export default function Taxcode() {
     }
   
     const batch = writeBatch(db);
+    if( dbExists === false){
+      defaultDB.map((task) =>{
+        var taxRefDoc = Math.random().toString(36).slice(2);
+        const taxRef = doc(db, 'taxcodes', taxRefDoc);
+        batch.set(taxRef, {
+            title: task.title,
+            name: task.title,
+            taxRate: 0.0,
+            taxAccount: task.title,
+            created: Timestamp.now(),
+            systemAccount: "yes",
+            uniqueId: nanoid()
+        });   
+      })
+    }
     if(uniqueId === 'Add New'){
       var categoriesRefDoc = Math.random().toString(36).slice(2);
       const categoriesRef = doc(db, 'taxcodes', categoriesRefDoc);
@@ -112,10 +137,12 @@ export default function Taxcode() {
           taxRate: taxRate,
           taxAccount: taxAccount,
           created: Timestamp.now(),
+          systemAccount: "no",
           uniqueId: nanoid()
       }); 
     } else{
-      const categoryUpdateRef = doc(db, 'taxcodes', id);
+      
+       const categoryUpdateRef = doc(db, 'taxcodes', id);
         batch.update(categoryUpdateRef, {
           title: title,
           name: name,
@@ -123,7 +150,7 @@ export default function Taxcode() {
           taxAccount: taxAccount,
           created: Timestamp.now()
         });
-
+       
       }
         // Commit the batch
         await batch.commit().then(() =>{
@@ -138,6 +165,10 @@ export default function Taxcode() {
 /* function to delete a document from firstore */ 
 const handleDelete = async () => {
  
+  if(systemAccount === 'yes'){
+    alert("Cannot delete! This is a system setting.")
+    return
+  }
   var id="";
   tasks.map((task) =>{
     
@@ -195,7 +226,10 @@ return (
             ))}<br/>                
             <b>Tax Account:</b> {tasks.map((task)=>(
               task.data.taxAccount
-            ))}          
+            ))}<br/>                
+            <b>System Account:</b> {tasks.map((task)=>(
+              task.data.systemAccount
+            ))}              
       <p>
 
         <button
@@ -273,7 +307,7 @@ return (
         <select 
         name='taxAccount' 
         onChange={(e) => setTaxAccount(e.target.value)  } 
-        value={title}>
+        value={taxAccount}>
         {
           accountDB.map((cat, key) =>{
             if(taxAccount === cat.data.name)
