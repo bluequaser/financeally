@@ -165,17 +165,22 @@ export default function Taxcode() {
 /* function to delete a document from firstore */ 
 const handleDelete = async () => {
  
-  if(systemAccount === 'yes'){
+
+  let id="";
+  let msystemAccount = 'no';
+  tasks.map((task) =>{
+    
+    if(task.data.uniqueId === uniqueId){
+      id=task.id;
+      msystemAccount = task.data.systemAccount;
+    }
+    
+  });
+
+  if(msystemAccount === 'yes'){
     alert("Cannot delete! This is a system setting.")
     return
   }
-  var id="";
-  tasks.map((task) =>{
-    
-    if(task.data.uniqueId === uniqueId)
-    id=task.id
-    
-  });
 
   let isExecuted = confirm("Are you sure you want to delete?");
   if(isExecuted == false)

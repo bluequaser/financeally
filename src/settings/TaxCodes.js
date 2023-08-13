@@ -109,7 +109,7 @@ export default function Categories() {
 
               to={`/taxcodes/${task.data.uniqueId}`}
             >
-              {task.data.title}
+              {task.data.name}
             </QueryNavLink>
           ))}
       </nav>
