@@ -40,7 +40,6 @@ function PurchaseInvoice() {
   const dateInputRef = useRef(null);
  const [store, setStores] = useState([]);
  const [taxCodesDB, setTaxCodesDB] = useState([]);
- const [taxCode, setTaxCode] = useState('');
  const [storeSelected, setStoreSelected] = useState("");
  const [supplier, setSupplier] = useState("");
  const [baseCurrencyDB, setBaseCurrencyDB] = useState([]);
@@ -50,10 +49,14 @@ function PurchaseInvoice() {
  const [invoice_number, setInvoiceNumber] = useState(params.purchaseId)
  const [count, setCount] = useState(0)
  const [updateStatus,  setUpdateStatus] = useState("NONE")
- const [qty, setQty] = useState(1);
  const [costPrice, setCostPrice] = useState(1);
+ const [costPriceManual, setCostPriceManual] = useState(false);
+ const [qty, setQty] = useState(1);
  const [qtyManual, setQtyManual] = useState(false);
- const [uniqueID, setUniqueID] = useState("");
+ const [description, setDescription] = useState(1);
+ const [descriptionManual, setDescriptionManual] = useState(false);
+ const [taxCode, setTaxCode] = useState('');
+ const [taxCodeManual, setTaxCodeManual] = useState(false);
  const [editLabel, setEditLabel] = useState('+Add New')
   const toastOptions = {
     autoClose: 400,
@@ -65,7 +68,7 @@ function PurchaseInvoice() {
 
 
   useEffect(() => {
-    const taskColRef1 = collection(db, 'purchases_day_book_fa');
+    const taskColRef1 = collection(db, 'purchases_day_book');
     const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
     onSnapshot(taskColRef, (snapshot) => {
       setCartDB(snapshot.docs.map(doc => ({
@@ -78,7 +81,7 @@ function PurchaseInvoice() {
 
 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'inventory_register_fa'), orderBy('log','asc'))
+    const taskColRef = query(collection(db, 'inventory_register'), orderBy('log','asc'))
       onSnapshot(taskColRef, (snapshot) => {
         setInventoryRegDB(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -204,7 +207,8 @@ const updateProductToCart = async(product) =>{
   let timestamp = Timestamp.now()
   let today = null;
   let mqty = qty;
-
+  let m_uniqueId ="";
+  let double_entry_ref = "";
   if(date)
     today = new Date(date)
   else
@@ -241,6 +245,7 @@ const updateProductToCart = async(product) =>{
     m_invoice_ref = Math.random() * range;
     m_invoice_ref = Math.floor(m_invoice_ref);
     m_invoice_number = Math.random().toString(36).slice(2);
+    double_entry_ref = Math.random().toString(36).slice(2);
   } 
 
 
@@ -294,7 +299,7 @@ const updateProductToCart = async(product) =>{
   batch.set(nycRef, {name: "New York City"});
   if(findProductInCart === 'yes'){
     var cartEditDoc = uid;
-    const cartEditRef = doc(db, 'cart', cartEditDoc);
+    const cartEditRef = doc(db, 'cart_purchses', cartEditDoc);
     batch.update(cartEditRef,{
       quantity: mqty,
       netAmount: (product.data.price * mqty) - tax,
@@ -304,7 +309,7 @@ const updateProductToCart = async(product) =>{
   } else {
   if(updateStatus === 'NONE'){
     
-    const cartuidRef = doc(db, 'cart_uid', uniqueID);
+    const cartuidRef = doc(db, 'cart_uid_purchases', uniqueID);
     batch.set(cartuidRef,{
       invoice_number: m_invoice_number,
       invoice_ref: m_invoice_ref,
@@ -313,7 +318,7 @@ const updateProductToCart = async(product) =>{
       created: timestamp,
       mdate: mdate,
       log: log,
-      uid: uniqueID      
+      uid: uniqueId
     })
   }
   var cartRefDoc = Math.random().toString(36).slice(2);
@@ -343,45 +348,42 @@ const updateProductToCart = async(product) =>{
     totalAmount: product.price * mqty,
     tax: tax,
     currency: product.currency,
-    reorderlevel: product.reorderlevel,
-    reorderqty: product.reorderqty,
-    leadtimedays: product.leadtimedays,
     created: timestamp,
     mdate: mdate,
     log: log,
     uid: cartRefDoc,
-    unique_id: uniqueID
+    uniqueId: m_uniqueId
    })
 
-   const purchasesdaybookRef = doc(db, 'purchases_day_book_fa', cartRefDoc);
+   const purchasesdaybookRef = doc(db, 'purchases_day_book', cartRefDoc);
    batch.set(purchasesdaybookRef, { 
         invoice_number: m_invoice_number,
          invoice_ref: m_invoice_ref,
          check_number: checkNumber,
          employee: employee,
-        location: storeSelected,
-         sku: product.sku,
-         name: product.name,
-         description: product.description,
+         location: storeSelected,
+         supplier: supplier,
+         sku: product.data.sku,
+         name: product.data.name,
+         description: product.data.description,
          maingroup: product.maingroup,
          familygroup: product.familygroup,
          itemgroup: product.itemgroup,
          type: product.type,
-         category: product.category,
+         category: product.data.category,
          costPrice: product.costprice,
-         unit: product.unit,
-         imageUrl: product.image, 
-         taxTitle: product.tax_code_purchase, 
+         unit: product.data.unit,
+         imageUrl: product.data.imageUrl, 
+         taxTitle: product.data.expensesTax, 
          quantity: mqty * -1,
          netAmount: stockRegisterValue,
          totalAmount: stockRegisterValue,
          tax: 0,
-         currency: product.currency,
+         currency: m_currency,
          created: timestamp,
          mdate: mdate,
          longDate: log,
          uid: cartRefDoc,
-         unit: unit,
          division: division,
          inventoryAccount: minventoryAccount,    
    })
@@ -795,6 +797,42 @@ const updateProductToCart = async(product) =>{
           onChange={(e) => 
             {setQty(Number(e.target.value)) ,setQtyManual(true)} } 
           value={qty}
+          placeholder='1.0'/>
+        </div>
+        <div>
+          Price: <input 
+          type='number' 
+          name='costPrice' min= '1.0' 
+          onChange={(e) => 
+            {setCostPrice(Number(e.target.value)) ,setCostPriceManual(true)} } 
+          value={costPrice}
+          placeholder='1.0'/>
+          </div> 
+          <label for="taxCode">Tax Code : </label>
+        <select 
+            name='taxCode' 
+            onChange={(e) => {setTaxCode(e.target.value), setTaxCodeManual(true)}  } 
+            value={taxCode}>
+            {
+              taxCodesDB.map((task) => {
+                if(task.data.title === taxCode)
+             return(
+              <option value={task.data.title} selected >{task.data.title}</option>
+               );
+               else
+               return(
+                <option value={task.data.title} >{task.data.title}</option>
+                 );                       
+             })
+          }
+        </select><br/>
+          <div>
+          Description: <input 
+          type='text' 
+          name='description'  
+          onChange={(e) => 
+            {setDescription(Number(e.target.value)) ,setDescriptionManual(true)} } 
+          value={description}
           placeholder='1.0'/>
           </div>
         <div className='col-lg-8'>
