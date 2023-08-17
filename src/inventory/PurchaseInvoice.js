@@ -50,10 +50,10 @@ function PurchaseInvoice() {
  const [count, setCount] = useState(0)
  const [updateStatus,  setUpdateStatus] = useState("NONE")
  const [costPrice, setCostPrice] = useState(1);
- const [costPriceManual, setCostPriceManual] = useState(false);
+ const [costPriceManual, setCostPriceManual] = useState(true);
  const [qty, setQty] = useState(1);
  const [qtyManual, setQtyManual] = useState(false);
- const [description, setDescription] = useState(1);
+ const [description, setDescription] = useState('');
  const [descriptionManual, setDescriptionManual] = useState(false);
  const [taxCode, setTaxCode] = useState('');
  const [taxCodeManual, setTaxCodeManual] = useState(false);
@@ -800,6 +800,12 @@ const updateProductToCart = async(product) =>{
           placeholder='1.0'/>
         </div>
         <div>
+        <input 
+          name ="costPriceManual" 
+          type="checkbox" 
+          onChange={(e) => setCostPriceManual(!costPriceManual)} 
+          checked={costPriceManual}/> Edit Price <br/>
+
           Price: <input 
           type='number' 
           name='costPrice' min= '1.0' 
@@ -808,6 +814,11 @@ const updateProductToCart = async(product) =>{
           value={costPrice}
           placeholder='1.0'/>
           </div> 
+          <input 
+          name ="taxCodeManual" 
+          type="checkbox" 
+          onChange={(e) => setTaxCodeManual(!taxCodeManual)} 
+          checked={taxCodeManual}/> Edit Tax Code <br/>
           <label for="taxCode">Tax Code : </label>
         <select 
             name='taxCode' 
@@ -826,15 +837,22 @@ const updateProductToCart = async(product) =>{
              })
           }
         </select><br/>
+        
+        <input 
+          name ="descriptionManual" 
+          type="checkbox" 
+          onChange={(e) => setDescriptionManual(!descriptionManual)} 
+          checked={descriptionManual}/> Edit Description <br/>
+          {descriptionManual ? 
           <div>
           Description: <input 
           type='text' 
           name='description'  
           onChange={(e) => 
-            {setDescription(Number(e.target.value)) ,setDescriptionManual(true)} } 
+            {setDescription(e.target.value) ,setDescriptionManual(true)} } 
           value={description}
-          placeholder='1.0'/>
-          </div>
+          placeholder='description'/>
+          </div> : null }
         <div className='col-lg-8'>
           {isLoading ? 'Loading' : <div className='row'>
               {itemsDB.map((product, key) =>
