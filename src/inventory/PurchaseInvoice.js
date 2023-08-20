@@ -858,12 +858,21 @@ const updateProductToCart = async(product) =>{
           placeholder='1.0'/>
         </div>
         <div>
-        <input 
+        Edit : <input 
           name ="costPriceManual" 
           type="checkbox" 
           onChange={(e) => setCostPriceManual(!costPriceManual)} 
-          checked={costPriceManual}/> Edit Price <br/>
-
+          checked={costPriceManual}/> Price {"  "}
+        <input 
+          name ="descriptionManual" 
+          type="checkbox" 
+          onChange={(e) => setDescriptionManual(!descriptionManual)} 
+          checked={descriptionManual}/> Description {"  "}
+          <input 
+          name ="taxCodeManual" 
+          type="checkbox" 
+          onChange={(e) => setTaxCodeManual(!taxCodeManual)} 
+          checked={taxCodeManual}/> Tax Code <br/>
           Price: <input 
           type='number' 
           name='costPrice' min= '1.0' 
@@ -872,11 +881,7 @@ const updateProductToCart = async(product) =>{
           value={costPrice}
           placeholder='1.0'/>
           </div> 
-          <input 
-          name ="taxCodeManual" 
-          type="checkbox" 
-          onChange={(e) => setTaxCodeManual(!taxCodeManual)} 
-          checked={taxCodeManual}/> Edit Tax Code <br/>
+
           <label for="taxCode">Tax Code : </label>
         <select 
             name='taxCode' 
@@ -896,11 +901,7 @@ const updateProductToCart = async(product) =>{
           }
         </select><br/>
         
-        <input 
-          name ="descriptionManual" 
-          type="checkbox" 
-          onChange={(e) => setDescriptionManual(!descriptionManual)} 
-          checked={descriptionManual}/> Edit Description <br/>
+
           {descriptionManual ? 
           <div>
           Description: <input 
