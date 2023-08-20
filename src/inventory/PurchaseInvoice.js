@@ -756,7 +756,7 @@ const updateProductToCart = async(product) =>{
                return(
                 <option value={task.data.symbol} >{task.data.symbol}</option>
                  );                       
-             })
+             }) 
           }
         </select><br/>
         <label for="itemType">Item Type :</label>
