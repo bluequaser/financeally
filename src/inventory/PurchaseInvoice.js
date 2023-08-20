@@ -29,7 +29,7 @@ function PurchaseInvoice() {
   const [cart, setCart] = useState([]);
   const [cartDB, setCartDB] = useState([]);
   const [inventoryRegDB, setInventoryRegDB] = useState([]);
-  const [itemTypeDB, setItemTypeDB] = useState([{type: 'Products'},{type: 'Expenses'},{type: 'Assets'}]);
+  const [itemTypeDB, setItemTypeDB] = useState([{type: 'Inventory'},{type: 'Expense'},{type: 'Cost of sales'},{type: 'Fixed Assets'}]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [mainGroup, setMainGroup] = useState([]);
   const [mainGroupVal, setMainGroupVal] = useState("");
@@ -56,7 +56,7 @@ function PurchaseInvoice() {
  const [description, setDescription] = useState('');
  const [descriptionManual, setDescriptionManual] = useState(false);
  const [taxCode, setTaxCode] = useState('');
- const [itemType, setItemType] = useState('Products');
+ const [itemType, setItemType] = useState('Inventory');
  const [account, setAccount] = useState([]);
  const [taxCodeManual, setTaxCodeManual] = useState(false);
  const [editLabel, setEditLabel] = useState('+Add New')
@@ -777,7 +777,7 @@ const updateProductToCart = async(product) =>{
              })
           }
         </select><br/>
-        {itemType === "Products" ? 
+        {itemType === "Inventory" ? 
         <div>
         <div>      
           <label for="maingroup">Category</label>
@@ -822,9 +822,8 @@ const updateProductToCart = async(product) =>{
         </select>
 
         </div>
-        </div> : null
-        } <br/>
-
+        </div> : 
+        <div>
           <label for="account">Account :</label>
         <select 
             name='account' 
@@ -832,6 +831,7 @@ const updateProductToCart = async(product) =>{
             value={account}>
             {
               accountsDB.map((task) => {
+               if(task.data.type === itemType){ 
                 if(task.data.rootPath === account)
              return(
               <option value={task.data.rootPath} selected >{task.data.rootPath}</option>
@@ -840,9 +840,13 @@ const updateProductToCart = async(product) =>{
                return(
                 <option value={task.data.rootPath} >{task.data.rootPath}</option>
                  );                       
+               }
              })
           }
-        </select><br/>
+        </select>
+        </div>
+        }
+        <br/>
 
         <div>
           Quantity: <input 
