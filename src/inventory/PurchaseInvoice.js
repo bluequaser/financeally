@@ -909,10 +909,12 @@ const updateProductToCart = async(product) =>{
           onChange={(e) => 
             {setDescription(e.target.value) ,setDescriptionManual(true)} } 
           value={description}
-          placeholder='description'/>
+          placeholder='description'/> 
           </div> : null }
         <div className='col-lg-8'>
-          {isLoading ? 'Loading' : <div className='row'>
+          {isLoading ? 'Loading' :
+           itemType === 'Inventory' ? 
+           <div className='row'>
               {itemsDB.map((product, key) =>
                 <div key={key} className='col-lg-4 mb-4'>
                   <div className='pos-item px-3 text-center border' onClick={() => updateProductToCart(product)}>
@@ -922,8 +924,8 @@ const updateProductToCart = async(product) =>{
                   </div>
                 </div>
               )}
-            </div>}
-       
+          </div> : null 
+          }
         </div>
         <div className='col-lg-4'>
               <div style={{display: "none"}}>
