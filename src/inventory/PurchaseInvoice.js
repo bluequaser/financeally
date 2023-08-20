@@ -18,19 +18,19 @@ function PurchaseInvoice() {
   const location = useLocation(); 
   const navigate = useNavigate();  
   const[uniqueId,setUniqueId] = useState("");
-
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [categoryDB, setCategoryDB] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [accountsDB, setAccountsDB] = useState([]);
   const [itemsDB, setItemsDB] = useState([]);
   const [supplierDB, setSupplierDB] = useState([]);
   const [dbase, setDBase] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartDB, setCartDB] = useState([]);
   const [inventoryRegDB, setInventoryRegDB] = useState([]);
+  const [itemTypeDB, setItemTypeDB] = useState([{type: 'Products'},{type: 'Expenses'},{type: 'Assets'}]);
   const [totalAmount, setTotalAmount] = useState(0);
-
   const [mainGroup, setMainGroup] = useState([]);
   const [mainGroupVal, setMainGroupVal] = useState("");
   const [familyGroup, setFamilyGroup] = useState([]);
@@ -56,6 +56,8 @@ function PurchaseInvoice() {
  const [description, setDescription] = useState('');
  const [descriptionManual, setDescriptionManual] = useState(false);
  const [taxCode, setTaxCode] = useState('');
+ const [itemType, setItemType] = useState('Products');
+ const [account, setAccount] = useState([]);
  const [taxCodeManual, setTaxCodeManual] = useState(false);
  const [editLabel, setEditLabel] = useState('+Add New')
   const toastOptions = {
@@ -152,6 +154,16 @@ function PurchaseInvoice() {
     })
   },[])
  
+  useEffect(() => {
+    const taskColRef = query(collection(db, 'chartofaccounts'), orderBy('name'))
+    onSnapshot(taskColRef, (snapshot) => {
+      setAccountsDB(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+  },[])
+
   function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -747,6 +759,26 @@ const updateProductToCart = async(product) =>{
              })
           }
         </select><br/>
+        <label for="itemType">Item Type :</label>
+        <select 
+            name='itemType' 
+            onChange={(e) => setItemType(e.target.value)  } 
+            value={itemType}>
+            {
+              itemTypeDB.map((task) => {
+                if(task.type === itemType)
+             return(
+              <option value={task.type} selected >{task.type}</option>
+               );
+               else
+               return(
+                <option value={task.type} >{task.type}</option>
+                 );                       
+             })
+          }
+        </select><br/>
+        {itemType === "Products" ? 
+        <div>
         <div>      
           <label for="maingroup">Category</label>
         <select 
@@ -790,6 +822,28 @@ const updateProductToCart = async(product) =>{
         </select>
 
         </div>
+        </div> : null
+        } <br/>
+
+          <label for="account">Account :</label>
+        <select 
+            name='account' 
+            onChange={(e) => setAccount(e.target.value)  } 
+            value={account}>
+            {
+              accountsDB.map((task) => {
+                if(task.data.rootPath === account)
+             return(
+              <option value={task.data.rootPath} selected >{task.data.rootPath}</option>
+               );
+               else
+               return(
+                <option value={task.data.rootPath} >{task.data.rootPath}</option>
+                 );                       
+             })
+          }
+        </select><br/>
+
         <div>
           Quantity: <input 
           type='number' 
