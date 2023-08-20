@@ -873,6 +873,9 @@ const updateProductToCart = async(product) =>{
           type="checkbox" 
           onChange={(e) => setTaxCodeManual(!taxCodeManual)} 
           checked={taxCodeManual}/> Tax Code <br/>
+          </div>
+          { costPriceManual ? 
+          <div>
           Price: <input 
           type='number' 
           name='costPrice' min= '1.0' 
@@ -880,8 +883,11 @@ const updateProductToCart = async(product) =>{
             {setCostPrice(Number(e.target.value)) ,setCostPriceManual(true)} } 
           value={costPrice}
           placeholder='1.0'/>
-          </div> 
+          </div>  : null
+          }
 
+          {taxCodeManual ? 
+          <div>
           <label for="taxCode">Tax Code : </label>
         <select 
             name='taxCode' 
@@ -899,19 +905,10 @@ const updateProductToCart = async(product) =>{
                  );                       
              })
           }
-        </select><br/>
-        
+        </select>
+        </div> : null
+        }
 
-          {descriptionManual ? 
-          <div>
-          Description: <input 
-          type='text' 
-          name='description'  
-          onChange={(e) => 
-            {setDescription(e.target.value) ,setDescriptionManual(true)} } 
-          value={description}
-          placeholder='description'/> 
-          </div> : null }
         <div className='col-lg-8'>
           {isLoading ? 'Loading' :
            itemType === 'Inventory' ? 
