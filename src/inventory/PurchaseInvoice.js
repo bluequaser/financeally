@@ -339,7 +339,7 @@ const updateProductToCart = async(product) =>{
     invoice_number: m_invoice_number,
     invoice_ref: m_invoice_ref,
     check_number: checkNumber,
-    employee: employee,
+    user: employee,
     location: storeSelected,
     sku: product.sku,
     name: product.name,
