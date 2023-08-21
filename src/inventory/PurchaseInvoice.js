@@ -83,7 +83,7 @@ function PurchaseInvoice() {
 
 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'inventory_register'), orderBy('log','asc'))
+    const taskColRef = query(collection(db, 'bincard'), orderBy('log','asc'))
       onSnapshot(taskColRef, (snapshot) => {
         setInventoryRegDB(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -340,7 +340,7 @@ const updateProductToCart = async(product) =>{
     invoice_ref: m_invoice_ref,
     check_number: checkNumber,
     employee: employee,
-    store: storeSelected,
+    location: storeSelected,
     sku: product.sku,
     name: product.name,
     description: product.description,
@@ -397,7 +397,8 @@ const updateProductToCart = async(product) =>{
          longDate: log,
          uid: cartRefDoc,
          division: division,
-         inventoryAccount: minventoryAccount,    
+         inventoryAccount: minventoryAccount,
+         itemType: itemType    
    })
 
    const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
