@@ -223,6 +223,10 @@ const updateProductToCart = async(product) =>{
   let mqty = qty;
   let m_uniqueId = "";
   let double_entry_ref = "";
+  let description = description;
+  if(description === ''){
+    description = product.data.inventoryDescription;
+  }
   if(date)
     today = new Date(date)
   else
@@ -349,7 +353,7 @@ const updateProductToCart = async(product) =>{
     name: product.data.name,
     sku: product.data.sku,
     unit: product.data.unit,
-    description: product.data.inventoryDescription,
+    description: description,
     imageUrl: product.data.imageUrl,
     expenseType: itemType, 
     maingroup: mainGroupVal,
