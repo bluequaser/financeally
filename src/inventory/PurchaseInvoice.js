@@ -21,6 +21,7 @@ function PurchaseInvoice() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [categoryDB, setCategoryDB] = useState([]);
+  const [divisionDB, setDivisionDB] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [accountsDB, setAccountsDB] = useState([]);
   const [itemsDB, setItemsDB] = useState([]);
@@ -60,6 +61,7 @@ function PurchaseInvoice() {
  const [descriptionManual, setDescriptionManual] = useState(false);
  const [taxCode, setTaxCode] = useState('');
  const [itemType, setItemType] = useState('Inventory');
+ const [division, setDivision] = useState('');
  const [account, setAccount] = useState([]);
  const [editLabel, setEditLabel] = useState('+Add New')
   const toastOptions = {
@@ -166,6 +168,17 @@ function PurchaseInvoice() {
     })
   },[])
 
+   
+  useEffect(() => {
+    const taskColRef = query(collection(db, 'divisions'), orderBy('name'))
+    onSnapshot(taskColRef, (snapshot) => {
+      setDivisionDB(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+  },[])
+
   function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -226,6 +239,13 @@ const updateProductToCart = async(product) =>{
   let double_entry_ref = "";
   let description = description;
   let costPrice = costPrice;
+  let accountName = product.data.inventoryAccount;
+  if(itemType != 'Inventory')
+    accountName = account;
+  if(accountName === ''){
+    alert("Please select an account name!")
+    return
+  }
   if(!costPriceManual)
     costPrice = product.data.purchasesPrice;
   if(costPrice < 0)
@@ -377,7 +397,7 @@ const updateProductToCart = async(product) =>{
     category: product.data.category,
     taxMode: taxMode,
     purchasesPrice: costPrice, 
-    expensesTax: taxCode, 
+    expensesTax: mtaxCode, 
     quantity: mqty * -1,
     netAmount: netAmount,
     totalAmount: totalAmount,
@@ -389,7 +409,7 @@ const updateProductToCart = async(product) =>{
     uniqueId: nanoid(),
     uid: cartRefDoc,
     division: product.data.division,
-    inventoryAccount: product.data.inventoryAccount,
+    inventoryAccount:accountName,
    })
 
    const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
@@ -861,17 +881,18 @@ const updateProductToCart = async(product) =>{
         }
 
         <div>
-        Edit : <input 
+          Edit : <input 
           name ="costPriceManual" 
           type="checkbox" 
           onChange={(e) => setCostPriceManual(!costPriceManual)} 
           checked={costPriceManual}/> Price {"  "}
-        <input 
+         <input 
           name ="descriptionManual" 
           type="checkbox" 
           onChange={(e) => setDescriptionManual(!descriptionManual)} 
           checked={descriptionManual}/> Description {"  "}
-          </div>
+        </div>
+        {descriptionManual ? 
         <div>
           <input 
           type='text' 
@@ -880,8 +901,8 @@ const updateProductToCart = async(product) =>{
             {setDescription(e.target.value)} } 
           value={description}
           placeholder='Description'/>
-        </div>
-
+        </div> : null
+        }
         <div>
           Quantity: <input 
           type='number' 
@@ -926,6 +947,27 @@ const updateProductToCart = async(product) =>{
         </select>
         </div> : null
         }
+
+          <div>
+          <label for="taxCode">Division : </label>
+        <select 
+            name='divisions' 
+            onChange={(e) => {setDivision(e.target.value)}  } 
+            value={division}>
+            {
+              divisionDB.map((task) => {
+                if(task.data.name === division)
+             return(
+              <option value={task.data.name} selected >{task.data.name}</option>
+               );
+               else
+               return(
+                <option value={task.data.name} >{task.data.name}</option>
+                 );                       
+             })
+          }
+        </select>
+        </div>
 
         <div className='col-lg-8'>
           {isLoading ? 'Loading' :
