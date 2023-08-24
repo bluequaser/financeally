@@ -208,6 +208,7 @@ const updateProductToCart = async(product) =>{
   let employee = '';
   let m_currency = currency;
   let producttaxcode = 0;
+  let mtaxCode = '';
   let taxrate = 0;
   let mtax = 0;
   let tax = 0;
@@ -224,9 +225,23 @@ const updateProductToCart = async(product) =>{
   let m_uniqueId = "";
   let double_entry_ref = "";
   let description = description;
+  let costPrice = costPrice;
+  if(!costPriceManual)
+    costPrice = product.data.purchasesPrice;
+  if(costPrice < 0)
+     costPrice = 0;
+
   if(description === ''){
     description = product.data.inventoryDescription;
   }
+  if(taxCodeManual)
+    mtaxCode = taxCode;
+  if(mtaxCode == '')
+   mtaxCode === product.data.expensesTax;
+  if(mtaxCode === '')
+    mtaxCode = 'Out of Scope of Tax';
+  if(taxMode === 'Out of Scope of Tax')
+    mtaxCode = 'Out of Scope of Tax';
   if(date)
     today = new Date(date)
   else
@@ -362,7 +377,7 @@ const updateProductToCart = async(product) =>{
     category: product.data.category,
     taxMode: taxMode,
     purchasesPrice: costPrice, 
-    expensesTax: product.data.expensesTax, 
+    expensesTax: taxCode, 
     quantity: mqty * -1,
     netAmount: netAmount,
     totalAmount: totalAmount,
