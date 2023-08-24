@@ -237,22 +237,46 @@ const updateProductToCart = async(product) =>{
   let mqty = qty;
   let m_uniqueId = "";
   let double_entry_ref = "";
-  let description = description;
-  let costPrice = costPrice;
+  let mdescription = description;
+  let mcostPrice = costPrice;
   let accountName = product.data.inventoryAccount;
-  if(itemType != 'Inventory')
+  let mdivision = division;
+  let counter = 0;
+  if(itemType != 'Inventory'){
     accountName = account;
+    if(accountName === ''){
+      accountsDB.map((task,index) =>{
+        if(task.data.type === itemType && index === 0)
+          accountName = task.data.rootPath;
+      });
+    }
+  }
   if(accountName === ''){
     alert("Please select an account name!")
     return
   }
-  if(!costPriceManual)
-    costPrice = product.data.purchasesPrice;
-  if(costPrice < 0)
-     costPrice = 0;
+  if(mdivision = '' && product.data.division){
+    mdivision = product.data.division
+  }
+  if(mdivision === ''){
+    divisionDB.map((task,index) =>{
+      if(index === 0)
+        mdivision = task.data.name;
+      counter++;
+    });
+    if(counter > 1){
+      mdivision == '';
+    }
+  }
 
-  if(description === ''){
-    description = product.data.inventoryDescription;
+  counter = 0;
+  if(!costPriceManual)
+    mcostPrice = product.data.purchasesPrice;
+  if(mcostPrice < 0)
+     mcostPrice = 0;
+
+  if(mdescription === ''){
+    mdescription = product.data.inventoryDescription;
   }
   if(taxCodeManual)
     mtaxCode = taxCode;
@@ -388,7 +412,7 @@ const updateProductToCart = async(product) =>{
     name: product.data.name,
     sku: product.data.sku,
     unit: product.data.unit,
-    description: description,
+    description: mdescription,
     imageUrl: product.data.imageUrl,
     expenseType: itemType, 
     maingroup: mainGroupVal,
@@ -396,9 +420,9 @@ const updateProductToCart = async(product) =>{
     itemgroup: itemGroupVal,
     category: product.data.category,
     taxMode: taxMode,
-    purchasesPrice: costPrice, 
-    expensesTax: mtaxCode, 
-    quantity: mqty * -1,
+    costPrice: mcostPrice, 
+    taxCode: mtaxCode, 
+    quantity: mqty,
     netAmount: netAmount,
     totalAmount: totalAmount,
     tax: 0,
@@ -408,7 +432,7 @@ const updateProductToCart = async(product) =>{
     longDate: longDate,
     uniqueId: nanoid(),
     uid: cartRefDoc,
-    division: product.data.division,
+    division: mdivision,
     inventoryAccount:accountName,
    })
 
