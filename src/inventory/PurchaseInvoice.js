@@ -35,11 +35,14 @@ function PurchaseInvoice() {
   const [mainGroupVal, setMainGroupVal] = useState("");
   const [familyGroup, setFamilyGroup] = useState([]);
   const [familyGroupVal, setFamilyGroupVal] = useState("");
+  const [itemGroupVal, setItemGroupVal] = useState("");
   const [displayProducts, setDisplayProducts] = useState([]);
   const [date, setDate] = useState('');
   const dateInputRef = useRef(null);
  const [store, setStores] = useState([]);
  const [taxCodesDB, setTaxCodesDB] = useState([]);
+ const [taxModeDB, setTaxModeDB] = useState([{name: 'Out of Scope of Tax'},{name: 'Tax Inclusive'},{name: 'Tax Exclusive'}]);
+ const [taxMode, setTaxMode] = useState('Tax Inclusive');
  const [storeSelected, setStoreSelected] = useState("");
  const [supplier, setSupplier] = useState("");
  const [baseCurrencyDB, setBaseCurrencyDB] = useState([]);
@@ -219,7 +222,7 @@ const updateProductToCart = async(product) =>{
   let timestamp = Timestamp.now()
   let today = null;
   let mqty = qty;
-  let m_uniqueId ="";
+  let m_uniqueId = "";
   let double_entry_ref = "";
   if(date)
     today = new Date(date)
@@ -229,7 +232,7 @@ const updateProductToCart = async(product) =>{
   let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   let yyyy = today.getFullYear();
   let dayInt = today.getDay();    
-  let log = today*1;  // outputs a long value
+  let longDate = today*1;  // outputs a long value
   //new Date(longFormat); gives correct date format, from long to string
   let mdate = yyyy + '-' + mm + '-' + dd;
   if(mqty <= 0)
@@ -329,76 +332,46 @@ const updateProductToCart = async(product) =>{
       store: storeSelected,
       created: timestamp,
       mdate: mdate,
-      log: log,
+      longDate: longDate,
       uid: uniqueId
     })
   }
   var cartRefDoc = Math.random().toString(36).slice(2);
   const cartRef = doc(db, 'cart', cartRefDoc);
-  batch.set(cartRef, { 
-    invoice_number: m_invoice_number,
-    invoice_ref: m_invoice_ref,
-    check_number: checkNumber,
-    user: employee,
-    location: storeSelected,
-    sku: product.sku,
-    name: product.name,
-    description: product.description,
-    maingroup: product.maingroup,
-    familygroup: product.familygroup,
-    itemgroup: product.itemgroup,
-    type: product.type,
-    trackinventory: product.trackinventory,
-    price: product.price,
-    costprice: product.costprice,
-    unit: product.unit,
-    image: product.image, 
-    tax_code_purchase: product.tax_code_purchase, 
-    tax_code_sale: product.tax_code_sale,
-    quantity: mqty,
-    netAmount: (product.price * mqty) - tax,
-    totalAmount: product.price * mqty,
-    tax: tax,
-    currency: product.currency,
-    created: timestamp,
-    mdate: mdate,
-    log: log,
-    uid: cartRefDoc,
-    uniqueId: m_uniqueId
-   })
 
    const purchasesdaybookRef = doc(db, 'purchases_day_book', cartRefDoc);
    batch.set(purchasesdaybookRef, { 
-        invoice_number: m_invoice_number,
-         invoice_ref: m_invoice_ref,
-         check_number: checkNumber,
-         employee: employee,
-         location: storeSelected,
-         supplier: supplier,
-         sku: product.data.sku,
-         name: product.data.name,
-         description: product.data.description,
-         maingroup: product.maingroup,
-         familygroup: product.familygroup,
-         itemgroup: product.itemgroup,
-         type: product.type,
-         category: product.data.category,
-         costPrice: product.costprice,
-         unit: product.data.unit,
-         imageUrl: product.data.imageUrl, 
-         taxTitle: product.data.expensesTax, 
-         quantity: mqty * -1,
-         netAmount: stockRegisterValue,
-         totalAmount: stockRegisterValue,
-         tax: 0,
-         currency: m_currency,
-         created: timestamp,
-         mdate: mdate,
-         longDate: log,
-         uid: cartRefDoc,
-         division: division,
-         inventoryAccount: minventoryAccount,
-         itemType: itemType    
+    invoice_number: m_invoice_number,
+    invoice_ref: m_invoice_ref,
+    check_number: checkNumber,
+    user: employee,
+    location: storeSelected,
+    supplier: supplier,
+    name: product.data.name,
+    sku: product.data.sku,
+    unit: product.data.unit,
+    description: product.data.inventoryDescription,
+    imageUrl: product.data.imageUrl,
+    expenseType: itemType, 
+    maingroup: mainGroupVal,
+    familygroup: familyGroupVal,
+    itemgroup: itemGroupVal,
+    category: product.data.category,
+    taxMode: taxMode,
+    purchasesPrice: costPrice, 
+    expensesTax: product.data.expensesTax, 
+    quantity: mqty * -1,
+    netAmount: netAmount,
+    totalAmount: totalAmount,
+    tax: 0,
+    currency: m_currency,
+    created: timestamp,
+    mdate: mdate,
+    longDate: longDate,
+    uniqueId: nanoid(),
+    uid: cartRefDoc,
+    division: product.data.division,
+    inventoryAccount: product.data.inventoryAccount,
    })
 
    const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
@@ -742,6 +715,27 @@ const updateProductToCart = async(product) =>{
         ref={dateInputRef}
       /><br/> {"   "} {date}
     </div>  <br/> 
+<div>
+          <label for="taxMode">Tax Mode : </label>
+        <select 
+            name='taxMode' 
+            onChange={(e) => {setTaxMode(e.target.value)}  } 
+            value={taxMode}>
+            {
+              taxModeDB.map((task) => {
+                if(task.data.name === taxMode)
+             return(
+              <option value={task.data.name} selected >{task.data.name}</option>
+               );
+               else
+               return(
+                <option value={task.data.name} >{task.data.name}</option>
+                 );                       
+             })
+          }
+        </select>
+        </div>
+
           <label for="currency">Currency :</label>
         <select 
             name='currency' 
