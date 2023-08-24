@@ -41,7 +41,7 @@ function PurchaseInvoice() {
   const dateInputRef = useRef(null);
  const [store, setStores] = useState([]);
  const [taxCodesDB, setTaxCodesDB] = useState([]);
- const [taxModeDB, setTaxModeDB] = useState([{name: 'Out of Scope of Tax'},{name: 'Tax Inclusive'},{name: 'Tax Exclusive'}]);
+ const [taxModeDB, setTaxModeDB] = useState([{title: 'Out of Scope of Tax'},{title: 'Tax Inclusive'},{title: 'Tax Exclusive'}]);
  const [taxMode, setTaxMode] = useState('Tax Inclusive');
  const [storeSelected, setStoreSelected] = useState("");
  const [supplier, setSupplier] = useState("");
@@ -61,7 +61,6 @@ function PurchaseInvoice() {
  const [taxCode, setTaxCode] = useState('');
  const [itemType, setItemType] = useState('Inventory');
  const [account, setAccount] = useState([]);
- const [taxCodeManual, setTaxCodeManual] = useState(false);
  const [editLabel, setEditLabel] = useState('+Add New')
   const toastOptions = {
     autoClose: 400,
@@ -723,13 +722,13 @@ const updateProductToCart = async(product) =>{
             value={taxMode}>
             {
               taxModeDB.map((task) => {
-                if(task.data.name === taxMode)
+                if(task.title === taxMode)
              return(
-              <option value={task.data.name} selected >{task.data.name}</option>
+              <option value={task.title} selected >{task.title}</option>
                );
                else
                return(
-                <option value={task.data.name} >{task.data.name}</option>
+                <option value={task.title} >{task.title}</option>
                  );                       
              })
           }
@@ -841,17 +840,7 @@ const updateProductToCart = async(product) =>{
         </select>
         </div>
         }
-        <br/>
 
-        <div>
-          Quantity: <input 
-          type='number' 
-          name='qty' min= '1.0' 
-          onChange={(e) => 
-            {setQty(Number(e.target.value)) ,setQtyManual(true)} } 
-          value={qty}
-          placeholder='1.0'/>
-        </div>
         <div>
         Edit : <input 
           name ="costPriceManual" 
@@ -863,12 +852,27 @@ const updateProductToCart = async(product) =>{
           type="checkbox" 
           onChange={(e) => setDescriptionManual(!descriptionManual)} 
           checked={descriptionManual}/> Description {"  "}
-          <input 
-          name ="taxCodeManual" 
-          type="checkbox" 
-          onChange={(e) => setTaxCodeManual(!taxCodeManual)} 
-          checked={taxCodeManual}/> Tax Code <br/>
           </div>
+        <div>
+          <input 
+          type='text' 
+          name='description' min= '1.0' 
+          onChange={(e) => 
+            {setDescription(e.target.value)} } 
+          value={description}
+          placeholder='Description'/>
+        </div>
+
+        <div>
+          Quantity: <input 
+          type='number' 
+          name='qty' min= '1.0' 
+          onChange={(e) => 
+            {setQty(Number(e.target.value)) ,setQtyManual(true)} } 
+          value={qty}
+          placeholder='1.0'/>
+        </div>
+
           { costPriceManual ? 
           <div>
           Price: <input 
@@ -881,12 +885,12 @@ const updateProductToCart = async(product) =>{
           </div>  : null
           }
 
-          {taxCodeManual ? 
+          {taxMode !== 'Out of Scope of Tax' ? 
           <div>
           <label for="taxCode">Tax Code : </label>
         <select 
             name='taxCode' 
-            onChange={(e) => {setTaxCode(e.target.value), setTaxCodeManual(true)}  } 
+            onChange={(e) => {setTaxCode(e.target.value)}  } 
             value={taxCode}>
             {
               taxCodesDB.map((task) => {
