@@ -216,12 +216,13 @@ batch.commit()
 
 
 const updateProductToCart = async(product) =>{
+  let a = 10;
   let m_invoice_ref = invoice_ref;
   let m_invoice_number = invoice_number;
   let employee = '';
   let m_currency = currency;
   let producttaxcode = 0;
-  let mtaxCode = '';
+  let mtaxCode = taxCode;
   let taxrate = 0;
   let mtax = 0;
   let tax = 0;
@@ -242,7 +243,7 @@ const updateProductToCart = async(product) =>{
   let accountName = product.data.inventoryAccount;
   let mdivision = division;
   let counter = 0;
-  if(itemType != 'Inventory'){
+  if(itemType !== 'Inventory'){
     accountName = account;
     if(accountName === ''){
       accountsDB.map((task,index) =>{
@@ -255,7 +256,7 @@ const updateProductToCart = async(product) =>{
     alert("Please select an account name!")
     return
   }
-  if(mdivision = '' && product.data.division){
+  if(mdivision === '' && product.data.division){
     mdivision = product.data.division
   }
   if(mdivision === ''){
@@ -265,23 +266,26 @@ const updateProductToCart = async(product) =>{
       counter++;
     });
     if(counter > 1){
-      mdivision == '';
+      mdivision = '';
     }
   }
+
 
   counter = 0;
   if(!costPriceManual)
     mcostPrice = product.data.purchasesPrice;
+
   if(mcostPrice < 0)
      mcostPrice = 0;
 
   if(mdescription === ''){
     mdescription = product.data.inventoryDescription;
   }
-  if(taxCodeManual)
-    mtaxCode = taxCode;
-  if(mtaxCode == '')
-   mtaxCode === product.data.expensesTax;
+
+  if(mtaxCode === '')
+   mtaxCode = product.data.expensesTax;
+
+
   if(mtaxCode === '')
     mtaxCode = 'Out of Scope of Tax';
   if(taxMode === 'Out of Scope of Tax')
@@ -290,6 +294,7 @@ const updateProductToCart = async(product) =>{
     today = new Date(date)
   else
     today = new Date();
+
   let dd = String(today.getDate()).padStart(2, '0');
   let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   let yyyy = today.getFullYear();
@@ -306,7 +311,7 @@ const updateProductToCart = async(product) =>{
     */
   let findProductInCart ="no";
   let uid = "";
-      await cartDB.map((cart) =>{
+    await cartDB.map((cart) =>{
         grandTotal += cart.data.totalAmount;
         if(cart.data.sku === product.data.sku){
           findProductInCart = "yes";
@@ -314,7 +319,6 @@ const updateProductToCart = async(product) =>{
           uid = cart.data.uid
         }
       });
- 
   if(invoice_number === "Add New"){
     let maxLimit = 999999;
     let minLimit = 999;
@@ -325,9 +329,7 @@ const updateProductToCart = async(product) =>{
     double_entry_ref = Math.random().toString(36).slice(2);
   } 
 
-
-
-    if(!m_ccurrency){
+    if(!m_currency){
       baseCurrencyDB.map((task) =>{
         if(task.data.isBaseCurrency === 'yes'){
           m_currency= task.data.symbol;
@@ -336,7 +338,7 @@ const updateProductToCart = async(product) =>{
       })
     }
 
-     if(!m_ccurrency){
+     if(!m_currency){
       supplierDB.map((task) =>{
         if(task.data.currency){
           m_currency= task.data.currency;
@@ -344,8 +346,7 @@ const updateProductToCart = async(product) =>{
         }
       })
     }
-
-    
+       
     let m_counter = 0;
     taxCodesDB.map((mtaxcode, key) => {
       producttaxcode =product.data.expensesTax;
@@ -368,6 +369,41 @@ const updateProductToCart = async(product) =>{
     tax = Math.floor(((product.price * mqty) * taxrate ) / (100 + taxrate));
     console.log("amount= "+product.price * mqty+", mtaxcode "+producttaxcode+", mtaxrate= "+taxrate+", tax= "+tax)    
   // Get a new write batch
+  a = 10;
+  if(a<100){
+   alert("invoice_number: "+m_invoice_number+", "+
+   "invoice_ref: "+ m_invoice_ref+", "+
+   "check_number: "+ checkNumber+", "+
+   "user: "+ employee+", "+
+   "location: "+ storeSelected+", "+
+   "supplier: "+ supplier+", "+
+   "name: "+ product.data.name+", "+
+   "sku: "+ product.data.sku+", "+
+   "unit: "+ product.data.unit+", "+
+   "description: "+ mdescription+", "+
+   "imageUrl: "+ product.data.imageUrl+", "+
+   "expenseType: "+ itemType+", "+
+   "maingroup: "+ mainGroupVal+", "+
+   "familygroup: "+ familyGroupVal+", "+
+   "itemgroup: "+ itemGroupVal+", "+
+   "category: "+ product.data.category+", "+
+   "taxMode: "+ taxMode+", "+
+   "costPrice: "+ mcostPrice+", "+ 
+   "taxCode: "+ mtaxCode+", "+
+   "quantity: "+ mqty+", "+
+   "netAmount: "+ netAmount+", "+
+   "totalAmount: "+ totalAmount+", "+
+   "tax: "+ 0+", "+
+   "currency: "+ m_currency+", "+
+   "created: "+ timestamp+", "+
+   "mdate: "+ mdate+", "+
+   "longDate: "+ longDate+", "+
+   "uniqueId: "+ nanoid()+", "+
+   "uid: "+ cartRefDoc+", "+
+   "division: "+ mdivision+", "+
+   "inventoryAccount: "+accountName);
+    return;
+  }
   const batch = writeBatch(db);
   // Set the value of 'NYC'
   var cartuidDoc = Math.random().toString(36).slice(2);
@@ -398,6 +434,7 @@ const updateProductToCart = async(product) =>{
       uid: uniqueId
     })
   }
+
   var cartRefDoc = Math.random().toString(36).slice(2);
   const cartRef = doc(db, 'cart', cartRefDoc);
 
@@ -433,7 +470,7 @@ const updateProductToCart = async(product) =>{
     uniqueId: nanoid(),
     uid: cartRefDoc,
     division: mdivision,
-    inventoryAccount:accountName,
+    inventoryAccount: accountName,
    })
 
    const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
@@ -752,7 +789,7 @@ const updateProductToCart = async(product) =>{
           <label for="suppliers">Supplier :</label>{" "}
         <select 
             name='suppliers' 
-            onChange={(e) => setSupplierDB(e.target.value)  } 
+            onChange={(e) => setSupplier(e.target.value)  } 
             value={supplier}>
             {
               supplierDB.map((task) => {
