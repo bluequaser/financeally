@@ -223,6 +223,7 @@ const updateProductToCart = async(product) =>{
   let m_currency = currency;
   let producttaxcode = 0;
   let mtaxCode = taxCode;
+  let taxAccount = "";
   let taxrate = 0;
   let mtax = 0;
   let tax = 0;
@@ -349,25 +350,27 @@ const updateProductToCart = async(product) =>{
        
     let m_counter = 0;
     taxCodesDB.map((mtaxcode, key) => {
-      producttaxcode =product.data.expensesTax;
-      
-      if(mtaxcode.data.title === producttaxcode){
-        let cur_taxrate = mtaxcode.data.taxRate;
-        taxrate +=  cur_taxrate;
 
-        taxRateArray[m_counter] = cur_taxrate; 
+      if(mtaxcode.data.title === mtaxCode){
+        let cur_taxrate = Number(mtaxcode.data.taxRate);
+        taxrate +=  Number(cur_taxrate);
+
+        taxRateArray[m_counter] = Number(cur_taxrate); 
         taxNameArray[m_counter] = mtaxcode.data.name;  
         taxAccountArray[m_counter] = mtaxcode.data.taxAccount;  
         
-        let mytax = Math.floor(((product.purchasesPrice * mqty) * cur_taxrate ) / (100 + cur_taxrate));
-        taxArray[m_counter] = mytax;
+        let mytax = Number(Math.floor(((mcostPrice * mqty) * cur_taxrate ) / (100 + cur_taxrate)));
+        taxArray[m_counter] = Number(mytax);
         m_counter += 1; 
-        console.log("amount= "+product.price * mqty+", mtaxcode "+producttaxcode+", mtaxrate= "+taxrate+", tax= "+mtax)
+        console.log("price=: "+mcostPrice+", qty=: "+mqty+", amount= "+mcostPrice * mqty+", taxCode "+mtaxCode+", taxrate= "+taxrate+", tax= "+mytax)
       }
     });
-
-    tax = Math.floor(((product.price * mqty) * taxrate ) / (100 + taxrate));
-    console.log("amount= "+product.price * mqty+", mtaxcode "+producttaxcode+", mtaxrate= "+taxrate+", tax= "+tax)    
+    if(a<100){
+      alert("updating..");
+      return;
+    }
+    tax = Math.floor(((mcostPrice * mqty) * taxrate ) / (100 + taxrate));
+    console.log("amount= "+mcostPrice * mqty+", mtaxcode "+mtaxCode+", mtaxrate= "+taxrate+", tax= "+tax)    
   // Get a new write batch
   a = 10;
   if(a<100){
