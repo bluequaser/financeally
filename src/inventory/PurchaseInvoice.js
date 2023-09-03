@@ -40,7 +40,7 @@ function PurchaseInvoice() {
   const [displayProducts, setDisplayProducts] = useState([]);
   const [date, setDate] = useState('');
   const dateInputRef = useRef(null);
- const [store, setStores] = useState([]);
+ const [storeDB, setStoresDB] = useState([]);
  const [taxCodesDB, setTaxCodesDB] = useState([]);
  const [taxModeDB, setTaxModeDB] = useState([{title: 'Out of Scope of Tax'},{title: 'Tax Inclusive'},{title: 'Tax Exclusive'}]);
  const [taxMode, setTaxMode] = useState('Tax Inclusive');
@@ -120,7 +120,7 @@ function PurchaseInvoice() {
      useEffect(() => {
       const taskColRef = query(collection(db, 'locations'), orderBy('name'))
       onSnapshot(taskColRef, (snapshot) => {
-        setStores(snapshot.docs.map(doc => ({
+        setStoresDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -221,6 +221,8 @@ const updateProductToCart = async(product) =>{
   let m_invoice_number = invoice_number;
   let employee = '';
   let m_currency = currency;
+  let location = storeSelected;
+  let msupplier = supplier;
   let producttaxcode = 0;
   let mtaxCode = taxCode;
   let taxAccount = "";
@@ -270,8 +272,18 @@ const updateProductToCart = async(product) =>{
       mdivision = '';
     }
   }
-
-
+  if(location === ''){
+    storeDB.map((task,index) =>{
+      if(index === 0)
+        location = task.data.name;
+    });
+  }
+  if(msupplier === ''){
+    supplierDB.map((task,index) =>{
+      if(index === 0)
+        msupplier = task.data.name;
+    });
+  }
   counter = 0;
   if(!costPriceManual)
     mcostPrice = product.data.purchasesPrice;
@@ -365,10 +377,6 @@ const updateProductToCart = async(product) =>{
         console.log("price=: "+mcostPrice+", qty=: "+mqty+", amount= "+mcostPrice * mqty+", taxCode "+mtaxCode+", taxrate= "+taxrate+", tax= "+mytax)
       }
     });
-    if(a<100){
-      alert("updating..");
-      return;
-    }
     tax = Math.floor(((mcostPrice * mqty) * taxrate ) / (100 + taxrate));
     console.log("amount= "+mcostPrice * mqty+", mtaxcode "+mtaxCode+", mtaxrate= "+taxrate+", tax= "+tax)    
   // Get a new write batch
@@ -378,8 +386,10 @@ const updateProductToCart = async(product) =>{
    "invoice_ref: "+ m_invoice_ref+", "+
    "check_number: "+ checkNumber+", "+
    "user: "+ employee+", "+
-   "location: "+ storeSelected+", "+
-   "supplier: "+ supplier+", "+
+   "location: "+ location+", "+
+   "supplier: "+ msupplier+", "+
+   "");
+/*
    "name: "+ product.data.name+", "+
    "sku: "+ product.data.sku+", "+
    "unit: "+ product.data.unit+", "+
@@ -405,7 +415,8 @@ const updateProductToCart = async(product) =>{
    "uid: "+ cartRefDoc+", "+
    "division: "+ mdivision+", "+
    "inventoryAccount: "+accountName);
-    return;
+    */
+   return;
   }
   const batch = writeBatch(db);
   // Set the value of 'NYC'
@@ -777,7 +788,7 @@ const updateProductToCart = async(product) =>{
             onChange={(e) => setStoreSelected(e.target.value)  } 
             value={storeSelected}>
             {
-              store.map((task) => {
+              storeDB.map((task) => {
                 if(task.data.name === storeSelected)
              return(
               <option value={task.data.name} selected >{task.data.name}</option>
