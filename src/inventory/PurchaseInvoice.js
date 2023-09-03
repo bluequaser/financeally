@@ -388,8 +388,6 @@ const updateProductToCart = async(product) =>{
    "user: "+ employee+", "+
    "location: "+ location+", "+
    "supplier: "+ msupplier+", "+
-   "");
-/*
    "name: "+ product.data.name+", "+
    "sku: "+ product.data.sku+", "+
    "unit: "+ product.data.unit+", "+
@@ -404,6 +402,8 @@ const updateProductToCart = async(product) =>{
    "costPrice: "+ mcostPrice+", "+ 
    "taxCode: "+ mtaxCode+", "+
    "quantity: "+ mqty+", "+
+   "");
+/*
    "netAmount: "+ netAmount+", "+
    "totalAmount: "+ totalAmount+", "+
    "tax: "+ 0+", "+
