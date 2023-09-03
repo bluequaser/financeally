@@ -229,8 +229,8 @@ const updateProductToCart = async(product) =>{
   let taxrate = 0;
   let mtax = 0;
   let tax = 0;
-  let amount = 0;
-  let totalamount = 0;
+  let netAmount = 0;
+  let grossAmount = 0;
   let grandTotal = 0;
   let taxRateArray = [];
   let taxNameArray = [];
@@ -378,6 +378,8 @@ const updateProductToCart = async(product) =>{
       }
     });
     tax = Math.floor(((mcostPrice * mqty) * taxrate ) / (100 + taxrate));
+    netAmount = Math.floor(mcostPrice * mqty);
+    grossAmount = Math.floor(netAmount + tax);
     console.log("amount= "+mcostPrice * mqty+", mtaxcode "+mtaxCode+", mtaxrate= "+taxrate+", tax= "+tax)    
   // Get a new write batch
   a = 10;
@@ -402,19 +404,21 @@ const updateProductToCart = async(product) =>{
    "costPrice: "+ mcostPrice+", "+ 
    "taxCode: "+ mtaxCode+", "+
    "quantity: "+ mqty+", "+
-   "");
-/*
    "netAmount: "+ netAmount+", "+
-   "totalAmount: "+ totalAmount+", "+
-   "tax: "+ 0+", "+
+   "grossAmount: "+ grossAmount+", "+
+   "tax: "+ tax+", "+
    "currency: "+ m_currency+", "+
    "created: "+ timestamp+", "+
    "mdate: "+ mdate+", "+
    "longDate: "+ longDate+", "+
    "uniqueId: "+ nanoid()+", "+
-   "uid: "+ cartRefDoc+", "+
    "division: "+ mdivision+", "+
-   "inventoryAccount: "+accountName);
+   "inventoryAccount: "+accountName+
+   "");
+/*
+   "uid: "+ cartRefDoc+", "+
+   
+  );
     */
    return;
   }
@@ -426,7 +430,7 @@ const updateProductToCart = async(product) =>{
   batch.set(nycRef, {name: "New York City"});
   if(findProductInCart === 'yes'){
     var cartEditDoc = uid;
-    const cartEditRef = doc(db, 'cart_purchses', cartEditDoc);
+    const cartEditRef = doc(db, 'cart_uid_purchases', cartEditDoc);
     batch.update(cartEditRef,{
       quantity: mqty,
       netAmount: (product.data.price * mqty) - tax,
