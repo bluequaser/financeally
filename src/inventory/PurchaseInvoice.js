@@ -246,6 +246,7 @@ const updateProductToCart = async(product) =>{
   let accountName = product.data.inventoryAccount;
   let mdivision = division;
   let counter = 0;
+  let id = "";
   if(itemType !== 'Inventory'){
     accountName = account;
     if(accountName === ''){
@@ -325,11 +326,12 @@ const updateProductToCart = async(product) =>{
   let findProductInCart ="no";
   let uid = "";
     await cartDB.map((cart) =>{
-        grandTotal += cart.data.totalAmount;
+        grandTotal += cart.data.grossAmount;
         if(cart.data.sku === product.data.sku){
           findProductInCart = "yes";
           mqty = cart.data.quantity + mqty;
           uid = cart.data.uid
+          id = cart.id;
         }
       });
   if(invoice_number === "Add New"){
@@ -426,12 +428,13 @@ const updateProductToCart = async(product) =>{
   // Set the value of 'NYC'
   var cartuidDoc = Math.random().toString(36).slice(2);
   var cartuidDoc2 = Math.random().toString(36).slice(2);
-  const nycRef = doc(db, "cities", cartuidDoc);
-  batch.set(nycRef, {name: "New York City"});
+//  const nycRef = doc(db, "cities", cartuidDoc);
+//  batch.set(nycRef, {name: "New York City"});
   if(findProductInCart === 'yes'){
     var cartEditDoc = uid;
-    const cartEditRef = doc(db, 'cart_uid_purchases', cartEditDoc);
+    const cartEditRef = doc(db, 'purchases_id', cartEditDoc);
     batch.update(cartEditRef,{
+      costPrice: mcostPrice,
       quantity: mqty,
       netAmount: (product.data.price * mqty) - tax,
       totalAmount: product.data.price * mqty,
@@ -440,7 +443,7 @@ const updateProductToCart = async(product) =>{
   } else {
   if(updateStatus === 'NONE'){
     
-    const cartuidRef = doc(db, 'cart_uid_purchases', uniqueID);
+    const cartuidRef = doc(db, 'purchases_id', uniqueID);
     batch.set(cartuidRef,{
       invoice_number: m_invoice_number,
       invoice_ref: m_invoice_ref,
@@ -657,9 +660,9 @@ const updateProductToCart = async(product) =>{
         setQty(1)
         setQtyManual(false)
         setTotalAmount(grandTotal + (product.price * mqty))
+        setInvoiceRef(m_invoice_ref)
         if(invoice_number === 'Add New'){
           setInvoiceNumber(m_invoice_number)
-          setInvoiceRef(m_invoice_ref)
         }
     });
   
