@@ -256,6 +256,7 @@ const updateProductToCart = async(product) =>{
     alert("Please enter a check number!")
     return
   }
+
   if(itemType !== 'Inventory'){
     accountName = account;
     if(accountName === ''){
@@ -395,6 +396,7 @@ const updateProductToCart = async(product) =>{
     console.log("amount= "+mcostPrice * mqty+", mtaxcode "+mtaxCode+", mtaxrate= "+taxrate+", tax= "+tax)    
   // Get a new write batch
   a = 10;
+  grandTotal += grossAmount;
   if(a<100){
    alert("invoice_number: "+m_invoice_number+", "+
    "invoice_ref: "+ m_invoice_ref+", "+
