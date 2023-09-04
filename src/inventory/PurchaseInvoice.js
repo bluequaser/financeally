@@ -426,12 +426,12 @@ const updateProductToCart = async(product) =>{
   }
   const batch = writeBatch(db);
   // Set the value of 'NYC'
-  var cartuidDoc = Math.random().toString(36).slice(2);
+  var newRowIdDoc = Math.random().toString(36).slice(2);
   var cartuidDoc2 = Math.random().toString(36).slice(2);
 //  const nycRef = doc(db, "cities", cartuidDoc);
 //  batch.set(nycRef, {name: "New York City"});
   if(findProductInCart === 'yes'){
-    var cartEditDoc = uid;
+    var cartEditDoc = id;
     const cartEditRef = doc(db, 'purchases_id', cartEditDoc);
     batch.update(cartEditRef,{
       costPrice: mcostPrice,
@@ -443,16 +443,17 @@ const updateProductToCart = async(product) =>{
   } else {
   if(updateStatus === 'NONE'){
     
-    const cartuidRef = doc(db, 'purchases_id', uniqueID);
+    const cartuidRef = doc(db, 'purchases_id', newRowIdDoc);
     batch.set(cartuidRef,{
       invoice_number: m_invoice_number,
       invoice_ref: m_invoice_ref,
+      chcekNumber: checkNumber,
       employee: employee,
       store: storeSelected,
       created: timestamp,
       mdate: mdate,
       longDate: longDate,
-      uid: uniqueId
+      uid: newRowIdDoc
     })
   }
 
