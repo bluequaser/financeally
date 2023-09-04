@@ -220,6 +220,7 @@ const updateProductToCart = async(product) =>{
   let m_invoice_ref = invoice_ref;
   let m_invoice_number = invoice_number;
   let employee = '';
+  let mcheckNumber = checkNumber;
   let m_currency = currency;
   let location = storeSelected;
   let msupplier = supplier;
@@ -247,6 +248,14 @@ const updateProductToCart = async(product) =>{
   let mdivision = division;
   let counter = 0;
   let editRowIdDoc = "";
+  if(accountName === ''){
+    alert("Please select an account name!")
+    return
+  }
+  if(mcheckNumber === ''){
+    alert("Please enter a check number!")
+    return
+  }
   if(itemType !== 'Inventory'){
     accountName = account;
     if(accountName === ''){
@@ -256,10 +265,7 @@ const updateProductToCart = async(product) =>{
       });
     }
   }
-  if(accountName === ''){
-    alert("Please select an account name!")
-    return
-  }
+
   if(mdivision === '' && product.data.division){
     mdivision = product.data.division
   }
@@ -284,6 +290,10 @@ const updateProductToCart = async(product) =>{
       if(index === 0)
         msupplier = task.data.name;
     });
+  }
+  if(msupplier === ''){
+    alert("Please select a Supplier!")
+    return;
   }
   counter = 0;
   if(!costPriceManual)
@@ -446,9 +456,10 @@ const updateProductToCart = async(product) =>{
     batch.set(cartuidRef,{
       invoice_number: m_invoice_number,
       invoice_ref: m_invoice_ref,
-      chcekNumber: checkNumber,
+      checkNumber: mcheckNumber,
       employee: employee,
       store: storeSelected,
+      grandTotal: grandTotal,
       created: timestamp,
       mdate: mdate,
       longDate: longDate,
