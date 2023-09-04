@@ -246,7 +246,7 @@ const updateProductToCart = async(product) =>{
   let accountName = product.data.inventoryAccount;
   let mdivision = division;
   let counter = 0;
-  let id = "";
+  let editRowIdDoc = "";
   if(itemType !== 'Inventory'){
     accountName = account;
     if(accountName === ''){
@@ -331,7 +331,7 @@ const updateProductToCart = async(product) =>{
           findProductInCart = "yes";
           mqty = cart.data.quantity + mqty;
           uid = cart.data.uid
-          id = cart.id;
+          editRowIdDoc = cart.id;
         }
       });
   if(invoice_number === "Add New"){
@@ -431,8 +431,7 @@ const updateProductToCart = async(product) =>{
 //  const nycRef = doc(db, "cities", cartuidDoc);
 //  batch.set(nycRef, {name: "New York City"});
   if(findProductInCart === 'yes'){
-    var cartEditDoc = id;
-    const cartEditRef = doc(db, 'purchases_id', cartEditDoc);
+    const cartEditRef = doc(db, 'purchases_id', editRowIdDoc);
     batch.update(cartEditRef,{
       costPrice: mcostPrice,
       quantity: mqty,
