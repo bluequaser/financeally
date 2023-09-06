@@ -852,15 +852,17 @@ const updateProductToCart = async(product) =>{
         </select>
 
         </div>
+      {updateStatus === 'NONE' ? 
       <div>
       
       Date : <input
         type="date"
         onChange={handleDateChange}
         ref={dateInputRef}
-      /><br/> {"   "} {date}
-    </div>  <br/> 
-<div>
+         /><br/> {"   "} {date}
+       </div>  
+        : null }<br/> 
+       <div>
           <label for="taxMode">Tax Mode : </label>
         <select 
             name='taxMode' 
