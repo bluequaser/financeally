@@ -253,7 +253,7 @@ const updateProductToCart = async(product) =>{
     alert("Please select an account name!")
     return
   }
-  if(mcheckNumber === ''){
+  if(mcheckNumber <= 0){
     alert("Please enter a check number!")
     return
   }
@@ -435,7 +435,7 @@ const updateProductToCart = async(product) =>{
    
   );
     */
-   return;
+   //return;
   }
   const batch = writeBatch(db);
   // Set the value of 'NYC'
@@ -1142,7 +1142,7 @@ const updateProductToCart = async(product) =>{
                 </table>
               </div>
               <div className='mt-3'>
-                { totalAmount !== 0 ? <div>
+                { totalAmount > 0 ? <div>
                   <button className='btn btn-primary' onClick={handlePrint}>
                     Print
                   </button> |{" "}
