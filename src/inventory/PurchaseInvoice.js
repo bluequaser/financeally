@@ -480,7 +480,7 @@ const updateProductToCart = async(product) =>{
     }
 
   var cartRefDoc = Math.random().toString(36).slice(2);
-  const cartRef = doc(db, 'cart', cartRefDoc);
+  const cartRef = doc(db, 'purchases_day_book', cartRefDoc);
 
    const purchasesdaybookRef = doc(db, 'purchases_day_book', cartRefDoc);
    batch.set(purchasesdaybookRef, { 
