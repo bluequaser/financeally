@@ -248,7 +248,7 @@ const updateProductToCart = async(product) =>{
   let mdivision = division;
   let counter = 0;
   let editRowIdDoc = "";
-  let linkedId = nanoid();
+  let linkedRowId = nanoid();
   if(accountName === ''){
     alert("Please select an account name!")
     return
