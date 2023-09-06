@@ -480,16 +480,15 @@ const updateProductToCart = async(product) =>{
     }
 
   var cartRefDoc = Math.random().toString(36).slice(2);
-  const cartRef = doc(db, 'purchases_day_book', cartRefDoc);
-
+  
    const purchasesdaybookRef = doc(db, 'purchases_day_book', cartRefDoc);
    batch.set(purchasesdaybookRef, { 
     invoice_number: m_invoice_number,
     invoice_ref: m_invoice_ref,
-    check_number: checkNumber,
+    check_number: mcheckNumber,
     user: employee,
-    location: storeSelected,
-    supplier: supplier,
+    location: location,
+    supplier: msupplier,
     name: product.data.name,
     sku: product.data.sku,
     unit: product.data.unit,
@@ -502,17 +501,19 @@ const updateProductToCart = async(product) =>{
     category: product.data.category,
     taxMode: taxMode,
     costPrice: mcostPrice, 
-    taxCode: mtaxCode, 
     quantity: mqty,
     netAmount: netAmount,
-    totalAmount: totalAmount,
-    tax: 0,
+    taxCode: mtaxCode, 
+    tax: tax,
+    totalAmount: grossAmount,
+    grandTotal: grandTotal,
     currency: m_currency,
     created: timestamp,
     mdate: mdate,
     longDate: longDate,
     uniqueId: nanoid(),
     uid: cartRefDoc,
+    parent_uid: m_invoice_number,
     division: mdivision,
     inventoryAccount: accountName,
    })
