@@ -26,7 +26,7 @@ export default function PurchaseInvoices() {
   let [searchParams, setSearchParams] = useSearchParams({ replace: true });
     /* function to get all tasks from firestore in realtime */ 
     useEffect(() => {
-      const taskColRef = query(collection(db, 'purchases_day_book_fa'), orderBy('longDate','desc'))
+      const taskColRef = query(collection(db, 'purchases_uid'), orderBy('longDate','desc'))
       onSnapshot(taskColRef, (snapshot) => {
         setTasks(snapshot.docs.map(doc => ({
           id: doc.id,
@@ -107,7 +107,8 @@ export default function PurchaseInvoices() {
 
               to={`/purchases/${task.data.invoice_number}`}
             >
-              {task.data.name}
+              {task.data.checkNumber}<br/>
+              {task.data.grandTotal}
             </QueryNavLink>
           ))}
       </nav>
