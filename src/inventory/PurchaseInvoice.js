@@ -671,7 +671,7 @@ const updateProductToCart = async(product) =>{
         setCount((c) => c + 1)
         setQty(1)
         setQtyManual(false)
-        setTotalAmount(grandTotal + (product.price * mqty))
+        setTotalAmount(grandTotal)
         setInvoiceRef(m_invoice_ref)
         if(invoice_number === 'Add New'){
           setInvoiceNumber(m_invoice_number)
