@@ -514,7 +514,6 @@ const updateProductToCart = async(product) =>{
     linkedRowId: linkedRowId,
     uid: cartRefDoc,
     parent_uid: m_invoice_number,
-
     division: mdivision,
     inventoryAccount: accountName,
    })
