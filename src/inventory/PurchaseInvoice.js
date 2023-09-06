@@ -443,7 +443,7 @@ const updateProductToCart = async(product) =>{
 //  const nycRef = doc(db, "cities", cartuidDoc);
 //  batch.set(nycRef, {name: "New York City"});
   if(findProductInCart === 'yes'){
-    const cartEditRef = doc(db, 'purchases_id', editRowIdDoc);
+    const cartEditRef = doc(db, 'purchases_day_book', editRowIdDoc);
     batch.update(cartEditRef,{
       costPrice: mcostPrice,
       quantity: mqty,
@@ -452,15 +452,14 @@ const updateProductToCart = async(product) =>{
       tax: tax
     })
   } else {
-  if(updateStatus === 'NONE'){
-    
-    const cartuidRef = doc(db, 'purchases_id', newRowIdDoc);
+  if(invoice_number === "Add New" && updateStatus === 'NONE'){
+    const cartuidRef = doc(db, 'purchases_uid', newRowIdDoc);
     batch.set(cartuidRef,{
       invoice_number: m_invoice_number,
       invoice_ref: m_invoice_ref,
       checkNumber: mcheckNumber,
       employee: employee,
-      store: storeSelected,
+      store: location,
       grandTotal: grandTotal,
       created: timestamp,
       mdate: mdate,
