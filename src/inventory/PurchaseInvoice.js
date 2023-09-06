@@ -446,17 +446,19 @@ const updateProductToCart = async(product) =>{
   if(findProductInCart === 'yes'){
     const cartEditRef = doc(db, 'purchases_day_book', editRowIdDoc);
     batch.update(cartEditRef,{
+      division: mdivision,
+      description: mdescription,
       costPrice: mcostPrice,
       quantity: mqty,
-      netAmount: (product.data.price * mqty) - tax,
-      totalAmount: product.data.price * mqty,
+      netAmount: netAmount,
+      totalAmount: grossAmount,
       tax: tax
     })
   } else 
   {
     if(invoice_number === "Add New" && updateStatus === 'NONE')
     {
-      const cartuidRef = doc(db, 'purchases_uid', newRowIdDoc);
+      const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
       batch.set(cartuidRef,{
         invoice_number: m_invoice_number,
         invoice_ref: m_invoice_ref,
@@ -467,12 +469,11 @@ const updateProductToCart = async(product) =>{
         created: timestamp,
         updated: timestamp,
         mdate: mdate,
-        longDate: longDate,
-        uid: newRowIdDoc
+        longDate: longDate
       })
     } else {
-      const cartuidRef = doc(db, 'purchases_uid', purchases_uid);
-      batch.set(cartuidRef,{
+      const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
+      batch.update(cartuidRef,{
         grandTotal: grandTotal,
         updated: timestamp
       })
