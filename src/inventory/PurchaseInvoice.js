@@ -248,6 +248,7 @@ const updateProductToCart = async(product) =>{
   let mdivision = division;
   let counter = 0;
   let editRowIdDoc = "";
+  let purchases_uid = "";
   if(accountName === ''){
     alert("Please select an account name!")
     return
@@ -470,11 +471,10 @@ const updateProductToCart = async(product) =>{
         uid: newRowIdDoc
       })
     } else {
-      const cartuidRef = doc(db, 'purchases_uid', newRowIdDoc);
+      const cartuidRef = doc(db, 'purchases_uid', purchases_uid);
       batch.set(cartuidRef,{
         grandTotal: grandTotal,
-        updated: timestamp,
-        uid: "hello"
+        updated: timestamp
       })
     }
 
