@@ -64,6 +64,7 @@ function PurchaseInvoice() {
  const [division, setDivision] = useState('');
  const [account, setAccount] = useState([]);
  const [editLabel, setEditLabel] = useState('+Add New')
+ const [initialized, setInitialized] = useState(0);
   const toastOptions = {
     autoClose: 400,
     pauseOnHover: true,
@@ -82,7 +83,7 @@ function PurchaseInvoice() {
         data: doc.data()
       })))
     })
-
+    setInitialized(1);
   },[])
 
 
@@ -178,6 +179,21 @@ function PurchaseInvoice() {
       })))
     })
   },[])
+
+  useEffect(() => {
+    const getData = async () => {
+      if (cartDB.length > 0) {
+        cartDB.map((task, index) =>{
+          if(index === 0){
+            setCheckNumber(task.data.check_number);
+            console.log(task.data.check_number)
+          }
+        })
+      }
+    }
+    getData(); 
+  }, [cartDB, initialized]);
+  
 
   function makeid(length) {
     var result           = '';
@@ -809,11 +825,25 @@ const updateProductToCart = async(product) =>{
       <div className='row'>Count: {count}
       <div>
       <label for="checkNumber">Check No. </label>
+       {invoice_number === 'Add New' ? 
+
         <input 
         type = 'number' name='checkNumber' size= 'sm'  
         placeholder='0.0' 
         value={checkNumber} onChange={(e) => setCheckNumber(e.target.value)}
-        />  <br/> 
+        /> 
+         : 
+        <span>
+        {cartDB.map((task,index) =>(
+            index === 0 ? 
+        task.data.check_number : ""
+          
+        ))}
+        </span>
+        }
+        <br/> 
+        {invoice_number === 'Add New' ? 
+        <div>
           <label for="store_selected">Store</label>
         <select 
             name='store_selected' 
@@ -831,7 +861,10 @@ const updateProductToCart = async(product) =>{
                  );                       
              })
           }
-        </select><br/> 
+        </select>
+        </div> : null }
+        {invoice_number === 'Add New' ? <br/> : null 
+        }
           <label for="suppliers">Supplier :</label>{" "}
         <select 
             name='suppliers' 
@@ -852,7 +885,7 @@ const updateProductToCart = async(product) =>{
         </select>
 
         </div>
-      {updateStatus === 'NONE' ? 
+      {invoice_number === 'Add New' ? 
       <div>
       
       Date : <input
