@@ -451,22 +451,32 @@ const updateProductToCart = async(product) =>{
       totalAmount: product.data.price * mqty,
       tax: tax
     })
-  } else {
-  if(invoice_number === "Add New" && updateStatus === 'NONE'){
-    const cartuidRef = doc(db, 'purchases_uid', newRowIdDoc);
-    batch.set(cartuidRef,{
-      invoice_number: m_invoice_number,
-      invoice_ref: m_invoice_ref,
-      checkNumber: mcheckNumber,
-      employee: employee,
-      store: location,
-      grandTotal: grandTotal,
-      created: timestamp,
-      mdate: mdate,
-      longDate: longDate,
-      uid: newRowIdDoc
-    })
-  }
+  } else 
+  {
+    if(invoice_number === "Add New" && updateStatus === 'NONE')
+    {
+      const cartuidRef = doc(db, 'purchases_uid', newRowIdDoc);
+      batch.set(cartuidRef,{
+        invoice_number: m_invoice_number,
+        invoice_ref: m_invoice_ref,
+        checkNumber: mcheckNumber,
+        employee: employee,
+        store: location,
+        grandTotal: grandTotal,
+        created: timestamp,
+        updated: timestamp,
+        mdate: mdate,
+        longDate: longDate,
+        uid: newRowIdDoc
+      })
+    } else {
+      const cartuidRef = doc(db, 'purchases_uid', newRowIdDoc);
+      batch.set(cartuidRef,{
+        grandTotal: grandTotal,
+        updated: timestamp,
+        uid: "hello"
+      })
+    }
 
   var cartRefDoc = Math.random().toString(36).slice(2);
   const cartRef = doc(db, 'cart', cartRefDoc);
