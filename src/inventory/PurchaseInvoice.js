@@ -54,7 +54,7 @@ function PurchaseInvoice() {
  const [count, setCount] = useState(0)
  const [updateStatus,  setUpdateStatus] = useState("NONE")
  const [costPrice, setCostPrice] = useState(1);
- const [costPriceManual, setCostPriceManual] = useState(true);
+ const [costPriceManual, setCostPriceManual] = useState(false);
  const [qty, setQty] = useState(1);
  const [qtyManual, setQtyManual] = useState(false);
  const [description, setDescription] = useState('');
@@ -248,7 +248,7 @@ const updateProductToCart = async(product) =>{
   let mdivision = division;
   let counter = 0;
   let editRowIdDoc = "";
-  let purchases_uid = "";
+  let linkedId = nanoid();
   if(accountName === ''){
     alert("Please select an account name!")
     return
@@ -426,7 +426,7 @@ const updateProductToCart = async(product) =>{
    "created: "+ timestamp+", "+
    "mdate: "+ mdate+", "+
    "longDate: "+ longDate+", "+
-   "uniqueId: "+ nanoid()+", "+
+   "linkedRowId: "+ linkedRowId+", "+
    "division: "+ mdivision+", "+
    "inventoryAccount: "+accountName+
    "");
@@ -511,9 +511,10 @@ const updateProductToCart = async(product) =>{
     created: timestamp,
     mdate: mdate,
     longDate: longDate,
-    uniqueId: nanoid(),
+    linkedRowId: linkedRowId,
     uid: cartRefDoc,
     parent_uid: m_invoice_number,
+
     division: mdivision,
     inventoryAccount: accountName,
    })
