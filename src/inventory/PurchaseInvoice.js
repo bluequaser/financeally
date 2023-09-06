@@ -186,7 +186,9 @@ function PurchaseInvoice() {
         cartDB.map((task, index) =>{
           if(index === 0){
             setCheckNumber(task.data.check_number);
-            console.log(task.data.check_number)
+            setDate(task.data.mdate);
+            setStoreSelected(task.data.location);
+            setSupplier(task.data.supplier);
           }
         })
       }
@@ -833,13 +835,7 @@ const updateProductToCart = async(product) =>{
         value={checkNumber} onChange={(e) => setCheckNumber(e.target.value)}
         /> 
          : 
-        <span>
-        {cartDB.map((task,index) =>(
-            index === 0 ? 
-        task.data.check_number : ""
-          
-        ))}
-        </span>
+        <span>{checkNumber}</span>
         }
         <br/> 
         {invoice_number === 'Add New' ? 
