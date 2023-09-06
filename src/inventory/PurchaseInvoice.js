@@ -517,7 +517,7 @@ const updateProductToCart = async(product) =>{
     division: mdivision,
     inventoryAccount: accountName,
    })
-
+/*
    const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
    batch.set(inventoryregisterRef, { 
         invoice_number: m_invoice_number,
@@ -673,6 +673,7 @@ const updateProductToCart = async(product) =>{
       created: timestamp,
       uid: m_invoice_number
     });
+    */
   }// end else if findProductInCart ="yes"
     // Commit the batch
     await batch.commit().then(() =>{
