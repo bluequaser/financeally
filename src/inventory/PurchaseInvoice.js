@@ -189,6 +189,8 @@ function PurchaseInvoice() {
             setDate(task.data.mdate);
             setStoreSelected(task.data.location);
             setSupplier(task.data.supplier);
+            setTaxMode(task.data.taxMode);
+            setCurrency(task.data.currency);
           }
         })
       }
@@ -827,18 +829,13 @@ const updateProductToCart = async(product) =>{
       <div className='row'>Count: {count}
       <div>
       <label for="checkNumber">Check No. </label>
-       {invoice_number === 'Add New' ? 
-
         <input 
         type = 'number' name='checkNumber' size= 'sm'  
         placeholder='0.0' 
         value={checkNumber} onChange={(e) => setCheckNumber(e.target.value)}
         /> 
-         : 
-        <span>{checkNumber}</span>
-        }
         <br/> 
-        {invoice_number === 'Add New' ? 
+
         <div>
           <label for="store_selected">Store</label>
         <select 
@@ -858,9 +855,8 @@ const updateProductToCart = async(product) =>{
              })
           }
         </select>
-        </div> : null }
-        {invoice_number === 'Add New' ? <br/> : null 
-        }
+        </div> 
+
           <label for="suppliers">Supplier :</label>{" "}
         <select 
             name='suppliers' 
@@ -881,7 +877,7 @@ const updateProductToCart = async(product) =>{
         </select>
 
         </div>
-      {invoice_number === 'Add New' ? 
+
       <div>
       
       Date : <input
@@ -889,8 +885,7 @@ const updateProductToCart = async(product) =>{
         onChange={handleDateChange}
         ref={dateInputRef}
          /><br/> {"   "} {date}
-       </div>  
-        : null }<br/> 
+       </div>   
        <div>
           <label for="taxMode">Tax Mode : </label>
         <select 
