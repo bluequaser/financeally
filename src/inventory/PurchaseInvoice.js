@@ -463,6 +463,7 @@ const updateProductToCart = async(product) =>{
   var cartuidDoc2 = Math.random().toString(36).slice(2);
 //  const nycRef = doc(db, "cities", cartuidDoc);
 //  batch.set(nycRef, {name: "New York City"});
+
   if(findProductInCart === 'yes'){
     const cartEditRef = doc(db, 'purchases_day_book', editRowIdDoc);
     batch.update(cartEditRef,{
@@ -472,8 +473,26 @@ const updateProductToCart = async(product) =>{
       quantity: mqty,
       netAmount: netAmount,
       totalAmount: grossAmount,
-      tax: tax
+      tax: tax,
+      modified: timestamp
     })
+
+    cartDB.map((task, index) =>{
+      let my_id = task.id;
+      const cartEditRef2 = doc(db, 'purchases_day_book',my_id );
+      batch.update(cartEditRef2,{
+        check_number: mcheckNumber,
+        location: location,
+        supplier: msupplier,
+        mdate: mdate,
+        longDate: longDate,
+        currency: m_currency,
+        taxMode: taxMode,
+        modified: timestamp
+      });
+    });
+
+    
   } else 
   {
     if(invoice_number === "Add New" && updateStatus === 'NONE')
