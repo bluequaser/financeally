@@ -506,7 +506,7 @@ const updateProductToCart = async(product) =>{
         store: location,
         grandTotal: grandTotal,
         created: timestamp,
-        updated: timestamp,
+        modified: timestamp,
         mdate: mdate,
         longDate: longDate
       })
@@ -514,7 +514,7 @@ const updateProductToCart = async(product) =>{
       const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
       batch.update(cartuidRef,{
         grandTotal: grandTotal,
-        updated: timestamp
+        modified: timestamp
       })
     }
 
@@ -548,6 +548,7 @@ const updateProductToCart = async(product) =>{
     grandTotal: grandTotal,
     currency: m_currency,
     created: timestamp,
+    modified: timestamp,
     mdate: mdate,
     longDate: longDate,
     linkedRowId: linkedRowId,
