@@ -19,7 +19,7 @@ function TableRows({rowsData, deleteTableRows, handleChange}) {
 
           )
       })
- 
+
   )
   
 }

@@ -54,6 +54,8 @@ import Go from './go/Go';
 import GoColumn from './go/GoColumn';
 import GoCell from './go/GoCell';
 import AddDeleteTableRows from './tables/AddDeleteTableRows';
+import Purchases from './invoices/Purchases';
+import Purchase from './invoices/Purchase';
 
 import './style.css';
 
@@ -88,6 +90,17 @@ root.render(
              }
            />
            <Route path=":purchaseId" element={<PurchaseInvoice />} />
+      </Route>
+      <Route path="buygoods" element={<Purchases />} >
+           <Route
+             index
+             element={
+              <main style={{ padding: "1rem" }}>
+                <p>Select a Purchase Invoice</p>
+              </main>
+             }
+           />
+           <Route path=":buygoodsId" element={<Purchase />} />
       </Route>
      <Route path="suppliers" element={<Suppliers />} >
            <Route

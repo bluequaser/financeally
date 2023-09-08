@@ -7,7 +7,6 @@ import { useReactToPrint } from 'react-to-print';
 //import { getProducts } from '../menuitems_complete';
 import {db} from '../firebase'
 import { writeBatch, doc, addDoc, collection, Timestamp, query, orderBy, onSnapshot, where, setDoc, deleteDoc, updateDoc } from "firebase/firestore"; 
-import {useState, useRef, useEffect} from 'react'
 import { useParams ,
   useNavigate,
   useLocation} from "react-router-dom";

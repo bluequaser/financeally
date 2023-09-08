@@ -1,11 +1,19 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import TableRows from "./TableRows"
-function AddDeleteTableRows(){
+import {db} from '../firebase'
+import { writeBatch, doc, addDoc, collection, Timestamp, query, orderBy, onSnapshot, where, setDoc, deleteDoc, updateDoc } from "firebase/firestore"; 
+import { useParams ,
+    useNavigate,
+    useLocation} from "react-router-dom";
 
+function Purchase(){
+    let params = useParams();
+    const location = useLocation(); 
+    const navigate = useNavigate(); 
 
     const [rowsData, setRowsData] = useState([]);
     const [initialized, setInitialized] = useState(0);
-    
+ const [invoice_number, setInvoiceNumber] = useState(params.purchaseinvoiceId)
     useEffect(() => {
       const taskColRef1 = collection(db, 'purchases_day_book');
       const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
@@ -59,7 +67,7 @@ function AddDeleteTableRows(){
                    <tbody>
 
                    <TableRows rowsData={rowsData} deleteTableRows={deleteTableRows} handleChange={handleChange} />
-
+ 
                    </tbody> 
                 </table>
 
