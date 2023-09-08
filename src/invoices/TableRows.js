@@ -15,6 +15,7 @@ function TableRows({rowsData, deleteTableRows, handleChange}) {
               <td><input type="text" value={emailAddress}  onChange={(evnt)=>(handleChange(index, evnt))} name="emailAddress" className="form-control"/> </td>
               <td><input type="text" value={salary}  onChange={(evnt)=>(handleChange(index, evnt))} name="salary" className="form-control" /> </td>
               <td><button className="btn btn-outline-danger" onClick={()=>(deleteTableRows(index))}>x</button></td>
+              <td><button className="btn btn-outline-danger" onClick={()=>(editTableRows(index))}>✐</button></td>
           </tr>
 
           )

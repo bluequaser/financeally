@@ -16,7 +16,7 @@ function Purchase(){
  const [invoice_number, setInvoiceNumber] = useState(params.buygoodsId)
  const [fullName, setFullName] = useState('');
  const [emailAddress, setEmailAddress] = useState('');
- const [salary, setSalary] = useState('');
+ const [salary, setSalary] = useState(0.0);
     useEffect(() => {
       const taskColRef1 = collection(db, 'purchases_day_book');
       const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
@@ -29,6 +29,15 @@ function Purchase(){
       setInitialized(1);
     },[])
 
+    const resetTableRows = ()=>{
+        setFullName("");
+        setEmailAddress("");
+        setSalary(0.0);
+    }
+
+    const editTableRows = ()=>{
+        
+    }
     const addTableRows = ()=>{
   
         const rowsInput={
@@ -72,11 +81,12 @@ function Purchase(){
                    <TableRows rowsData={rowsData} deleteTableRows={deleteTableRows} handleChange={handleChange} />
            <tr >
               <td>
-             <input type="text" value={fullName} onChange={(evnt)=>(handleChange(index, evnt))} name="fullName" className="form-control"/>
+             <input type="text" value={fullName} onChange={(evnt)=> setFullName(evnt.target.value)} name="fullName" className="form-control"/>
               </td>
-              <td><input type="text" value={emailAddress}  onChange={(evnt)=>(handleChange(index, evnt))} name="emailAddress" className="form-control"/> </td>
-              <td><input type="text" value={salary}  onChange={(evnt)=>(handleChange(index, evnt))} name="salary" className="form-control" /> </td>
-              <td><button className="btn btn-outline-danger" onClick={()=>(deleteTableRows(index))}>x</button></td>
+              <td><input type="email" value={emailAddress}  onChange={(evnt)=> setEmailAddress(evnt.target.value)} name="emailAddress" className="form-control"/> </td>
+              <td><input type="number" value={salary}  onChange={(evnt)=> setSalary(Number( evnt.target.value))} name="salary" className="form-control" /> </td>
+              <td><button className="btn btn-outline-danger" onClick={()=> resetTableRows()}> 🔃</button></td>
+                <td><button className="btn btn-outline-danger" onClick={()=> saveTableRows()}> 💾</button></td>
           </tr>
                    </tbody> 
                 </table>
