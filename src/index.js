@@ -53,6 +53,8 @@ import BalanceSheetAccount from './settings/accountschart/BalanceSheetAccount';
 import Go from './go/Go';
 import GoColumn from './go/GoColumn';
 import GoCell from './go/GoCell';
+import AddDeleteTableRows from './tables/AddDeleteTableRows';
+
 import './style.css';
 
 const rootElement = document.getElementById('root');
@@ -64,6 +66,7 @@ root.render(
     <Routes>
      <Route path="/" element={<App />} >
      <Route path="go" element={<Go />} />
+     <Route path="tables" element={<AddDeleteTableRows />} />
      <Route path="pospages" element={<PosPages />} >
            <Route
              index
