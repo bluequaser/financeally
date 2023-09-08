@@ -107,7 +107,8 @@ export default function PurchaseInvoices() {
 
               to={`/purchases/${task.data.invoice_number}`}
             >
-              {task.data.checkNumber}<br/>
+              {task.data.employee}<br/>
+              {task.data.check_number}{" "}{task.data.mdate}<br/>
               {task.data.grandTotal}
             </QueryNavLink>
           ))}

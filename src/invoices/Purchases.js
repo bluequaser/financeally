@@ -17,7 +17,7 @@ function QueryNavLink({ to, ...props }) {
   return <NavLink to={to + location.search} {...props} />;
 }
 
-export default function InvoicePurchases() {
+export default function Purchases() {
   const [tasks, setTasks] = useState([])
   const [name, setName] =  useState([])
   const [addNew, setNew] = useState("Add New")
@@ -58,7 +58,7 @@ export default function InvoicePurchases() {
                 };
               }}
 
-              to={`/invoicepurchases/${addNew}`}
+              to={`/buygoods/${addNew}`}
             >
               <button>+Add New</button>
             </QueryNavLink>
@@ -104,9 +104,10 @@ export default function InvoicePurchases() {
                 };
               }}
 
-              to={`/invoicepurchases/${task.data.invoice_number}`}
+              to={`/buygoods/${task.data.invoice_number}`}
             >
-              {task.data.checkNumber}<br/>
+              {task.data.employee}<br/>
+              {task.data.mdate}{" "}{task.data.check_number}<br/>
               {task.data.grandTotal}
             </QueryNavLink>
           ))}

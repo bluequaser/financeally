@@ -13,7 +13,10 @@ function Purchase(){
 
     const [rowsData, setRowsData] = useState([]);
     const [initialized, setInitialized] = useState(0);
- const [invoice_number, setInvoiceNumber] = useState(params.purchaseinvoiceId)
+ const [invoice_number, setInvoiceNumber] = useState(params.buygoodsId)
+ const [fullName, setFullName] = useState('');
+ const [emailAddress, setEmailAddress] = useState('');
+ const [salary, setSalary] = useState('');
     useEffect(() => {
       const taskColRef1 = collection(db, 'purchases_day_book');
       const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
@@ -67,7 +70,14 @@ function Purchase(){
                    <tbody>
 
                    <TableRows rowsData={rowsData} deleteTableRows={deleteTableRows} handleChange={handleChange} />
- 
+           <tr >
+              <td>
+             <input type="text" value={fullName} onChange={(evnt)=>(handleChange(index, evnt))} name="fullName" className="form-control"/>
+              </td>
+              <td><input type="text" value={emailAddress}  onChange={(evnt)=>(handleChange(index, evnt))} name="emailAddress" className="form-control"/> </td>
+              <td><input type="text" value={salary}  onChange={(evnt)=>(handleChange(index, evnt))} name="salary" className="form-control" /> </td>
+              <td><button className="btn btn-outline-danger" onClick={()=>(deleteTableRows(index))}>x</button></td>
+          </tr>
                    </tbody> 
                 </table>
 
@@ -80,4 +90,4 @@ function Purchase(){
     )
 
 }
-export default AddDeleteTableRows
+export default Purchase

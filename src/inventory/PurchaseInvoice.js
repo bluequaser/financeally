@@ -500,7 +500,7 @@ const updateProductToCart = async(product) =>{
       batch.set(cartuidRef,{
         invoice_number: m_invoice_number,
         invoice_ref: m_invoice_ref,
-        checkNumber: mcheckNumber,
+        check_number: mcheckNumber,
         employee: employee,
         store: location,
         grandTotal: grandTotal,
