@@ -85,6 +85,17 @@ function PurchaseInvoice() {
     setInitialized(1);
   },[])
 
+  useEffect(() => {
+    const taskColRef1 = collection(db, 'purchases_day_book');
+    const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
+    onSnapshot(taskColRef, (snapshot) => {
+      setCartDB(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+    
+  },[cartDB])
 
   useEffect(() => {
     const taskColRef = query(collection(db, 'bincard'), orderBy('log','asc'))
@@ -543,7 +554,7 @@ const updateProductToCart = async(product) =>{
     netAmount: netAmount,
     taxCode: mtaxCode, 
     tax: tax,
-    totalAmount: grossAmount,
+    grossAmount: grossAmount,
     grandTotal: grandTotal,
     currency: m_currency,
     created: timestamp,
@@ -740,23 +751,25 @@ const updateProductToCart = async(product) =>{
     let grandTotal = 0;
     cartDB.map((cart) =>{
       counter += 1;
-      grandTotal += cart.data.totalAmount
+      grandTotal += cart.data.grossAmount
     });
-    let amount = product.data.totalAmount;
+    let amount = product.data.grossAmount;
    
         console.log("DEL- qty : "+qty +", totalAmount = "+amount)
     let m_counter = 0;
-        taxcode.map((mtaxcode, key) => {
-          let producttaxcode =product.data.tax_code_sale;
+        taxCodesDB.map((mtaxcode, key) => {
+          let producttaxcode =product.data.taxCode;
           
           if(mtaxcode.data.title === producttaxcode){
             m_counter += 1; 
           }
         });
-        console.log("m_counter = "+m_counter)
+        console.log("m_counter = "+m_counter+", uid=: "+product.data.uid)
     const batch = writeBatch(db);
-    const deleteCartRef = doc(db, "cart", product.data.uid);
+    const deleteCartRef = doc(db, "purchases_day_book", product.data.uid);
     batch.delete(deleteCartRef);
+    /*
+    //new 
     const deleteInventoryRegRef = doc(db, "inventoryregister_pos", product.data.uid);
     batch.delete(deleteInventoryRegRef);
     const deleteInventoryRef = doc(db, "inventory_pos", product.data.uid);
@@ -776,13 +789,19 @@ const updateProductToCart = async(product) =>{
       const deleteCLRef = doc(db, "creditorsledger_pos", mycartRefDoc);
       batch.delete(deleteCLRef);
     }
-
+  */
+    
+    
     if(counter > 1){
+      /*
+      //new
       const debtorsledgerRef = doc(db, 'debtorsledger_pos', invoice_number);
       batch.update(debtorsledgerRef, {
         amount: totalAmount - amount,
         created: Timestamp.now()
       })
+      //end new
+      */
       /*
       batch.set(debtorsledgerRef, {
         invoice_number: m_invoice_number,
@@ -808,11 +827,17 @@ const updateProductToCart = async(product) =>{
       });
       */
     } else {
+      /*
+      //new
       const deleteDLRef = doc(db, "debtorsledger_pos", invoice_number);
       batch.delete(deleteDLRef);
+      //end new
+      */
     }
+    
     // Commit the batch
     await batch.commit().then(() =>{
+      console.log("Success")
         setCount((c) => c - 1)
         setQty(1)
         setQtyManual(false)
@@ -1159,7 +1184,7 @@ const updateProductToCart = async(product) =>{
                       <td>{cartProduct.data.name}</td>
                       <td>{cartProduct.data.price}</td>
                       <td>{cartProduct.data.quantity}</td>
-                      <td>{cartProduct.data.totalAmount}</td>
+                      <td>{cartProduct.data.grossAmount}</td>
                       <td>
                         <button className='btn btn-danger btn-sm' onClick={() => removeProduct(cartProduct)}>DEL⌧</button>
                       </td>
