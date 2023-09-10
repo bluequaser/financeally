@@ -29,7 +29,7 @@ function PurchaseInvoice() {
   const [cart, setCart] = useState([]);
   const [cartDB, setCartDB] = useState([]);
   const [generalLedgerDB, setGeneralLedgerDB] = useState([]);
-  const [inventoryRegDB, setInventoryRegDB] = useState([]);
+  const [binCardDB, setBinCardDB] = useState([]);
   const [expenditureTypeDB, setExpenditureTypeDB] = useState([{type: 'Inventory'},{type: 'Expense'},{type: 'Cost of sales'},{type: 'Fixed Assets'}]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [mainGroup, setMainGroup] = useState([]);
@@ -87,20 +87,9 @@ function PurchaseInvoice() {
   },[])
 
   useEffect(() => {
-    const taskColRef1 = collection(db, 'general_ledger');
-    const taskColRef = query(taskColRef1, where("transanction_number","==",invoice_number))
-    onSnapshot(taskColRef, (snapshot) => {
-      setGeneralLedgerDB(snapshot.docs.map(doc => ({
-        id: doc.id,
-        data: doc.data()
-      })))
-    })
-  },[])
-
-  useEffect(() => {
-    const taskColRef = query(collection(db, 'bincard'), orderBy('log','asc'))
+    const taskColRef = query(collection(db, 'purchases_bincard'), orderBy('log','asc'))
       onSnapshot(taskColRef, (snapshot) => {
-        setInventoryRegDB(snapshot.docs.map(doc => ({
+        setBinCardDB(snapshot.docs.map(doc => ({
           id: doc.id,
           data: doc.data()
         })))
@@ -548,7 +537,7 @@ const updateProductToCart = async(product) =>{
      }
  
    var cartRefDoc = Math.random().toString(36).slice(2);
-   if(expenditureType === 'Inventory'){
+
     const purchasesRegisterRef = doc(db, 'purchases_register', cartRefDoc);
     batch.set(purchasesRegisterRef, { 
      invoice_number: m_invoice_number,
@@ -583,8 +572,38 @@ const updateProductToCart = async(product) =>{
      linkedRowId: linkedRowId,
      uid: cartRefDoc,
      division: mdivision,
-     inventoryAccount: accountName,
+     accountName: accountName
     })
+
+    if(expenditureType === 'Inventory'){
+   const binCardRef = doc(db, 'bin_card', cartRefDoc);
+   batch.set(binCardRef, {
+       invoice_number: m_invoice_number,
+       invoice_ref: m_invoice_ref,
+       check_number: mcheckNumber,
+       name: product.data.name,
+       description: mdescription,
+       location: location,
+       supplier: msupplier,
+       imageUrl: product.data.imageUrl,
+       sku: product.data.sku,
+       unit: product.data.unit,
+       category: product.data.category,
+       costPrice: mcostPrice, 
+       quantity: mqty,
+       netAmount: netAmount,
+       taxCode: mtaxCode, 
+       tax: tax,
+       division: mdivision,
+       mdate: mdate,
+       longDate: longDate,
+       accountName: accountName,
+       rootPath: mroot,
+       created: timestamp,
+       modified: timestamp,
+       linkedRowId: linkedRowId,
+       uid: cartRefDoc
+     }); 
    }
     const inventoryaccountRef = doc(db, 'general_ledger', cartRefDoc);
     batch.set(inventoryaccountRef, {
@@ -598,21 +617,47 @@ const updateProductToCart = async(product) =>{
        tr_no: mcheckNumber,
        memo: memo,
        ledger_ref: 'General Ledger',
-       de_ledger_ref: double_entry_ref,
-       reference: m_invoice_ref,
+       de_ledger_ref: 'Creditors Ledger',
+       reference: mexpenditureType,
        amount: netAmount,
        double_entry_type: 'Double Entry',
        credit_debit: 'Debit',
-       double_entry_account_name: product.name+" -COS",
-       double_entry_account_type: 'Income',
+       double_entry_account_name: "Accounts Payable",
+       double_entry_account_type: 'Liabilities:Current Liabilities',
        currency: m_currency,
        user_name: employee,
        created: timestamp,
        modified: timestamp,
        linkedRowId: linkedRowId,
-       uid: cartRefDoc,
+       uid: cartRefDoc
     });
- 
+
+    const creditorsLedgerRef = doc(db, 'creditors_ledger', cartRefDoc);
+    batch.set(creditorsLedgerRef, {
+       transanction_number: m_invoice_number,
+       transanction_ref:  m_invoice_ref,
+       account_name: 'Accounts Payable',
+       account_type: 'Liabilities:Current Liabilities',
+       name: msupplier,
+       tr_date: mdate,
+       tr_date_long: longDate,
+       tr_no: mcheckNumber,
+       memo: memo,
+       ledger_ref: 'General Ledger',
+       de_ledger_ref: 'Creditors Ledger',
+       reference: mexpenditureType,
+       amount: netAmount,
+       double_entry_type: 'Double Entry',
+       credit_debit: 'Credit',
+       double_entry_account_name: accountName,
+       double_entry_account_type: account_type,
+       currency: m_currency,
+       user_name: employee,
+       created: timestamp,
+       modified: timestamp,
+       linkedRowId: linkedRowId,
+       uid: cartRefDoc
+    });
  /*
     const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
     batch.set(inventoryregisterRef, { 
