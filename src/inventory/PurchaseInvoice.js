@@ -28,8 +28,9 @@ function PurchaseInvoice() {
   const [dbase, setDBase] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartDB, setCartDB] = useState([]);
+  const [generalLedgerDB, setGeneralLedgerDB] = useState([]);
   const [inventoryRegDB, setInventoryRegDB] = useState([]);
-  const [itemTypeDB, setItemTypeDB] = useState([{type: 'Inventory'},{type: 'Expense'},{type: 'Cost of sales'},{type: 'Fixed Assets'}]);
+  const [expenditureTypeDB, setExpenditureTypeDB] = useState([{type: 'Inventory'},{type: 'Expense'},{type: 'Cost of sales'},{type: 'Fixed Assets'}]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [mainGroup, setMainGroup] = useState([]);
   const [mainGroupVal, setMainGroupVal] = useState("");
@@ -59,7 +60,7 @@ function PurchaseInvoice() {
  const [description, setDescription] = useState('');
  const [descriptionManual, setDescriptionManual] = useState(false);
  const [taxCode, setTaxCode] = useState('');
- const [itemType, setItemType] = useState('Inventory');
+ const [expenditureType, setExpenditureType] = useState('Inventory');
  const [division, setDivision] = useState('');
  const [account, setAccount] = useState([]);
  const [editLabel, setEditLabel] = useState('+Add New')
@@ -74,7 +75,7 @@ function PurchaseInvoice() {
 
 
   useEffect(() => {
-    const taskColRef1 = collection(db, 'purchases_day_book');
+    const taskColRef1 = collection(db, 'purchases_register');
     const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
     onSnapshot(taskColRef, (snapshot) => {
       setCartDB(snapshot.docs.map(doc => ({
@@ -85,6 +86,16 @@ function PurchaseInvoice() {
     setInitialized(1);
   },[])
 
+  useEffect(() => {
+    const taskColRef1 = collection(db, 'general_ledger');
+    const taskColRef = query(taskColRef1, where("transanction_number","==",invoice_number))
+    onSnapshot(taskColRef, (snapshot) => {
+      setGeneralLedgerDB(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+  },[])
 
   useEffect(() => {
     const taskColRef = query(collection(db, 'bincard'), orderBy('log','asc'))
@@ -260,7 +271,8 @@ const updateProductToCart = async(product) =>{
   let today = null;
   let mqty = qty;
   let m_uniqueId = "";
-  let double_entry_ref = "";
+  let ledger_ref ="General Ledger";
+  let double_entry_ledger_ref = "";
   let mdescription = description;
   let mcostPrice = costPrice;
   let accountName = product.data.inventoryAccount;
@@ -270,6 +282,7 @@ const updateProductToCart = async(product) =>{
   let linkedRowId = nanoid();
   let memo = "";
   let account_type = "Current Assets";
+  let mexpenditureType = expenditureType;
 
   if(accountName === ''){
     alert("Please select an account or inventory!")
@@ -280,18 +293,18 @@ const updateProductToCart = async(product) =>{
     return
   }
 
-  if(itemType !== 'Inventory'){
+  if(mexpenditureType !== 'Inventory'){
     accountName = account;
-    if(itemType == 'Expense')
+    if(mexpenditureType == 'Expense')
       account_type = 'Expense'
-    if(itemType == 'Fixed Assets')
+    if(mexpenditureType == 'Fixed Assets')
       account_type = 'Assets:Fixed Assets'
-    if(itemType == 'Cost of sales')
+    if(mexpenditureType == 'Cost of sales')
       account_type = 'Income:Cost of sales'
     if(accountName === ''){
       let found = 0;
       accountsDB.map((task,index) =>{
-        if(task.data.type === itemType && found === 0){
+        if(task.data.type === expenditureType && found === 0){
           accountName = task.data.rootPath;
           found = 1;
         }
@@ -299,6 +312,7 @@ const updateProductToCart = async(product) =>{
       });
     }
   }
+
   memo = account_type;
   if(mdivision === '' && product.data.division){
     mdivision = product.data.division
@@ -329,6 +343,7 @@ const updateProductToCart = async(product) =>{
     alert("Please select a Supplier!")
     return;
   }
+
   counter = 0;
   if(!costPriceManual)
     mcostPrice = product.data.purchasesPrice;
@@ -343,7 +358,6 @@ const updateProductToCart = async(product) =>{
   if(mtaxCode === '')
    mtaxCode = product.data.expensesTax;
 
-
   if(mtaxCode === '')
     mtaxCode = 'Out of Scope of Tax';
   if(taxMode === 'Out of Scope of Tax')
@@ -352,7 +366,7 @@ const updateProductToCart = async(product) =>{
     today = new Date(date)
   else
     today = new Date();
-
+  
   let dd = String(today.getDate()).padStart(2, '0');
   let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   let yyyy = today.getFullYear();
@@ -369,7 +383,14 @@ const updateProductToCart = async(product) =>{
     */
   let findProductInCart ="no";
   let uid = "";
-    await cartDB.map((cart) =>{
+} 
+
+if(a<100){
+  alert("ok.. here "+accountName)
+  return;
+}
+
+  cartDB.map((cart) =>{
         grandTotal += cart.data.grossAmount;
         if(cart.data.sku === product.data.sku){
           findProductInCart = "yes";
@@ -378,6 +399,7 @@ const updateProductToCart = async(product) =>{
           editRowIdDoc = cart.id;
         }
       });
+
   if(invoice_number === "Add New"){
     let maxLimit = 999999;
     let minLimit = 999;
@@ -386,7 +408,6 @@ const updateProductToCart = async(product) =>{
     m_invoice_ref = Math.floor(m_invoice_ref);
     m_invoice_number = Math.random().toString(36).slice(2);
     double_entry_ref = Math.random().toString(36).slice(2);
-  } 
 
     if(!m_currency){
       baseCurrencyDB.map((task) =>{
@@ -430,6 +451,7 @@ const updateProductToCart = async(product) =>{
   // Get a new write batch
   a = 10;
   grandTotal += grossAmount;
+
   if(a<100){
    alert("invoice_number: "+m_invoice_number+", "+
    "invoice_ref: "+ m_invoice_ref+", "+
@@ -442,7 +464,7 @@ const updateProductToCart = async(product) =>{
    "unit: "+ product.data.unit+", "+
    "description: "+ mdescription+", "+
    "imageUrl: "+ product.data.imageUrl+", "+
-   "expenseType: "+ itemType+", "+
+   "expenditureType: "+ mexpenditureType+", "+
    "maingroup: "+ mainGroupVal+", "+
    "familygroup: "+ familyGroupVal+", "+
    "itemgroup: "+ itemGroupVal+", "+
@@ -461,7 +483,7 @@ const updateProductToCart = async(product) =>{
    "linkedRowId: "+ linkedRowId+", "+
    "division: "+ mdivision+", "+
    "inventoryAccount: "+inventoryAccountName+
-   "");
+   "accountName: "+accountName);
 /*
    "uid: "+ cartRefDoc+", "+
    
@@ -477,7 +499,7 @@ const updateProductToCart = async(product) =>{
 //  batch.set(nycRef, {name: "New York City"});
 
   if(findProductInCart === 'yes'){
-    const cartEditRef = doc(db, 'purchases_day_book', editRowIdDoc);
+    const cartEditRef = doc(db, 'purchases_register', editRowIdDoc);
     batch.update(cartEditRef,{
       division: mdivision,
       description: mdescription,
@@ -491,7 +513,7 @@ const updateProductToCart = async(product) =>{
 
     cartDB.map((task, index) =>{
       let my_id = task.id;
-      const cartEditRef2 = doc(db, 'purchases_day_book',my_id );
+      const cartEditRef2 = doc(db, 'purchases_register',my_id );
       batch.update(cartEditRef2,{
         check_number: mcheckNumber,
         location: location,
@@ -531,9 +553,9 @@ const updateProductToCart = async(product) =>{
     }
 
   var cartRefDoc = Math.random().toString(36).slice(2);
-  
-   const purchasesdaybookRef = doc(db, 'purchases_day_book', cartRefDoc);
-   batch.set(purchasesdaybookRef, { 
+  if(expenditureType === 'Inventory'){
+   const purchasesRegisterRef = doc(db, 'purchases_register', cartRefDoc);
+   batch.set(purchasesRegisterRef, { 
     invoice_number: m_invoice_number,
     invoice_ref: m_invoice_ref,
     check_number: mcheckNumber,
@@ -545,7 +567,7 @@ const updateProductToCart = async(product) =>{
     unit: product.data.unit,
     description: mdescription,
     imageUrl: product.data.imageUrl,
-    expenseType: itemType, 
+    expenditureType: mexpenditureType, 
     maingroup: mainGroupVal,
     familygroup: familyGroupVal,
     itemgroup: itemGroupVal,
@@ -565,24 +587,23 @@ const updateProductToCart = async(product) =>{
     longDate: longDate,
     linkedRowId: linkedRowId,
     uid: cartRefDoc,
-    parent_uid: m_invoice_number,
     division: mdivision,
     inventoryAccount: accountName,
    })
-
-   const inventoryaccountRef = doc(db, 'generalledger_pos', cartRefDoc);
+  }
+   const inventoryaccountRef = doc(db, 'general_ledger', cartRefDoc);
    batch.set(inventoryaccountRef, {
       transanction_number: m_invoice_number,
       transanction_ref:  m_invoice_ref,
-      account_name: 'Inventory:'+product.data.name,
-      account_type: "Current Assets",
+      account_name: accountName,
+      account_type: account_type,
       name: msupplier,
       tr_date: mdate,
       tr_date_long: longDate,
       tr_no: mcheckNumber,
       memo: memo,
-      ledger_ref: 'General Register',
-      double_entry_ledger_ref: doubleEntryLedgerRef,
+      ledger_ref: 'General Ledger',
+      de_ledger_ref: double_entry_ref,
       reference: m_invoice_ref,
       amount: netAmount,
       double_entry_type: 'Double Entry',
@@ -593,7 +614,8 @@ const updateProductToCart = async(product) =>{
       user_name: employee,
       created: timestamp,
       modified: timestamp,
-      uid: cartRefDoc
+      linkedRowId: linkedRowId,
+      uid: cartRefDoc,
    });
 
 /*
@@ -975,14 +997,14 @@ const updateProductToCart = async(product) =>{
              }) 
           }
         </select><br/>
-        <label for="itemType">Item Type :</label>
+        <label for="expenditureType">Expenditure Type :</label>
         <select 
-            name='itemType' 
-            onChange={(e) => setItemType(e.target.value)  } 
-            value={itemType}>
+            name='expenditureType' 
+            onChange={(e) => setExpenditureType(e.target.value)  } 
+            value={expenditureType}>
             {
-              itemTypeDB.map((task) => {
-                if(task.type === itemType)
+              expenditureTypeDB.map((task) => {
+                if(task.type === expenditureType)
              return(
               <option value={task.type} selected >{task.type}</option>
                );
@@ -993,7 +1015,7 @@ const updateProductToCart = async(product) =>{
              })
           }
         </select><br/>
-        {itemType === "Inventory" ? 
+        {expenditureType === "Inventory" ? 
         <div>
         <div>      
           <label for="maingroup">Category</label>
@@ -1047,7 +1069,7 @@ const updateProductToCart = async(product) =>{
             value={account}>
             {
               accountsDB.map((task) => {
-               if(task.data.type === itemType){ 
+               if(task.data.type === expenditureType){ 
                 if(task.data.rootPath === account)
              return(
               <option value={task.data.rootPath} selected >{task.data.rootPath}</option>
@@ -1154,7 +1176,7 @@ const updateProductToCart = async(product) =>{
 
         <div className='col-lg-8'>
           {isLoading ? 'Loading' :
-           itemType === 'Inventory' ? 
+           expenditureType === 'Inventory' ? 
            <div className='row'>
               {itemsDB.map((product, key) =>
                 <div key={key} className='col-lg-4 mb-4'>
@@ -1185,7 +1207,9 @@ const updateProductToCart = async(product) =>{
                     </tr>
                   </thead>
                   <tbody>
-                    { cartDB.length > 0 ? cartDB.map((cartProduct, key) => <tr key={key}>
+                  <tr ><td colspan = "6"><b>Products</b></td></tr>
+                    { cartDB.length > 0 ? cartDB.map((cartProduct, key) => cartProduct.expenditureType === 'Inventory' ? 
+                      <tr key={key}>
                       <td>{cartProduct.data.sku}</td>
                       <td>{cartProduct.data.name}</td>
                       <td>{cartProduct.data.price}</td>
@@ -1195,9 +1219,25 @@ const updateProductToCart = async(product) =>{
                         <button className='btn btn-danger btn-sm' onClick={() => removeProduct(cartProduct)}>DEL⌧</button>
                       </td>
 
-                    </tr>)
+                    </tr> : "No data" )
+                      : "No data"
+                    }
+                    <tr ><td colspan = "6"><b>Expenditure</b></td></tr>
+                    { cartDB.length > 0 ? cartDB.map((cartProduct, key) => cartProduct.expenditureType !== 'Inventory' ? 
+                      <tr key={key}>
+                      <td>{cartProduct.data.sku}</td>
+                      <td>{cartProduct.data.name}</td>
+                      <td>{cartProduct.data.price}</td>
+                      <td>{cartProduct.data.quantity}</td>
+                      <td>{cartProduct.data.grossAmount}</td>
+                      <td>
+                        <button className='btn btn-danger btn-sm' onClick={() => removeProduct(cartProduct)}>DEL⌧</button>
+                      </td>
 
-                    : 'No Item in Cart'}
+                    </tr> : "No data" )
+                      : "No data"
+                    }
+
                   </tbody>
                 </table>
                 <h2 className='px-2 text-white'>Total Amount: {currency} {totalAmount}</h2>
