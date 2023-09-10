@@ -85,17 +85,6 @@ function PurchaseInvoice() {
     setInitialized(1);
   },[])
 
-  useEffect(() => {
-    const taskColRef1 = collection(db, 'purchases_day_book');
-    const taskColRef = query(taskColRef1, where("invoice_number","==",invoice_number))
-    onSnapshot(taskColRef, (snapshot) => {
-      setCartDB(snapshot.docs.map(doc => ({
-        id: doc.id,
-        data: doc.data()
-      })))
-    })
-    
-  },[cartDB])
 
   useEffect(() => {
     const taskColRef = query(collection(db, 'bincard'), orderBy('log','asc'))
@@ -279,8 +268,11 @@ const updateProductToCart = async(product) =>{
   let counter = 0;
   let editRowIdDoc = "";
   let linkedRowId = nanoid();
+  let memo = "";
+  let account_type = "Current Assets";
+
   if(accountName === ''){
-    alert("Please select an account name!")
+    alert("Please select an account or inventory!")
     return
   }
   if(mcheckNumber <= 0){
@@ -290,14 +282,24 @@ const updateProductToCart = async(product) =>{
 
   if(itemType !== 'Inventory'){
     accountName = account;
+    if(itemType == 'Expense')
+      account_type = 'Expense'
+    if(itemType == 'Fixed Assets')
+      account_type = 'Assets:Fixed Assets'
+    if(itemType == 'Cost of sales')
+      account_type = 'Income:Cost of sales'
     if(accountName === ''){
+      let found = 0;
       accountsDB.map((task,index) =>{
-        if(task.data.type === itemType && index === 0)
+        if(task.data.type === itemType && found === 0){
           accountName = task.data.rootPath;
+          found = 1;
+        }
+      
       });
     }
   }
-
+  memo = account_type;
   if(mdivision === '' && product.data.division){
     mdivision = product.data.division
   }
@@ -458,14 +460,14 @@ const updateProductToCart = async(product) =>{
    "longDate: "+ longDate+", "+
    "linkedRowId: "+ linkedRowId+", "+
    "division: "+ mdivision+", "+
-   "inventoryAccount: "+accountName+
+   "inventoryAccount: "+inventoryAccountName+
    "");
 /*
    "uid: "+ cartRefDoc+", "+
    
   );
     */
-   //return;
+   return;
   }
   const batch = writeBatch(db);
   // Set the value of 'NYC'
@@ -567,6 +569,33 @@ const updateProductToCart = async(product) =>{
     division: mdivision,
     inventoryAccount: accountName,
    })
+
+   const inventoryaccountRef = doc(db, 'generalledger_pos', cartRefDoc);
+   batch.set(inventoryaccountRef, {
+      transanction_number: m_invoice_number,
+      transanction_ref:  m_invoice_ref,
+      account_name: 'Inventory:'+product.data.name,
+      account_type: "Current Assets",
+      name: msupplier,
+      tr_date: mdate,
+      tr_date_long: longDate,
+      tr_no: mcheckNumber,
+      memo: memo,
+      ledger_ref: 'General Register',
+      double_entry_ledger_ref: doubleEntryLedgerRef,
+      reference: m_invoice_ref,
+      amount: netAmount,
+      double_entry_type: 'Double Entry',
+      credit_debit: 'Debit',
+      double_entry_account_name: product.name+" -COS",
+      double_entry_account_type: 'Income',
+      currency: m_currency,
+      user_name: employee,
+      created: timestamp,
+      modified: timestamp,
+      uid: cartRefDoc
+   });
+
 /*
    const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
    batch.set(inventoryregisterRef, { 
@@ -618,29 +647,6 @@ const updateProductToCart = async(product) =>{
       user_name: employee,
       created: timestamp,
       uid: cartRefDoc
-    });
-    const inventoryaccountRef = doc(db, 'generalledger_pos', cartRefDoc+1);
-    batch.set(inventoryaccountRef, {
-      invoice_number: m_invoice_number,
-      invoice_ref: m_invoice_ref,
-      account_name: 'Inventory:'+product.name,
-      account_type: "Current Assets",
-      name: 'Point-of-sale',
-      tr_date: mdate,
-      tr_date_long: log,
-      tr_no: checkNumber,
-      memo: 'Product Sales',
-      ref: 'Cost of Sales',
-      reference: product.name,
-      amount: stockRegisterValue * -1,
-      double_entry_type: 'Double Entry',
-      credit_or_debit: 'Debit',
-      double_entry_account_name: product.name+" -COS",
-      double_entry_account_type: 'Income',
-      currency: product.currency,
-      user_name: employee,
-      created: timestamp,
-      uid: cartRefDoc+1
     });
 
     const salesledgerRef = doc(db, 'salesledger_pos', cartRefDoc);
