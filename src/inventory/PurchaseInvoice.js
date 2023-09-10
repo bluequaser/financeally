@@ -236,6 +236,7 @@ batch.commit()
 
 const updateProductToCart = async(product, flag) =>{
   let a = 10;
+  
   let m_invoice_ref = invoice_ref;
   let m_invoice_number = invoice_number;
   let employee = '';
@@ -264,7 +265,7 @@ const updateProductToCart = async(product, flag) =>{
   let double_entry_ref = "";
   let mdescription = description;
   let mcostPrice = costPrice;
-  let accountName = flag === 'Inventory' ? product.data.inventoryAccount : account
+  let accountName = "";
   let mdivision = division;
   let counter = 0;
   let editRowIdDoc = "";
@@ -272,11 +273,9 @@ const updateProductToCart = async(product, flag) =>{
   let memo = "";
   let account_type = "Current Assets";
   let mexpenditureType = expenditureType;
-
-  if(accountName === ''){
-    alert("Please select an account or inventory!")
-    return
-  }
+  
+  accountName = flag === 'Inventory' ? product.data.inventoryAccount : account;
+  
   if(mcheckNumber <= 0){
     alert("Please enter a check number!")
     return
@@ -293,7 +292,8 @@ const updateProductToCart = async(product, flag) =>{
     if(accountName === ''){
       let found = 0;
       accountsDB.map((task,index) =>{
-        if(task.data.type === expenditureType && found === 0){
+        console.log(task.data.type+": "+task.data.roootPath+", ")
+        if(task.data.type === mexpenditureType && index === 0){
           accountName = task.data.rootPath;
           found = 1;
         }
@@ -302,6 +302,14 @@ const updateProductToCart = async(product, flag) =>{
     }
   }
 
+  if(accountName === ''){
+    alert("Please select an account or inventory!")
+    return
+  }
+  if(a < 100){
+    alert("ok .. here "+flag+" , "+accountName)
+    return
+  }
 
   memo = expenditureType;
   if(mdivision === '' && product.data.division && product){
@@ -394,7 +402,6 @@ const updateProductToCart = async(product, flag) =>{
     m_invoice_number = Math.random().toString(36).slice(2);
     double_entry_ref = Math.random().toString(36).slice(2);
   }
-
     if(!m_currency){
       baseCurrencyDB.map((task) =>{
         if(task.data.isBaseCurrency === 'yes'){
@@ -1128,7 +1135,7 @@ const updateProductToCart = async(product, flag) =>{
              })
           }
         </select> <br/>
-        <button onClick = {()=> updateProductToCart(null,expenditureType)}></button>
+        <button onClick = {()=> updateProductToCart(null,expenditureType)}>Save</button>
         </div>
         }
 
