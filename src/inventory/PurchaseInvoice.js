@@ -345,10 +345,7 @@ const updateProductToCart = async(product, flag) =>{
   if(mdescription === '' && product){
     mdescription = product.data.inventoryDescription;
   }
-if(a<100){
-  alert("ok.. here "+accountName)
-  return
-}
+
   if(mtaxCode === '' && product)
    mtaxCode = product.data.expensesTax;
 
@@ -1130,7 +1127,8 @@ if(a<100){
                }
              })
           }
-        </select>
+        </select> <br/>
+        <button onClick = {()=> updateProductToCart(null,expenditureType)}></button>
         </div>
         }
 
