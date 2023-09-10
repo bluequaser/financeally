@@ -480,7 +480,7 @@ const updateProductToCart = async(product, flag) =>{
     
    );
      */
-    return;
+   // return;
    }
    const batch = writeBatch(db);
    // Set the value of 'NYC'
@@ -489,7 +489,7 @@ const updateProductToCart = async(product, flag) =>{
  //  const nycRef = doc(db, "cities", cartuidDoc);
  //  batch.set(nycRef, {name: "New York City"});
  
-   if(findProductInCart === 'yes' && product){
+   if(findProductInCart === 'yes'){
      //update
      const cartEditRef = doc(db, 'purchases_register', editRowIdDoc);
      batch.update(cartEditRef,{
@@ -531,6 +531,7 @@ const updateProductToCart = async(product, flag) =>{
          check_number: mcheckNumber,
          employee: employee,
          store: location,
+         currency: m_currency,
          grandTotal: grandTotal,
          created: timestamp,
          modified: timestamp,

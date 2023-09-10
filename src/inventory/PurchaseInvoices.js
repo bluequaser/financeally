@@ -109,7 +109,7 @@ export default function PurchaseInvoices() {
             >
               {task.data.employee}<br/>
               {task.data.check_number}{" "}{task.data.mdate}<br/>
-              {task.data.grandTotal}
+              {task.data.currency}{" "}{task.data.grandTotal}
             </QueryNavLink>
           ))}
       </nav>
