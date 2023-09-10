@@ -281,37 +281,33 @@ const updateProductToCart = async(product, flag) =>{
     return
   }
 
+
   if(mexpenditureType !== 'Inventory'){
-    accountName = account;
     if(mexpenditureType == 'Expense')
       account_type = 'Expense'
     if(mexpenditureType == 'Fixed Assets')
       account_type = 'Assets:Fixed Assets'
     if(mexpenditureType == 'Cost of sales')
       account_type = 'Income:Cost of sales'
-    if(accountName === ''){
-      let found = 0;
-      accountsDB.map((task,index) =>{
-        console.log(task.data.type+": "+task.data.roootPath+", ")
-        if(task.data.type === mexpenditureType && index === 0){
-          accountName = task.data.rootPath;
-          found = 1;
-        }
-      
-      });
-    }
+ 
   }
+  
+  if(accountName.length < 2)
+  accountsDB.map((task,index) =>{
+
+    if(task.data.type === mexpenditureType && index === 0){
+      accountName = task.data.rootPath;
+    }
+  
+  });
 
   if(accountName === ''){
     alert("Please select an account or inventory!")
     return
   }
-  if(a < 100){
-    alert("ok .. here "+flag+" , "+accountName)
-    return
-  }
 
-  memo = expenditureType;
+
+  memo = mexpenditureType;
   if(mdivision === '' && product.data.division && product){
     mdivision = product.data.division
   }
@@ -567,7 +563,7 @@ const updateProductToCart = async(product, flag) =>{
      maingroup: mainGroupVal,
      familygroup: familyGroupVal,
      itemgroup: itemGroupVal,
-     category: product.data.category,
+     category: product ? product.data.category : "",
      taxMode: taxMode,
      costPrice: mcostPrice, 
      quantity: mqty,
@@ -587,7 +583,7 @@ const updateProductToCart = async(product, flag) =>{
      accountName: accountName
     })
 
-    if(expenditureType === 'Inventory'){
+    if(mexpenditureType === 'Inventory'){
    const binCardRef = doc(db, 'bin_card', cartRefDoc);
    batch.set(binCardRef, {
        invoice_number: m_invoice_number,
@@ -635,7 +631,7 @@ const updateProductToCart = async(product, flag) =>{
        double_entry_type: 'Double Entry',
        credit_debit: 'Debit',
        double_entry_account_name: "Accounts Payable",
-       double_entry_account_type: 'Liabilities:Current Liabilities',
+       double_entry_account_type: 'Liabilities:Current Liabilities:Accounts Payable',
        currency: m_currency,
        user_name: employee,
        created: timestamp,
@@ -649,14 +645,14 @@ const updateProductToCart = async(product, flag) =>{
        transanction_number: m_invoice_number,
        transanction_ref:  m_invoice_ref,
        account_name: 'Accounts Payable',
-       account_type: 'Liabilities:Current Liabilities',
+       account_type: 'Liabilities:Current Liabilities:Accounts Payable',
        name: msupplier,
        tr_date: mdate,
        tr_date_long: longDate,
        tr_no: mcheckNumber,
        memo: memo,
-       ledger_ref: 'General Ledger',
-       de_ledger_ref: 'Creditors Ledger',
+       ledger_ref: 'Creditors Ledger',
+       de_ledger_ref: 'General Ledger',
        reference: mexpenditureType,
        amount: netAmount,
        double_entry_type: 'Double Entry',
