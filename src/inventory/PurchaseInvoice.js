@@ -234,7 +234,7 @@ batch.commit()
 
 
 
-const updateProductToCart = async(product) =>{
+const updateProductToCart = async(product, flag) =>{
   let a = 10;
   let m_invoice_ref = invoice_ref;
   let m_invoice_number = invoice_number;
@@ -261,10 +261,10 @@ const updateProductToCart = async(product) =>{
   let mqty = qty;
   let m_uniqueId = "";
   let ledger_ref ="General Ledger";
-  let double_entry_ledger_ref = "";
+  let double_entry_ref = "";
   let mdescription = description;
   let mcostPrice = costPrice;
-  let accountName = product.data.inventoryAccount;
+  let accountName = flag === 'Inventory' ? product.data.inventoryAccount : account
   let mdivision = division;
   let counter = 0;
   let editRowIdDoc = "";
@@ -302,8 +302,9 @@ const updateProductToCart = async(product) =>{
     }
   }
 
-  memo = account_type;
-  if(mdivision === '' && product.data.division){
+
+  memo = expenditureType;
+  if(mdivision === '' && product.data.division && product){
     mdivision = product.data.division
   }
   if(mdivision === ''){
@@ -328,23 +329,27 @@ const updateProductToCart = async(product) =>{
         msupplier = task.data.name;
     });
   }
+
   if(msupplier === ''){
     alert("Please select a Supplier!")
     return;
   }
 
   counter = 0;
-  if(!costPriceManual)
+  if(!costPriceManual && product)
     mcostPrice = product.data.purchasesPrice;
 
   if(mcostPrice < 0)
      mcostPrice = 0;
 
-  if(mdescription === ''){
+  if(mdescription === '' && product){
     mdescription = product.data.inventoryDescription;
   }
-
-  if(mtaxCode === '')
+if(a<100){
+  alert("ok.. here "+accountName)
+  return
+}
+  if(mtaxCode === '' && product)
    mtaxCode = product.data.expensesTax;
 
   if(mtaxCode === '')
@@ -367,7 +372,7 @@ const updateProductToCart = async(product) =>{
     mqty = 1;
       /*
     let findProductInCart =  cartDB.map((cart) =>{
-        return cart.data.sku === product.sku
+        return cart.data.sku === product.data.sku
       });
     */
   let findProductInCart ="no";
@@ -375,7 +380,7 @@ const updateProductToCart = async(product) =>{
 
   cartDB.map((cart) =>{
     grandTotal += cart.data.grossAmount;
-    if(cart.data.sku === product.data.sku){
+    if(cart.data.sku === product.data.sku && product){
       findProductInCart = "yes";
       mqty = cart.data.quantity + mqty;
       uid = cart.data.uid
@@ -410,7 +415,7 @@ const updateProductToCart = async(product) =>{
         }
       })
     }
-
+  
     let m_counter = 0;
     taxCodesDB.map((mtaxcode, key) => {
 
@@ -435,6 +440,7 @@ const updateProductToCart = async(product) =>{
   // Get a new write batch
   a = 10;
   grandTotal += grossAmount;
+
 
   if(a<100){
     alert("invoice_number: "+m_invoice_number+", "+
@@ -466,8 +472,7 @@ const updateProductToCart = async(product) =>{
     "longDate: "+ longDate+", "+
     "linkedRowId: "+ linkedRowId+", "+
     "division: "+ mdivision+", "+
-    "inventoryAccount: "+inventoryAccountName+
-    "accountName: "+accountName);
+    "accountName: "+accountName);
  /*
     "uid: "+ cartRefDoc+", "+
     
@@ -483,6 +488,7 @@ const updateProductToCart = async(product) =>{
  //  batch.set(nycRef, {name: "New York City"});
  
    if(findProductInCart === 'yes'){
+     //update
      const cartEditRef = doc(db, 'purchases_register', editRowIdDoc);
      batch.update(cartEditRef,{
        division: mdivision,
@@ -512,9 +518,10 @@ const updateProductToCart = async(product) =>{
  
      
    } else 
-   {
+   { 
      if(invoice_number === "Add New" && updateStatus === 'NONE')
      {
+       //insert
        const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
        batch.set(cartuidRef,{
          invoice_number: m_invoice_number,
@@ -529,6 +536,7 @@ const updateProductToCart = async(product) =>{
          longDate: longDate
        })
      } else {
+       // update
        const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
        batch.update(cartuidRef,{
          grandTotal: grandTotal,
@@ -1221,7 +1229,7 @@ const updateProductToCart = async(product) =>{
            <div className='row'>
               {itemsDB.map((product, key) =>
                 <div key={key} className='col-lg-4 mb-4'>
-                  <div className='pos-item px-3 text-center border' onClick={() => updateProductToCart(product)}>
+                  <div className='pos-item px-3 text-center border' onClick={() => updateProductToCart(product,"Inventory")}>
                       {product.data.rootPath.split(":")[0] === mainGroupVal && product.data.rootPath.split(":")[1] === familyGroupVal ? 
                       <p> <img src={product.data.imageUrl} className="img-fluid"  />{product.data.name} {product.data.sku} {currency} {product.data.salesPrice}</p>
                       : null }
