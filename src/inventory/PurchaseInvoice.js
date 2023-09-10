@@ -377,28 +377,22 @@ const updateProductToCart = async(product) =>{
   if(mqty <= 0)
     mqty = 1;
       /*
-    let findProductInCart = await cartDB.map((cart) =>{
+    let findProductInCart =  cartDB.map((cart) =>{
         return cart.data.sku === product.sku
       });
     */
   let findProductInCart ="no";
   let uid = "";
-} 
-
-if(a<100){
-  alert("ok.. here "+accountName)
-  return;
-}
 
   cartDB.map((cart) =>{
-        grandTotal += cart.data.grossAmount;
-        if(cart.data.sku === product.data.sku){
-          findProductInCart = "yes";
-          mqty = cart.data.quantity + mqty;
-          uid = cart.data.uid
-          editRowIdDoc = cart.id;
-        }
-      });
+    grandTotal += cart.data.grossAmount;
+    if(cart.data.sku === product.data.sku){
+      findProductInCart = "yes";
+      mqty = cart.data.quantity + mqty;
+      uid = cart.data.uid
+      editRowIdDoc = cart.id;
+    }
+  });
 
   if(invoice_number === "Add New"){
     let maxLimit = 999999;
@@ -408,6 +402,7 @@ if(a<100){
     m_invoice_ref = Math.floor(m_invoice_ref);
     m_invoice_number = Math.random().toString(36).slice(2);
     double_entry_ref = Math.random().toString(36).slice(2);
+  }
 
     if(!m_currency){
       baseCurrencyDB.map((task) =>{
@@ -426,7 +421,7 @@ if(a<100){
         }
       })
     }
-       
+
     let m_counter = 0;
     taxCodesDB.map((mtaxcode, key) => {
 
@@ -453,322 +448,323 @@ if(a<100){
   grandTotal += grossAmount;
 
   if(a<100){
-   alert("invoice_number: "+m_invoice_number+", "+
-   "invoice_ref: "+ m_invoice_ref+", "+
-   "check_number: "+ checkNumber+", "+
-   "user: "+ employee+", "+
-   "location: "+ location+", "+
-   "supplier: "+ msupplier+", "+
-   "name: "+ product.data.name+", "+
-   "sku: "+ product.data.sku+", "+
-   "unit: "+ product.data.unit+", "+
-   "description: "+ mdescription+", "+
-   "imageUrl: "+ product.data.imageUrl+", "+
-   "expenditureType: "+ mexpenditureType+", "+
-   "maingroup: "+ mainGroupVal+", "+
-   "familygroup: "+ familyGroupVal+", "+
-   "itemgroup: "+ itemGroupVal+", "+
-   "category: "+ product.data.category+", "+
-   "taxMode: "+ taxMode+", "+
-   "costPrice: "+ mcostPrice+", "+ 
-   "taxCode: "+ mtaxCode+", "+
-   "quantity: "+ mqty+", "+
-   "netAmount: "+ netAmount+", "+
-   "grossAmount: "+ grossAmount+", "+
-   "tax: "+ tax+", "+
-   "currency: "+ m_currency+", "+
-   "created: "+ timestamp+", "+
-   "mdate: "+ mdate+", "+
-   "longDate: "+ longDate+", "+
-   "linkedRowId: "+ linkedRowId+", "+
-   "division: "+ mdivision+", "+
-   "inventoryAccount: "+inventoryAccountName+
-   "accountName: "+accountName);
-/*
-   "uid: "+ cartRefDoc+", "+
-   
-  );
-    */
-   return;
-  }
-  const batch = writeBatch(db);
-  // Set the value of 'NYC'
-  var newRowIdDoc = Math.random().toString(36).slice(2);
-  var cartuidDoc2 = Math.random().toString(36).slice(2);
-//  const nycRef = doc(db, "cities", cartuidDoc);
-//  batch.set(nycRef, {name: "New York City"});
-
-  if(findProductInCart === 'yes'){
-    const cartEditRef = doc(db, 'purchases_register', editRowIdDoc);
-    batch.update(cartEditRef,{
-      division: mdivision,
-      description: mdescription,
-      costPrice: mcostPrice,
-      quantity: mqty,
-      netAmount: netAmount,
-      totalAmount: grossAmount,
-      tax: tax,
-      modified: timestamp
-    })
-
-    cartDB.map((task, index) =>{
-      let my_id = task.id;
-      const cartEditRef2 = doc(db, 'purchases_register',my_id );
-      batch.update(cartEditRef2,{
-        check_number: mcheckNumber,
-        location: location,
-        supplier: msupplier,
-        mdate: mdate,
-        longDate: longDate,
-        currency: m_currency,
-        taxMode: taxMode,
-        modified: timestamp
-      });
-    });
-
+    alert("invoice_number: "+m_invoice_number+", "+
+    "invoice_ref: "+ m_invoice_ref+", "+
+    "check_number: "+ checkNumber+", "+
+    "user: "+ employee+", "+
+    "location: "+ location+", "+
+    "supplier: "+ msupplier+", "+
+    "name: "+ product.data.name+", "+
+    "sku: "+ product.data.sku+", "+
+    "unit: "+ product.data.unit+", "+
+    "description: "+ mdescription+", "+
+    "imageUrl: "+ product.data.imageUrl+", "+
+    "expenditureType: "+ mexpenditureType+", "+
+    "maingroup: "+ mainGroupVal+", "+
+    "familygroup: "+ familyGroupVal+", "+
+    "itemgroup: "+ itemGroupVal+", "+
+    "category: "+ product.data.category+", "+
+    "taxMode: "+ taxMode+", "+
+    "costPrice: "+ mcostPrice+", "+ 
+    "taxCode: "+ mtaxCode+", "+
+    "quantity: "+ mqty+", "+
+    "netAmount: "+ netAmount+", "+
+    "grossAmount: "+ grossAmount+", "+
+    "tax: "+ tax+", "+
+    "currency: "+ m_currency+", "+
+    "created: "+ timestamp+", "+
+    "mdate: "+ mdate+", "+
+    "longDate: "+ longDate+", "+
+    "linkedRowId: "+ linkedRowId+", "+
+    "division: "+ mdivision+", "+
+    "inventoryAccount: "+inventoryAccountName+
+    "accountName: "+accountName);
+ /*
+    "uid: "+ cartRefDoc+", "+
     
-  } else 
-  {
-    if(invoice_number === "Add New" && updateStatus === 'NONE')
-    {
-      const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
-      batch.set(cartuidRef,{
-        invoice_number: m_invoice_number,
-        invoice_ref: m_invoice_ref,
-        check_number: mcheckNumber,
-        employee: employee,
-        store: location,
-        grandTotal: grandTotal,
-        created: timestamp,
-        modified: timestamp,
-        mdate: mdate,
-        longDate: longDate
-      })
-    } else {
-      const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
-      batch.update(cartuidRef,{
-        grandTotal: grandTotal,
-        modified: timestamp
-      })
-    }
-
-  var cartRefDoc = Math.random().toString(36).slice(2);
-  if(expenditureType === 'Inventory'){
-   const purchasesRegisterRef = doc(db, 'purchases_register', cartRefDoc);
-   batch.set(purchasesRegisterRef, { 
-    invoice_number: m_invoice_number,
-    invoice_ref: m_invoice_ref,
-    check_number: mcheckNumber,
-    user: employee,
-    location: location,
-    supplier: msupplier,
-    name: product.data.name,
-    sku: product.data.sku,
-    unit: product.data.unit,
-    description: mdescription,
-    imageUrl: product.data.imageUrl,
-    expenditureType: mexpenditureType, 
-    maingroup: mainGroupVal,
-    familygroup: familyGroupVal,
-    itemgroup: itemGroupVal,
-    category: product.data.category,
-    taxMode: taxMode,
-    costPrice: mcostPrice, 
-    quantity: mqty,
-    netAmount: netAmount,
-    taxCode: mtaxCode, 
-    tax: tax,
-    grossAmount: grossAmount,
-    grandTotal: grandTotal,
-    currency: m_currency,
-    created: timestamp,
-    modified: timestamp,
-    mdate: mdate,
-    longDate: longDate,
-    linkedRowId: linkedRowId,
-    uid: cartRefDoc,
-    division: mdivision,
-    inventoryAccount: accountName,
-   })
-  }
-   const inventoryaccountRef = doc(db, 'general_ledger', cartRefDoc);
-   batch.set(inventoryaccountRef, {
-      transanction_number: m_invoice_number,
-      transanction_ref:  m_invoice_ref,
-      account_name: accountName,
-      account_type: account_type,
-      name: msupplier,
-      tr_date: mdate,
-      tr_date_long: longDate,
-      tr_no: mcheckNumber,
-      memo: memo,
-      ledger_ref: 'General Ledger',
-      de_ledger_ref: double_entry_ref,
-      reference: m_invoice_ref,
-      amount: netAmount,
-      double_entry_type: 'Double Entry',
-      credit_debit: 'Debit',
-      double_entry_account_name: product.name+" -COS",
-      double_entry_account_type: 'Income',
-      currency: m_currency,
-      user_name: employee,
-      created: timestamp,
-      modified: timestamp,
-      linkedRowId: linkedRowId,
-      uid: cartRefDoc,
-   });
-
-/*
-   const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
-   batch.set(inventoryregisterRef, { 
-        invoice_number: m_invoice_number,
-         invoice_ref: m_invoice_ref,
-         check_number: checkNumber,
-        location: storeSelected,
-         sku: product.sku,
-         name: product.name,
-         description: product.description,
-         category: product.category,
-         costPrice: product.costprice,
-         unit: product.unit,
-         imageUrl: product.image, 
-         quantity: mqty,
-         quantityIn: mqty,
-         quantityOut: 0.0,
-         netAmount: stockRegisterValue,
-         currency: product.currency,
-         created: timestamp,
-         mdate: mdate,
-         longDate: log,
-         uid: cartRefDoc,
-         unit: unit,
-         division: division,
-         inventoryAccount: minventoryAccount,
-    
+   );
+     */
+    return;
+   }
+   const batch = writeBatch(db);
+   // Set the value of 'NYC'
+   var newRowIdDoc = Math.random().toString(36).slice(2);
+   var cartuidDoc2 = Math.random().toString(36).slice(2);
+ //  const nycRef = doc(db, "cities", cartuidDoc);
+ //  batch.set(nycRef, {name: "New York City"});
+ 
+   if(findProductInCart === 'yes'){
+     const cartEditRef = doc(db, 'purchases_register', editRowIdDoc);
+     batch.update(cartEditRef,{
+       division: mdivision,
+       description: mdescription,
+       costPrice: mcostPrice,
+       quantity: mqty,
+       netAmount: netAmount,
+       totalAmount: grossAmount,
+       tax: tax,
+       modified: timestamp
+     })
+ 
+     cartDB.map((task, index) =>{
+       let my_id = task.id;
+       const cartEditRef2 = doc(db, 'purchases_register',my_id );
+       batch.update(cartEditRef2,{
+         check_number: mcheckNumber,
+         location: location,
+         supplier: msupplier,
+         mdate: mdate,
+         longDate: longDate,
+         currency: m_currency,
+         taxMode: taxMode,
+         modified: timestamp
+       });
+     });
+ 
+     
+   } else 
+   {
+     if(invoice_number === "Add New" && updateStatus === 'NONE')
+     {
+       const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
+       batch.set(cartuidRef,{
+         invoice_number: m_invoice_number,
+         invoice_ref: m_invoice_ref,
+         check_number: mcheckNumber,
+         employee: employee,
+         store: location,
+         grandTotal: grandTotal,
+         created: timestamp,
+         modified: timestamp,
+         mdate: mdate,
+         longDate: longDate
+       })
+     } else {
+       const cartuidRef = doc(db, 'purchases_uid', m_invoice_number);
+       batch.update(cartuidRef,{
+         grandTotal: grandTotal,
+         modified: timestamp
+       })
+     }
+ 
+   var cartRefDoc = Math.random().toString(36).slice(2);
+   if(expenditureType === 'Inventory'){
+    const purchasesRegisterRef = doc(db, 'purchases_register', cartRefDoc);
+    batch.set(purchasesRegisterRef, { 
+     invoice_number: m_invoice_number,
+     invoice_ref: m_invoice_ref,
+     check_number: mcheckNumber,
+     user: employee,
+     location: location,
+     supplier: msupplier,
+     name: product.data.name,
+     sku: product.data.sku,
+     unit: product.data.unit,
+     description: mdescription,
+     imageUrl: product.data.imageUrl,
+     expenditureType: mexpenditureType, 
+     maingroup: mainGroupVal,
+     familygroup: familyGroupVal,
+     itemgroup: itemGroupVal,
+     category: product.data.category,
+     taxMode: taxMode,
+     costPrice: mcostPrice, 
+     quantity: mqty,
+     netAmount: netAmount,
+     taxCode: mtaxCode, 
+     tax: tax,
+     grossAmount: grossAmount,
+     grandTotal: grandTotal,
+     currency: m_currency,
+     created: timestamp,
+     modified: timestamp,
+     mdate: mdate,
+     longDate: longDate,
+     linkedRowId: linkedRowId,
+     uid: cartRefDoc,
+     division: mdivision,
+     inventoryAccount: accountName,
     })
-
-    const costofsalesRef = doc(db, 'generalledger_pos', cartRefDoc);
-    batch.set(costofsalesRef, {
-      invoice_number: m_invoice_number,
-      invoice_ref: m_invoice_ref,
-      account_name: product.name+" -COS",
-      account_type: "Income",
-      name: 'Point-of-sale',
-      tr_date: mdate,
-      tr_date_long: log,
-      tr_no: checkNumber,
-      memo: 'Product Sales',
-      ref: 'Inventory Account',
-      reference: product.name,
-      amount: stockRegisterValue * -1,
-      double_entry_type: 'Double Entry',
-      credit_or_debit: 'Debit',
-      double_entry_account_name: 'Inventory:'+product.name,
-      double_entry_account_type: 'Current Assets',
-      currency: product.currency,
-      user_name: employee,
-      created: timestamp,
-      uid: cartRefDoc
+   }
+    const inventoryaccountRef = doc(db, 'general_ledger', cartRefDoc);
+    batch.set(inventoryaccountRef, {
+       transanction_number: m_invoice_number,
+       transanction_ref:  m_invoice_ref,
+       account_name: accountName,
+       account_type: account_type,
+       name: msupplier,
+       tr_date: mdate,
+       tr_date_long: longDate,
+       tr_no: mcheckNumber,
+       memo: memo,
+       ledger_ref: 'General Ledger',
+       de_ledger_ref: double_entry_ref,
+       reference: m_invoice_ref,
+       amount: netAmount,
+       double_entry_type: 'Double Entry',
+       credit_debit: 'Debit',
+       double_entry_account_name: product.name+" -COS",
+       double_entry_account_type: 'Income',
+       currency: m_currency,
+       user_name: employee,
+       created: timestamp,
+       modified: timestamp,
+       linkedRowId: linkedRowId,
+       uid: cartRefDoc,
     });
+ 
+ /*
+    const inventoryregisterRef = doc(db, 'inventoryregister_pos', cartRefDoc);
+    batch.set(inventoryregisterRef, { 
+         invoice_number: m_invoice_number,
+          invoice_ref: m_invoice_ref,
+          check_number: checkNumber,
+         location: storeSelected,
+          sku: product.sku,
+          name: product.name,
+          description: product.description,
+          category: product.category,
+          costPrice: product.costprice,
+          unit: product.unit,
+          imageUrl: product.image, 
+          quantity: mqty,
+          quantityIn: mqty,
+          quantityOut: 0.0,
+          netAmount: stockRegisterValue,
+          currency: product.currency,
+          created: timestamp,
+          mdate: mdate,
+          longDate: log,
+          uid: cartRefDoc,
+          unit: unit,
+          division: division,
+          inventoryAccount: minventoryAccount,
+     
+     })
+ 
+     const costofsalesRef = doc(db, 'generalledger_pos', cartRefDoc);
+     batch.set(costofsalesRef, {
+       invoice_number: m_invoice_number,
+       invoice_ref: m_invoice_ref,
+       account_name: product.name+" -COS",
+       account_type: "Income",
+       name: 'Point-of-sale',
+       tr_date: mdate,
+       tr_date_long: log,
+       tr_no: checkNumber,
+       memo: 'Product Sales',
+       ref: 'Inventory Account',
+       reference: product.name,
+       amount: stockRegisterValue * -1,
+       double_entry_type: 'Double Entry',
+       credit_or_debit: 'Debit',
+       double_entry_account_name: 'Inventory:'+product.name,
+       double_entry_account_type: 'Current Assets',
+       currency: product.currency,
+       user_name: employee,
+       created: timestamp,
+       uid: cartRefDoc
+     });
+ 
+     const salesledgerRef = doc(db, 'salesledger_pos', cartRefDoc);
+     batch.set(salesledgerRef, {
+       invoice_number: m_invoice_number,
+       invoice_ref: m_invoice_ref,
+       account_name: product.name,
+       account_type: 'Income',
+       name: 'Point-of-sale',
+       tr_date: mdate,
+       tr_date_long: log,
+       tr_no: checkNumber,
+       memo: 'Product Sales',
+       ref: 'Creditors Ledger',
+       reference: product.name,
+       amount: (product.price * mqty) - tax,
+       double_entry_type: 'Double Entry',
+       credit_or_debit: 'Credit',
+       double_entry_account_name: 'Accounts Receivable',
+       double_entry_account_type: 'Current Assets',
+       currency: product.currency,
+       user_name: employee,
+       created: timestamp,
+       uid: cartRefDoc
+     });
+ 
+     taxNameArray.forEach((taxation, key) =>{
+     let mycartRefDoc = cartRefDoc + (key+1)
+     const creditorsledgerRef = doc(db, 'creditorsledger_pos', mycartRefDoc);
+     batch.set(creditorsledgerRef, {
+       invoice_number: m_invoice_number,
+       invoice_ref: m_invoice_ref,
+       account_name: taxAccountArray[key],
+       account_type: 'Current Liability',
+       name: 'Point-of-sale',
+       tr_date: mdate,
+       tr_date_long: log,
+       tr_no: checkNumber,
+       memo: 'Product Sales',
+       ref: 'Sales Ledger',
+       reference: product.name,
+       amount: taxArray[key],
+       double_entry_type: 'Double Entry',
+       credit_or_debit: 'Credit',
+       double_entry_account_name: product.name,
+       double_entry_account_type: 'Income',
+       currency: product.currency,
+       user_name: employee,
+       created: timestamp,
+       uid: mycartRefDoc
+       });
+     })
+ 
+     if(count > 0){
+       // Delete debtors ledger
+       const deleteDebtorsLedgerRef = doc(db, "debtorsledger_pos", m_invoice_number);
+       batch.delete(deleteDebtorsLedgerRef);
+     }
+ 
+     const debtorsledgerRef = doc(db, 'debtorsledger_pos', m_invoice_number);
+     batch.set(debtorsledgerRef, {
+       invoice_number: m_invoice_number,
+       invoice_ref: m_invoice_ref,
+       account_name: 'Accounts Receivable',
+       account_type: 'Current Assets',
+       name: 'Point-of-sale',
+       tr_date: mdate,
+       tr_date_long: log,
+       tr_no: checkNumber,
+       memo: 'Product Sales',
+       ref: 'Sales Ledger',
+       reference: product.name,
+       amount: grandTotal + (product.price * mqty),
+       double_entry_type: 'Double Entry',
+       credit_or_debit: 'Debit',
+       double_entry_account_name: product.name,
+       double_entry_account_type: 'Income',
+       currency: product.currency,
+       user_name: employee,
+       created: timestamp,
+       uid: m_invoice_number
+     });
+     */
+   }// end else if findProductInCart ="yes"
+     // Commit the batch
+     batch.commit().then(() =>{
+       if(editLabel === '+Add New')
+         setEditLabel("Edit")
+       if(count == 0)
+         setUpdateStatus("Success")
+         setCount((c) => c + 1)
+         setQty(1)
+         setQtyManual(false)
+         setTotalAmount(grandTotal)
+         setInvoiceRef(m_invoice_ref)
+         if(invoice_number === 'Add New'){
+           setInvoiceNumber(m_invoice_number)
+         }
+     });
+ 
 
-    const salesledgerRef = doc(db, 'salesledger_pos', cartRefDoc);
-    batch.set(salesledgerRef, {
-      invoice_number: m_invoice_number,
-      invoice_ref: m_invoice_ref,
-      account_name: product.name,
-      account_type: 'Income',
-      name: 'Point-of-sale',
-      tr_date: mdate,
-      tr_date_long: log,
-      tr_no: checkNumber,
-      memo: 'Product Sales',
-      ref: 'Creditors Ledger',
-      reference: product.name,
-      amount: (product.price * mqty) - tax,
-      double_entry_type: 'Double Entry',
-      credit_or_debit: 'Credit',
-      double_entry_account_name: 'Accounts Receivable',
-      double_entry_account_type: 'Current Assets',
-      currency: product.currency,
-      user_name: employee,
-      created: timestamp,
-      uid: cartRefDoc
-    });
-
-    taxNameArray.forEach((taxation, key) =>{
-    let mycartRefDoc = cartRefDoc + (key+1)
-    const creditorsledgerRef = doc(db, 'creditorsledger_pos', mycartRefDoc);
-    batch.set(creditorsledgerRef, {
-      invoice_number: m_invoice_number,
-      invoice_ref: m_invoice_ref,
-      account_name: taxAccountArray[key],
-      account_type: 'Current Liability',
-      name: 'Point-of-sale',
-      tr_date: mdate,
-      tr_date_long: log,
-      tr_no: checkNumber,
-      memo: 'Product Sales',
-      ref: 'Sales Ledger',
-      reference: product.name,
-      amount: taxArray[key],
-      double_entry_type: 'Double Entry',
-      credit_or_debit: 'Credit',
-      double_entry_account_name: product.name,
-      double_entry_account_type: 'Income',
-      currency: product.currency,
-      user_name: employee,
-      created: timestamp,
-      uid: mycartRefDoc
-      });
-    })
-
-    if(count > 0){
-      // Delete debtors ledger
-      const deleteDebtorsLedgerRef = doc(db, "debtorsledger_pos", m_invoice_number);
-      batch.delete(deleteDebtorsLedgerRef);
-    }
-
-    const debtorsledgerRef = doc(db, 'debtorsledger_pos', m_invoice_number);
-    batch.set(debtorsledgerRef, {
-      invoice_number: m_invoice_number,
-      invoice_ref: m_invoice_ref,
-      account_name: 'Accounts Receivable',
-      account_type: 'Current Assets',
-      name: 'Point-of-sale',
-      tr_date: mdate,
-      tr_date_long: log,
-      tr_no: checkNumber,
-      memo: 'Product Sales',
-      ref: 'Sales Ledger',
-      reference: product.name,
-      amount: grandTotal + (product.price * mqty),
-      double_entry_type: 'Double Entry',
-      credit_or_debit: 'Debit',
-      double_entry_account_name: product.name,
-      double_entry_account_type: 'Income',
-      currency: product.currency,
-      user_name: employee,
-      created: timestamp,
-      uid: m_invoice_number
-    });
-    */
-  }// end else if findProductInCart ="yes"
-    // Commit the batch
-    await batch.commit().then(() =>{
-      if(editLabel === '+Add New')
-        setEditLabel("Edit")
-      if(count == 0)
-        setUpdateStatus("Success")
-        setCount((c) => c + 1)
-        setQty(1)
-        setQtyManual(false)
-        setTotalAmount(grandTotal)
-        setInvoiceRef(m_invoice_ref)
-        if(invoice_number === 'Add New'){
-          setInvoiceNumber(m_invoice_number)
-        }
-    });
-  
 }
 
 
@@ -864,7 +860,7 @@ if(a<100){
     }
     
     // Commit the batch
-    await batch.commit().then(() =>{
+    batch.commit().then(() =>{
       console.log("Success")
         setCount((c) => c - 1)
         setQty(1)

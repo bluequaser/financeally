@@ -6,7 +6,7 @@ export default function App() {
     <div>
       <h1>Finance Ally</h1>
       <nav style={{ borderBottom: 'solid 1px', paddingBottom: '1rem' }}>
-        <Link to="/books">Books</Link> |{' '}
+      <Link to="/books">Books</Link> |{' '}
         <Link to="/pospages">Point-of-Sale</Link> |{' '}
         <Link to="/itemslist">Items List</Link> |{' '}
         <Link to="/suppliers">Suppliers</Link> |{' '}

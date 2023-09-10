@@ -19,11 +19,15 @@ import { createRoot } from 'react-dom/client';
 import ReactDOM from "react-dom/client";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import App from './App';
+
 import Expenses from './routes/expenses';
 import Books from "./routes/Books";
 import Book from "./routes/Book";
+
 import PosPages from "./pos/pages/PosPages";
 import PosPage from "./pos/pages/PosPage";
+import PurchaseInvoices from './inventory/PurchaseInvoices';
+import PurchaseInvoice from './inventory/PurchaseInvoice';
 import Settings from './settings/Settings';
 import Divisions from './settings/Divisions';
 import Division from './settings/Division';
@@ -37,8 +41,6 @@ import Locations from './inventory/Locations';
 import Location from './inventory/Location';
 import InventoryItems from './inventory/InventoryItems';
 import InventoryItem from './inventory/InventoryItem';
-import PurchaseInvoices from './inventory/PurchaseInvoices';
-import PurchaseInvoice from './inventory/PurchaseInvoice';
 import Suppliers from './contacts/Suppliers';
 import Supplier from './contacts/Supplier';
 import IncomeExpenseGroups from './settings/accountschart/IncomeExpenseGroups';
@@ -50,12 +52,12 @@ import BalanceSheetGroup from './settings/accountschart/BalanceSheetGroup';
 import BalanceSheetAccounts from './settings/accountschart/BalanceSheetAccounts';
 import BalanceSheetAccount from './settings/accountschart/BalanceSheetAccount';
 
+import Purchases from './invoices/Purchases';
+import Purchase from './invoices/Purchase';
 import Go from './go/Go';
 import GoColumn from './go/GoColumn';
 import GoCell from './go/GoCell';
 import AddDeleteTableRows from './tables/AddDeleteTableRows';
-import Purchases from './invoices/Purchases';
-import Purchase from './invoices/Purchase';
 
 import './style.css';
 
@@ -67,6 +69,7 @@ root.render(
     <BrowserRouter>
     <Routes>
      <Route path="/" element={<App />} >
+     
      <Route path="go" element={<Go />} />
      <Route path="tables" element={<AddDeleteTableRows />} />
      <Route path="pospages" element={<PosPages />} >
@@ -235,7 +238,6 @@ root.render(
            />
            <Route path=":bookId" element={<Book />} />
       </Route>
-
         <Route
           path="*"
           element={
@@ -244,6 +246,7 @@ root.render(
            </main>
           }
          />
+       
       </Route>
     </Routes>
    </BrowserRouter>
