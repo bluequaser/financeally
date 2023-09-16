@@ -14,7 +14,7 @@ export default function App() {
         <Link to="/settings">Settings</Link> |{' '}
         <Link to="/tables">Tables</Link> |{' '}
         <Link to="/buygoods">Invoice Table</Link> |{' '}
-        <Link to="/go">Go Game</Link> |
+        <Link to="/go">Go Games</Link> |
       </nav>
       <Outlet />
     </div>
