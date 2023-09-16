@@ -1,4 +1,3 @@
-//Task.js
 import React from "react"
 import './task.css'
 import {useState} from 'react'
@@ -16,7 +15,7 @@ function Task({id, key, modified, invoice_number, invoice_ref, check_number, mda
   const [taxcode, setTaxCodes] = useState([])
 
   useEffect(() => {
-    const taskColRef = query(collection(db, 'sales_day_book'),where("invoice_number","==",invoice_number))
+    const taskColRef = query(collection(db, 'sales_register'),where("invoice_number","==",invoice_number))
     onSnapshot(taskColRef, (snapshot) => {
       setProduct(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -82,7 +81,7 @@ function Task({id, key, modified, invoice_number, invoice_ref, check_number, mda
     }
 */    
     const batch = writeBatch(db);
-    const deleteCartUIDRef = doc(db, "cart_uid", id);
+    const deleteCartUIDRef = doc(db, "sales_uid", id);
     batch.delete(deleteCartUIDRef);
     product.map((item) =>{
     const deleteCartRef = doc(db, "cart", item.id);
@@ -91,23 +90,23 @@ function Task({id, key, modified, invoice_number, invoice_ref, check_number, mda
     batch.delete(deleteInventoryRegRef);
     const deleteInventoryRef = doc(db, "inventory_pos", item.id);
     batch.delete(deleteInventoryRef);
-    const deleteGLCOSRef = doc(db, "generalledger_pos", item.id);
+    const deleteGLCOSRef = doc(db, "general_ledger", item.id);
     batch.delete(deleteGLCOSRef);
-    const deleteGLAccountRef = doc(db, "generalledger_pos", item.id+1);
+    const deleteGLAccountRef = doc(db, "general_ledger", item.id+1);
     batch.delete(deleteGLAccountRef);
-    const deleteSLRef = doc(db, "salesledger_pos", item.id);
+    const deleteSLRef = doc(db, "sales_ledger", item.id);
     batch.delete(deleteSLRef);
-    const deleteSDBRef = doc(db, "salesdaybook_pos",item.id);
+    const deleteSDBRef = doc(db, "sales_register",item.id);
     batch.delete(deleteSDBRef);
     let cartRefDoc = item.id;
     for (let i = 0; i < m_counter; i++) {
       let mycartRefDoc = cartRefDoc + (i + 1)
       console.log("cartRefDoc = "+mycartRefDoc)
-      const deleteCLRef = doc(db, "creditorsledger_pos", mycartRefDoc);
+      const deleteCLRef = doc(db, "creditors_ledger", mycartRefDoc);
       batch.delete(deleteCLRef);
     }
     })
-    const debtorsledgerRef = doc(db, 'debtorsledger_pos', invoice_number);
+    const debtorsledgerRef = doc(db, 'debtors_ledger', invoice_number);
     batch.delete(debtorsledgerRef);
     // Commit the batch
     await batch.commit().then(() =>{
