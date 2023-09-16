@@ -26,6 +26,7 @@ import Book from "./routes/Book";
 
 import PosPages from "./pos/pages/PosPages";
 import PosPage from "./pos/pages/PosPage";
+import POS from "./point_of_sale/TaskManager";
 import PurchaseInvoices from './inventory/PurchaseInvoices';
 import PurchaseInvoice from './inventory/PurchaseInvoice';
 import Settings from './settings/Settings';
@@ -72,6 +73,7 @@ root.render(
      
      <Route path="go" element={<Go />} />
      <Route path="tables" element={<AddDeleteTableRows />} />
+     <Route path="pos" element={<POS />} />
      <Route path="pospages" element={<PosPages />} >
            <Route
              index
