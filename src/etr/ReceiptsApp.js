@@ -19,6 +19,7 @@ const ReceiptsApp = () => {
   });
 
   useEffect(() => {
+   
     const taskColRef = query(collection(db, 'locations'), orderBy('name'))
     onSnapshot(taskColRef, (snapshot) => {
       setTasks(snapshot.docs.map(doc => ({
@@ -30,6 +31,7 @@ const ReceiptsApp = () => {
 
   const handleChange = async() => {
    console.log(tasks);
+   console.log("on re-render "+location); 
 /*   
    const fruit = [
     {type: "apples", pieces: 24},
