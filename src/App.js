@@ -15,6 +15,7 @@ export default function App() {
         <Link to="/tables">Tables</Link> |{' '}
         <Link to="/buygoods">Invoice Table</Link> |{' '}
         <Link to="/pos">POSale</Link> |{' '}
+        <Link to="/etr">ETR</Link> |{' '}
         <Link to="/go">Go Game</Link> |
       </nav>
       <Outlet />

@@ -59,6 +59,7 @@ import Go from './go/Go';
 import GoColumn from './go/GoColumn';
 import GoCell from './go/GoCell';
 import AddDeleteTableRows from './tables/AddDeleteTableRows';
+import ReceiptsApp from './etr/ReceiptsApp';
 
 import './style.css';
 
