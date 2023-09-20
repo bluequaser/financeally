@@ -15,6 +15,9 @@ const ReceiptsApp = () => {
     content: () => componentRef.current,
   });
 
+  const handleChange = async() => {
+  
+  }
   const handleCalcTotal = async() => {
       let total = 0;
       receipts.map((sum,key) =>{
@@ -44,6 +47,7 @@ const ReceiptsApp = () => {
       <ComponentToPrint cart={receipts} ref={componentRef} />
       <button onClick={handlePrint}>Print this out!</button> {" " }
       <button onClick={() => handleCalcTotal()}>Calc Total</button>{" "}
+      <button onClick={() => handleChange()}>Test</button><br/>
       Paid Amount {totalAmount}
 
       <div className='table-responsive bg-dark'>

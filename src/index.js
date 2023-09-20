@@ -75,6 +75,7 @@ root.render(
      <Route path="go" element={<Go />} />
      <Route path="tables" element={<AddDeleteTableRows />} />
      <Route path="pos" element={<POS />} />
+     <Route path="etr" element={<ReceiptsApp />} />
      <Route path="pospages" element={<PosPages />} >
            <Route
              index
