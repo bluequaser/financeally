@@ -1,22 +1,50 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useReactToPrint } from 'react-to-print';
-
 import { ComponentToPrint } from './ComponentToPrint';
 import {getReceipts} from './etr_receipts'
+import {collection, query, orderBy, onSnapshot, addDoc, Timestamp} from "firebase/firestore"
+import {db} from '../firebase'
 
 const ReceiptsApp = () => {
   
   const [receipts, setReceipts] = useState([]);
   const [isLoading, setIsLoading] = useState('X');
   const [totalAmount, setTotalAmount] = useState(0);
+  const [tasks, setTasks] = useState([])
+  const [location, setLocation] = useState([])
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
 
+  useEffect(() => {
+    const taskColRef = query(collection(db, 'locations'), orderBy('name'))
+    onSnapshot(taskColRef, (snapshot) => {
+      setTasks(snapshot.docs.map(doc => ({
+        id: doc.id,
+        data: doc.data()
+      })))
+    })
+  },[])
+
   const handleChange = async() => {
+   console.log(tasks);
+/*   
+   const fruit = [
+    {type: "apples", pieces: 24},
+    {type: "pears", pieces: 12},
+    {type: "oranges", pieces: 10},
+    {type: "peaches", pieces: 6}
+    ];
   
+  const fruitName = fruit.reduce(() => 
+   [...acc, cv.type], []);
+  console.log("Ex.1 "+fruitName); 
+*/
+  setLocation(location => [...location, {store: "Kitchen"}]);
+  console.log(location); 
+
   }
   const handleCalcTotal = async() => {
       let total = 0;
